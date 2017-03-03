@@ -8,6 +8,6 @@ namespace Game {
 	{
 	public:
 		using GameState::GameState;
-		void Update(GameEngine *engine) override;
+		void Init(GameEngine *engine) override;
 	};
 }

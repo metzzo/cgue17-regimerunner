@@ -1,10 +1,12 @@
 #pragma once
 #include "Eigen/Dense"
+#include <vector>
 
 using namespace Eigen;
 using namespace std;
 
 namespace Engine {
+	class Entity;
 	class GameState;
 
 	class GameEngine
@@ -15,7 +17,10 @@ namespace Engine {
 		GameState *currentGameState;
 
 	protected:
+		vector<Entity*> entities;
+
 		void RaiseEngineError(const string error);
+
 		virtual void Init() = 0;
 		virtual void DeInit() = 0;
 
@@ -28,6 +33,8 @@ namespace Engine {
 
 		Vector2i GetScreenSize() const;
 		string GetProgramName() const;
+
+		Entity *CreateEntity();
 	};
 
 }

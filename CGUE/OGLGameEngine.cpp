@@ -1,12 +1,13 @@
 #include "OGLGameEngine.h"
 #include <SDL.h>
 #include "glew/glew.h"
+#include "Entity.h"
 
 namespace Engine {
 	void checkSDLError(int line = -1)
 	{
 #ifndef NDEBUG
-		const char *error = SDL_GetError();
+		auto error = SDL_GetError();
 		if (*error != '\0')
 		{
 			printf("SDL Error: %s\n", error);
@@ -65,6 +66,12 @@ namespace Engine {
 	{
 		glClearColor(0.0, 0.0, 1.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		for (auto &entity : this->entities)
+		{
+			entity->Render(this);
+		}
+
 		SDL_GL_SwapWindow(this->mainwindow);
 	}
 }

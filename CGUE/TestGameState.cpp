@@ -1,7 +1,8 @@
 #include "TestGameState.h"
 
 namespace Game {
-	void TestGameState::Update(GameEngine* engine)
+	void TestGameState::Init(GameEngine* engine)
 	{
+
 	}
 }

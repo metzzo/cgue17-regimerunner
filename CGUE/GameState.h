@@ -9,6 +9,6 @@ namespace Engine {
 		GameState();
 		virtual ~GameState();
 
-		virtual void Update(GameEngine *engine) = 0;
+		virtual void Init(GameEngine *engine) = 0;
 	};
 }
