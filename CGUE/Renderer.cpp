@@ -1,5 +1,6 @@
 #include "Renderer.h"
-
+#include "Entity.h"
+#include <typeinfo>
 
 namespace Engine {
 	Renderer::Renderer()
@@ -25,5 +26,10 @@ namespace Engine {
 	void Renderer::Wire()
 	{
 		// nothing \o/
+	}
+
+	const char* Renderer::GetClassName() const
+	{
+		return typeid(*this).name();
 	}
 }

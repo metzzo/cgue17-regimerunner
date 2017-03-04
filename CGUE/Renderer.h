@@ -17,5 +17,6 @@ namespace Engine {
 		virtual void Render(GameEngine *gameEngine) = 0;
 		virtual void Init(GameEngine* gameEngine);
 		virtual void Wire();
+		const char *GetClassName() const;
 	};
 }

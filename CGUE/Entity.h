@@ -5,6 +5,10 @@
 #include "Renderer.h"
 
 namespace Engine {
+#define WIRE_COMPONENT(A,B) this->getEntity()->WireUp(reinterpret_cast<Component**>(&A), B.GetClassName());
+#define WIRE_RENDERER(A,B) this->getEntity()->WireUp(reinterpret_cast<Renderer**>(&A), B.GetClassName());
+
+
 	class GameEngine;
 	class Entity
 	{
@@ -18,8 +22,8 @@ namespace Engine {
 		Component *AddComponent(Component *component);
 		Renderer *AddRenderer(Renderer *renderer);
 
-		void WireUp(Component **target, type_info *typeId);
-		void WireUp(Renderer **target, type_info *typeId);
+		void WireUp(Component **target, const char *name);
+		void WireUp(Renderer **target, const char *name);
 
 		void Update(GameEngine *gameEngine);
 		void Render(GameEngine *gameEngine);

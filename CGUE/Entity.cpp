@@ -37,13 +37,14 @@ namespace Engine {
 		return renderer;
 	}
 
-	void Entity::WireUp(Component** target, type_info* typeId)
+	void Entity::WireUp(Component** target, const char *name)
 	{
 		for (auto &component : this->components)
 		{
-			if (typeid(component) == *typeId)
+			if (strcmp(component->GetClassName(), name) == 0)
 			{
 				*target = component;
+				return;
 			}
 		}
 
@@ -51,13 +52,14 @@ namespace Engine {
 		exit(1);
 	}
 
-	void Entity::WireUp(Renderer** target, type_info* typeId)
+	void Entity::WireUp(Renderer** target, const char *name)
 	{
 		for (auto &renderer : this->renderer)
 		{
-			if (typeid(renderer) == *typeId)
+			if (strcmp(renderer->GetClassName(), name) == 0)
 			{
 				*target = renderer;
+				return;
 			}
 		}
 

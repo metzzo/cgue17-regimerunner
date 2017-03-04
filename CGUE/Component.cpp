@@ -1,6 +1,5 @@
 #include "Component.h"
-
-
+#include<typeinfo>
 
 namespace Engine {
 	Component::Component()
@@ -31,5 +30,10 @@ namespace Engine {
 	void Component::Wire()
 	{
 		// nothing \o/
+	}
+
+	const char* Component::GetClassName() const
+	{
+		return typeid(*this).name();
 	}
 }

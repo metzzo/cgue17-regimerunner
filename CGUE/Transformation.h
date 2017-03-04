@@ -6,13 +6,15 @@
 using namespace Eigen;
 
 namespace Engine {
-	class Transform : public Component
+	class Transformation : public Component
 
 	{
 		Matrix4d transform;
 
 	public:
-		Transform();
-		~Transform();
+		Transformation();
+		~Transformation();
 	};
+
+	extern const Transformation TransformationClass;
 }

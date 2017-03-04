@@ -21,6 +21,7 @@ namespace Engine {
 	void GameEngine::Run()
 	{
 		this->Init();
+
 		if (this->currentGameState != nullptr) {
 			this->currentGameState->Init(this);
 		}

@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include "glew/glew.h"
 #include "Entity.h"
+#include <iostream>
 
 namespace Engine {
 	void checkSDLError(int line = -1)
@@ -32,7 +33,10 @@ namespace Engine {
 		// set certain attributes
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-
+		//SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+		
 		auto programName = this->GetProgramName().c_str();
 		auto screenSize = this->GetScreenSize();
 
@@ -54,17 +58,28 @@ namespace Engine {
 		this->maincontext = SDL_GL_CreateContext(this->mainwindow);
 		checkSDLError(__LINE__);
 
+		glewExperimental = GL_TRUE;
+		auto error = glewInit();
+		if (GLEW_OK != error)
+		{
+			this->RaiseEngineError("Glew init error: " + to_string(error));
+		}
+
 		SDL_GL_SetSwapInterval(1);
+
+		cout << "Using OpenGL Version: " << glGetString(GL_VERSION) << endl;
+
+		glClearColor(0.0, 0.0, 1.0, 1.0);
 	}
 
 	void OGLGameEngine::DeInit()
 	{
+		SDL_GL_DeleteContext(this->maincontext);
 		SDL_Quit();
 	}
 
 	void OGLGameEngine::Render()
 	{
-		glClearColor(0.0, 0.0, 1.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		for (auto &entity : this->entities)
