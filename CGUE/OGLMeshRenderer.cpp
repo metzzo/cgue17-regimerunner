@@ -19,6 +19,7 @@ namespace Engine {
 
 	OGLMeshRenderer::~OGLMeshRenderer()
 	{
+		glDeleteBuffers(1, &this->vertexArray);
 		glDeleteBuffers(1, &this->vertexBuffer);
 	}
 
@@ -29,11 +30,11 @@ namespace Engine {
 	}
 
 
-	void OGLMeshRenderer::Init(GameEngine* gameEngine)
+	void OGLMeshRenderer::Init()
 	{
 		static_assert(sizeof(GLfloat) == sizeof(float), "GLfloat must have same size as float.");
 
-		MeshRenderer::Init(gameEngine);
+		MeshRenderer::Init();
 
 		glGenBuffers(1, &this->vertexBuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, this->vertexBuffer);
@@ -49,13 +50,14 @@ namespace Engine {
 			GL_FLOAT,           // type
 			GL_FALSE,           // normalized?
 			0,                  // stride
-			(void*)0           // array buffer offset
+			nullptr	            // array buffer offset
 		);
 
 		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	void OGLMeshRenderer::Render(GameEngine* gameEngine)
+	void OGLMeshRenderer::Render()
 	{
 		this->material->ApplyMaterial();
 		glBindVertexArray(this->vertexArray);

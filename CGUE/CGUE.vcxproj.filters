@@ -51,9 +51,6 @@
     <ClCompile Include="GameEngine.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="TestGameState.cpp">
-      <Filter>Source Files\Game</Filter>
-    </ClCompile>
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
@@ -69,9 +66,6 @@
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>Source Files\Engine\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="GameState.cpp">
-      <Filter>Source Files\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Transformation.cpp">
       <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
@@ -84,6 +78,12 @@
     <ClCompile Include="Material.cpp">
       <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityUnit.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -94,12 +94,6 @@
     </ClInclude>
     <ClInclude Include="GameEngine.h">
       <Filter>Header Files\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="GameState.h">
-      <Filter>Header Files\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="TestGameState.h">
-      <Filter>Header Files\Game</Filter>
     </ClInclude>
     <ClInclude Include="OGLGameEngine.h">
       <Filter>Header Files\Engine\OGL</Filter>
@@ -124,6 +118,12 @@
     </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>Header Files\Engine\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityUnit.h">
+      <Filter>Header Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,7 +4,6 @@
 namespace Engine {
 	Component::Component()
 	{
-		this->entity = nullptr;
 	}
 
 
@@ -12,28 +11,8 @@ namespace Engine {
 	{
 	}
 
-	Entity* Component::getEntity() const
-	{
-		return this->entity;
-	}
-
-	void Component::Update(GameEngine* gameEngine)
+	void Component::Update()
 	{
 		// nothing \o/
-	}
-
-	void Component::Init(GameEngine* gameEngine)
-	{
-		// nothing \o/
-	}
-
-	void Component::Wire()
-	{
-		// nothing \o/
-	}
-
-	const char* Component::GetClassName() const
-	{
-		return typeid(*this).name();
 	}
 }

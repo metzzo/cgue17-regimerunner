@@ -5,9 +5,9 @@
 using namespace std;
 
 namespace Engine {
-	Entity::Entity()
+	Entity::Entity(GameEngine *gameEngine)
 	{
-		
+		this->gameEngine = gameEngine;
 	}
 
 
@@ -23,14 +23,14 @@ namespace Engine {
 		}
 	}
 
-	Component* Entity::AddComponent(Component* component)
+	Component* Entity::Add(Component* component)
 	{
 		component->entity = this;
 		this->components.push_back(component);
 		return component;
 	}
 
-	Renderer* Entity::AddRenderer(Renderer* renderer)
+	Renderer* Entity::Add(Renderer* renderer)
 	{
 		renderer->entity = this;
 		this->renderer.push_back(renderer);
@@ -67,19 +67,19 @@ namespace Engine {
 		exit(1);
 	}
 
-	void Entity::Update(GameEngine* gameEngine)
+	void Entity::Update()
 	{
 		for (auto &component : this->components)
 		{
-			component->Update(gameEngine);
+			component->Update();
 		}
 	}
 
-	void Entity::Render(GameEngine* gameEngine)
+	void Entity::Render()
 	{
 		for (auto &renderer : this->renderer)
 		{
-			renderer->Render(gameEngine);
+			renderer->Render();
 		}
 	}
 
@@ -96,16 +96,16 @@ namespace Engine {
 		}
 	}
 
-	void Entity::Init(GameEngine* gameEngine)
+	void Entity::Init()
 	{
 		for (auto &component : this->components)
 		{
-			component->Init(gameEngine);
+			component->Init();
 		}
 
 		for (auto &renderer : this->renderer)
 		{
-			renderer->Init(gameEngine);
+			renderer->Init();
 		}
 	}
 }

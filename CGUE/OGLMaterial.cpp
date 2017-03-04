@@ -16,6 +16,13 @@ namespace Engine {
 
 	OGLMaterial::OGLMaterial(string vertexShader, string fragmentShader)
 	{
+		this->vertexShader = vertexShader;
+		this->fragmentShader = fragmentShader;
+		this->program = 0;
+	}
+
+	void OGLMaterial::Init()
+	{
 		// Create the shaders
 		auto VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 		auto FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
@@ -43,7 +50,8 @@ namespace Engine {
 			while (getline(FragmentShaderStream, Line))
 				FragmentShaderCode += "\n" + Line;
 			FragmentShaderStream.close();
-		} else
+		}
+		else
 		{
 			printf("Impossible to open %s. Are you in the right directory?\n", fragmentShader.c_str());
 			getchar();

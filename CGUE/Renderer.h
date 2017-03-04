@@ -1,22 +1,16 @@
 #pragma once
+#include "EntityUnit.h"
+
 namespace Engine {
 	class Entity;
 	class GameEngine;
 
-	class Renderer
+	class Renderer : public EntityUnit
 	{
-		friend Entity;
-
-		Entity *entity;
 	public:
 		Renderer();
 		virtual ~Renderer();
 
-		Entity *getEntity() const;
-
-		virtual void Render(GameEngine *gameEngine) = 0;
-		virtual void Init(GameEngine* gameEngine);
-		virtual void Wire();
-		const char *GetClassName() const;
+		virtual void Render() = 0;
 	};
 }

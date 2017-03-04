@@ -1,30 +1,24 @@
 #include "GameEngine.h"
 #include <iostream>
-#include "GameState.h"
 #include "Entity.h"
 
 namespace Engine {
-	GameEngine::GameEngine(Vector2i screenSize, const string programName, GameState *gameState)
+	GameEngine::GameEngine(Vector2i screenSize, const string programName)
 	{
 		this->screenSize = screenSize;
 		this->programName = programName;
 		this->cancelled = false;
-		this->currentGameState = gameState;
 	}
 
 
 	GameEngine::~GameEngine()
 	{
-		delete this->currentGameState;
+
 	}
 
 	void GameEngine::Run()
 	{
 		this->Init();
-
-		if (this->currentGameState != nullptr) {
-			this->currentGameState->Init(this);
-		}
 
 		for (auto &entity : this->entities)
 		{
@@ -33,14 +27,14 @@ namespace Engine {
 
 		for (auto &entity : this->entities)
 		{
-			entity->Init(this);
+			entity->Init();
 		}
 
 		while(!cancelled)
 		{
 			for (auto &entity : this->entities)
 			{
-				entity->Update(this);
+				entity->Update();
 			}
 
 			this->Render();
@@ -60,7 +54,7 @@ namespace Engine {
 
 	Entity* GameEngine::CreateEntity()
 	{
-		auto entity = new Entity();
+		auto entity = new Entity(this);
 		this->entities.push_back(entity);
 		return entity;
 	}

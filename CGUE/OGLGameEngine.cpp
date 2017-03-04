@@ -84,7 +84,7 @@ namespace Engine {
 
 		for (auto &entity : this->entities)
 		{
-			entity->Render(this);
+			entity->Render();
 		}
 
 		SDL_GL_SwapWindow(this->mainwindow);

@@ -16,8 +16,8 @@ namespace Engine {
 		OGLMeshRenderer(const float *bufferData, int numVertices);
 		~OGLMeshRenderer();
 
-		void Init(GameEngine *gameEngine) override;
-		void Render(GameEngine *gameEngine) override;
+		void Init() override;
+		void Render() override;
 		void Wire() override;
 	};
 }

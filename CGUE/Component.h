@@ -1,23 +1,14 @@
 #pragma once
+#include "EntityUnit.h"
+
 namespace Engine {
-	class GameEngine;
-	class Entity;
-
-	class Component
+	class Component : public EntityUnit
 	{
-		friend Entity;
-
-		Entity *entity;
-
 	public:
 		Component();
 		virtual ~Component();
 
-		Entity *getEntity() const;
-		virtual void Update(GameEngine *gameEngine);
-		virtual void Init(GameEngine* gameEngine);
-		virtual void Wire();
-		const char *GetClassName() const;
+		virtual void Update();
 	};
 }
 

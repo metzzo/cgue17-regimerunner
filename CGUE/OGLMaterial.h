@@ -9,11 +9,14 @@ namespace Engine {
 	class OGLMaterial : public Material
 	{
 		GLuint program;
-
+		string vertexShader;
+		string fragmentShader;
 	public:
 		OGLMaterial();
 		OGLMaterial(string vertexShader, string fragmentShader);
 		~OGLMaterial();
+
+		void Init() override;
 
 		void ApplyMaterial() const;
 		static void UnApplyMaterial();

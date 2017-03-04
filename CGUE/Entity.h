@@ -14,20 +14,21 @@ namespace Engine {
 	{
 		std::vector<Component*> components;
 		std::vector<Renderer*> renderer;
+		GameEngine *gameEngine;
 
 	public:
-		Entity();
+		Entity(GameEngine *gameEngine);
 		virtual ~Entity();
 
-		Component *AddComponent(Component *component);
-		Renderer *AddRenderer(Renderer *renderer);
+		Component *Add(Component *component);
+		Renderer *Add(Renderer *renderer);
 
 		void WireUp(Component **target, const char *name);
 		void WireUp(Renderer **target, const char *name);
 
-		void Update(GameEngine *gameEngine);
-		void Render(GameEngine *gameEngine);
-		void Init(GameEngine *gameEngine);
+		void Update();
+		void Render();
+		void Init();
 		void Wire();
 	};
 }

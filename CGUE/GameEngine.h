@@ -14,7 +14,6 @@ namespace Engine {
 		Vector2i screenSize;
 		string programName;
 		bool cancelled;
-		GameState *currentGameState;
 
 	protected:
 		vector<Entity*> entities;
@@ -26,7 +25,7 @@ namespace Engine {
 
 		virtual void Render() = 0;
 	public:
-		GameEngine(Vector2i screenSize, string programName, GameState *gameState);
+		GameEngine(Vector2i screenSize, string programName);
 		virtual ~GameEngine();
 
 		void Run();
