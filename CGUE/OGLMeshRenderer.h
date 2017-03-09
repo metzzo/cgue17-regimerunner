@@ -10,7 +10,6 @@ namespace Engine {
 		GLuint vertexBuffer;
 		GLuint vertexArray;
 		OGLMaterial *material;
-		Transformation *transform;
 	public:
 		OGLMeshRenderer();
 		OGLMeshRenderer(const float *bufferData, int numVertices);

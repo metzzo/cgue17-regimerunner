@@ -127,13 +127,8 @@ namespace Engine {
 		glDeleteProgram(this->program);
 	}
 
-	void OGLMaterial::ApplyMaterial() const
+	GLuint OGLMaterial::GetProgramId() const
 	{
-		glUseProgram(this->program);
-	}
-
-	void OGLMaterial::UnApplyMaterial()
-	{
-		glUseProgram(0);
+		return this->program;
 	}
 }

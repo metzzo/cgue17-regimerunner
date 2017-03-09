@@ -84,6 +84,9 @@
     <ClCompile Include="EntityUnit.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="OGLCamera.cpp">
+      <Filter>Source Files\Engine\OGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -124,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="EntityUnit.h">
       <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="OGLCamera.h">
+      <Filter>Header Files\Engine\OGL</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

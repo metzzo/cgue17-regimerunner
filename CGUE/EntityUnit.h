@@ -1,6 +1,9 @@
 #pragma once
+#include "GameEngine.h"
+
 namespace Engine {
 	class Entity;
+	class Transformation;
 
 	class EntityUnit
 	{
@@ -11,7 +14,9 @@ namespace Engine {
 		EntityUnit();
 		virtual ~EntityUnit();
 
-		Entity* EntityUnit::getEntity() const;
+		Entity* GetEntity() const;
+		GameEngine* GetEngine() const;
+		Transformation* GetTransformation() const;
 
 		virtual void Init();
 		virtual void Wire();

@@ -3,6 +3,8 @@
 #include "glew/glew.h"
 #include "Entity.h"
 #include <iostream>
+#include <string>
+#include "Camera.h"
 
 namespace Engine {
 	void checkSDLError(int line = -1)
@@ -38,14 +40,13 @@ namespace Engine {
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		
 		auto programName = this->GetProgramName().c_str();
-		auto screenSize = this->GetScreenSize();
 
 		this->mainwindow = SDL_CreateWindow(
 			programName, 
 			SDL_WINDOWPOS_CENTERED, 
 			SDL_WINDOWPOS_CENTERED,
-			screenSize.x(),
-			screenSize.y(), 
+			width,
+			height, 
 			SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN
 		);
 
@@ -82,10 +83,7 @@ namespace Engine {
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		for (auto &entity : this->entities)
-		{
-			entity->Render();
-		}
+		this->mainCamera->RenderScreen();
 
 		SDL_GL_SwapWindow(this->mainwindow);
 	}

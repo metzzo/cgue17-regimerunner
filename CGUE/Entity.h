@@ -5,23 +5,33 @@
 #include "Renderer.h"
 
 namespace Engine {
-#define WIRE_COMPONENT(A,B) this->getEntity()->WireUp(reinterpret_cast<Component**>(&A), B.GetClassName());
-#define WIRE_RENDERER(A,B) this->getEntity()->WireUp(reinterpret_cast<Renderer**>(&A), B.GetClassName());
+#define WIRE_COMPONENT(A,B) this->GetEntity()->WireUp(reinterpret_cast<Component**>(&A), B.GetClassName());
+#define WIRE_RENDERER(A,B) this->GetEntity()->WireUp(reinterpret_cast<Renderer**>(&A), B.GetClassName());
 
 
 	class GameEngine;
+	class Transformation;
 	class Entity
 	{
-		std::vector<Component*> components;
-		std::vector<Renderer*> renderer;
+		vector<Component*> components;
+		vector<Renderer*> renderer;
+		vector<Entity*> children;
+		Entity *parent;
 		GameEngine *gameEngine;
-
+		Transformation *transformation;
 	public:
-		Entity(GameEngine *gameEngine);
+		explicit Entity(GameEngine *gameEngine);
 		virtual ~Entity();
+
+		GameEngine *GetEngine() const;
 
 		Component *Add(Component *component);
 		Renderer *Add(Renderer *renderer);
+		Entity *CreateChild();
+
+		Entity *GetParent() const;
+		const vector<Entity*>* GetChildren() const;
+		Transformation *GetTransformation() const;
 
 		void WireUp(Component **target, const char *name);
 		void WireUp(Renderer **target, const char *name);

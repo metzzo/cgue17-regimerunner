@@ -7,14 +7,12 @@ namespace Engine {
 	{
 		this->vertexBuffer = 0;
 		this->material = nullptr;
-		this->transform = nullptr;
 	}
 
 	OGLMeshRenderer::OGLMeshRenderer(const float* bufferData, int numVertices) : MeshRenderer(bufferData, numVertices)
 	{
 		this->vertexBuffer = 0;
 		this->material = nullptr;
-		this->transform = nullptr;
 	}
 
 	OGLMeshRenderer::~OGLMeshRenderer()
@@ -25,7 +23,6 @@ namespace Engine {
 
 	void OGLMeshRenderer::Wire()
 	{
-		WIRE_COMPONENT(this->transform, TransformationClass);
 		WIRE_COMPONENT(this->material, OGLMaterialClass);
 	}
 
@@ -59,8 +56,13 @@ namespace Engine {
 
 	void OGLMeshRenderer::Render()
 	{
-		this->material->ApplyMaterial();
+		auto programId = this->material->GetProgramId();
+		auto matrixId = glGetUniformLocation(programId, "MVP");
+
+		glUseProgram(programId);
+		glUniformMatrix4fv(matrixId, 1, GL_FALSE, &this->GetTransformation()->GetMvpMatrix()[0][0]);
 		glBindVertexArray(this->vertexArray);
 		glDrawArrays(GL_TRIANGLES, 0, this->numVertices);
+		glUseProgram(0);
 	}
 }

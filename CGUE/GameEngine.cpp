@@ -1,13 +1,18 @@
 #include "GameEngine.h"
 #include <iostream>
 #include "Entity.h"
+#include "Camera.h"
 
 namespace Engine {
-	GameEngine::GameEngine(Vector2i screenSize, const string programName)
+	GameEngine::GameEngine(int width, int height, const string programName)
 	{
-		this->screenSize = screenSize;
 		this->programName = programName;
 		this->cancelled = false;
+		this->width = width;
+		this->height = height;
+
+		this->rootEntity = new Entity(this);
+		this->mainCamera = nullptr;
 	}
 
 
@@ -20,31 +25,30 @@ namespace Engine {
 	{
 		this->Init();
 
-		for (auto &entity : this->entities)
-		{
-			entity->Wire();
-		}
+		this->rootEntity->Wire();
 
-		for (auto &entity : this->entities)
-		{
-			entity->Init();
-		}
+		this->rootEntity->Init();
+
+		this->rootEntity->GetTransformation()->SetProjectionViewMatrix(this->mainCamera->GetProjectionViewMatrix());
 
 		while(!cancelled)
 		{
-			for (auto &entity : this->entities)
-			{
-				entity->Update();
-			}
+			this->rootEntity->Update();
 
 			this->Render();
 		}
 		this->DeInit();
 	}
 
-	Vector2i GameEngine::GetScreenSize() const
+	void GameEngine::SetMainCamera(Camera* mainCamera)
 	{
-		return this->screenSize;
+		this->mainCamera = mainCamera;
+
+	}
+
+	Camera* GameEngine::GetMainCamera() const
+	{
+		return this->mainCamera;
 	}
 
 	string GameEngine::GetProgramName() const
@@ -52,16 +56,24 @@ namespace Engine {
 		return this->programName;
 	}
 
-	Entity* GameEngine::CreateEntity()
+	Entity* GameEngine::GetRootEntity() const
 	{
-		auto entity = new Entity(this);
-		this->entities.push_back(entity);
-		return entity;
+		return this->rootEntity;
+	}
+
+	int GameEngine::GetScreenWidth() const
+	{
+		return this->width;
+	}
+
+	int GameEngine::GetScreenHeight() const
+	{
+		return this->height;
 	}
 
 	void GameEngine::RaiseEngineError(const string error)
 	{
-		cout << "Engine Error: " << error << endl;
+		//cout << "Engine Error: " << error << endl;
 		this->DeInit();
 		exit(1);
 	}

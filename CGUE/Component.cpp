@@ -1,5 +1,4 @@
 #include "Component.h"
-#include<typeinfo>
 
 namespace Engine {
 	Component::Component()

@@ -4,15 +4,24 @@
 
 namespace Engine {
 	class Camera :
-		public Renderer
+		public Component
 	{
 	protected:
-		Transformation transform;
+		float fov;
+		float far;
+		float near;
 
+		mat4x4 projectionMatrix;
 	public:
 		Camera();
+		Camera(float fov, float near, float far);
 		~Camera();
 
+		virtual void RenderScreen() = 0;
+
+		mat4x4 GetProjectionViewMatrix() const;
+
 		void Wire() override;
+		void Init() override;
 	};
 }

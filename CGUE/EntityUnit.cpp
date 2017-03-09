@@ -1,5 +1,6 @@
 #include "EntityUnit.h"
 #include "Entity.h"
+#include "Transformation.h"
 #include <typeinfo>
 
 namespace Engine {
@@ -13,9 +14,19 @@ namespace Engine {
 	{
 	}
 
-	Entity* EntityUnit::getEntity() const
+	Entity* EntityUnit::GetEntity() const
 	{
 		return this->entity;
+	}
+
+	GameEngine* EntityUnit::GetEngine() const
+	{
+		return this->entity->GetEngine();
+	}
+
+	Transformation* EntityUnit::GetTransformation() const
+	{
+		return this->entity->GetTransformation();
 	}
 
 	void EntityUnit::Init()

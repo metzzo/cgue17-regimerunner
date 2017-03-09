@@ -1,22 +1,23 @@
 #pragma once
-#include "Eigen/Dense"
 #include <vector>
 
-using namespace Eigen;
 using namespace std;
 
 namespace Engine {
 	class Entity;
 	class GameState;
+	class Camera;
 
 	class GameEngine
 	{
-		Vector2i screenSize;
 		string programName;
 		bool cancelled;
 
 	protected:
-		vector<Entity*> entities;
+		Entity* rootEntity;
+		Camera* mainCamera;
+		int width;
+		int height;
 
 		void RaiseEngineError(const string error);
 
@@ -25,15 +26,19 @@ namespace Engine {
 
 		virtual void Render() = 0;
 	public:
-		GameEngine(Vector2i screenSize, string programName);
+		GameEngine(int width, int height, string programName);
 		virtual ~GameEngine();
 
 		void Run();
 
-		Vector2i GetScreenSize() const;
+		void SetMainCamera(Camera *mainCamera);
+		Camera *GetMainCamera() const;
+
 		string GetProgramName() const;
 
-		Entity *CreateEntity();
+		Entity *GetRootEntity() const;
+		int GetScreenWidth() const;
+		int GetScreenHeight() const;
 	};
 
 }

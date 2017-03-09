@@ -89,7 +89,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>glew;Eigen;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>glew;glm;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -128,6 +128,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
+    <ClCompile Include="OGLCamera.cpp" />
     <ClCompile Include="OGLGameEngine.cpp" />
     <ClCompile Include="OGLMaterial.cpp" />
     <ClCompile Include="OGLMeshRenderer.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MeshRenderer.h" />
+    <ClInclude Include="OGLCamera.h" />
     <ClInclude Include="OGLGameEngine.h" />
     <ClInclude Include="OGLMaterial.h" />
     <ClInclude Include="OGLMeshRenderer.h" />

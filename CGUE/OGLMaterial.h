@@ -16,10 +16,9 @@ namespace Engine {
 		OGLMaterial(string vertexShader, string fragmentShader);
 		~OGLMaterial();
 
-		void Init() override;
+		GLuint GetProgramId() const;
 
-		void ApplyMaterial() const;
-		static void UnApplyMaterial();
+		void Init() override;
 	};
 
 	extern const OGLMaterial OGLMaterialClass;
