@@ -45,4 +45,10 @@ namespace Engine {
 		auto ratio = float(engine->GetScreenWidth()) / float(engine->GetScreenHeight());
 		projectionMatrix = perspective(radians(fov), ratio, near, far);
 	}
+
+	void Camera::RenderScreen()
+	{
+		// TODO: glViewport to set viewport of Camera
+		this->GetEngine()->GetRootEntity()->Render();
+	}
 }

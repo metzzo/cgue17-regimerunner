@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "packages/sdl2.v140.2.0.4/build/native/include/SDL_video.h"
 
 using namespace std;
 
@@ -11,7 +12,8 @@ namespace Engine {
 	class GameEngine
 	{
 		string programName;
-		
+		SDL_Window *mainwindow;
+		SDL_GLContext maincontext;
 	protected:
 		bool cancelled;
 		Entity* rootEntity;
@@ -21,10 +23,9 @@ namespace Engine {
 
 		void RaiseEngineError(const string error);
 
-		virtual void Init() = 0;
-		virtual void DeInit() = 0;
-
-		virtual void Render() = 0;
+		virtual void Init();
+		virtual void DeInit();
+		virtual void Render();
 	public:
 		GameEngine(int width, int height, string programName);
 		virtual ~GameEngine();

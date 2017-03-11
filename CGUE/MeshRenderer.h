@@ -1,9 +1,17 @@
 #pragma once
 #include "Renderer.h"
+#include "glew/glew.h"
+#include "Material.h"
+#include "Transformation.h"
+
 namespace Engine {
 	class MeshRenderer :
 		public Renderer
 	{
+		GLuint vertexBuffer;
+		GLuint vertexArray;
+		GLuint colorBuffer;
+		Material *material;
 
 	protected:
 		float *vertexData;
@@ -15,8 +23,12 @@ namespace Engine {
 		MeshRenderer(const float *vertexData, int numVertices);
 		~MeshRenderer();
 
-		void SetVertexData(const float *vertexData, int numVertices);
-		void SetVertexColorData(const float *colorData);
+		MeshRenderer *SetVertexData(const float *vertexData, int numVertices);
+		MeshRenderer *SetVertexColorData(const float *colorData);
+
+		void Init() override;
+		void Render() override;
+		void Wire() override;
 	};
 }
 

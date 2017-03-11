@@ -1,21 +1,22 @@
 
 
 #include "GameEngine.h"
-#include "OGLGameEngine.h"
+#include "GameEngine.h"
 #include "Transformation.h"
-#include "OGLMaterial.h"
+#include "Material.h"
 #include "OGLMeshRenderer.h"
 #include "Entity.h"
-#include "OGLCamera.h"
+#include "Camera.h"
 #include "Transformation.h"
 #include "glm/gtc/matrix_transform.inl"
+#include "Rotating.h"
 
 using namespace Engine;
 
 int main(int argc, char **argv)
 {
 
-	GameEngine *engine = new OGLGameEngine(640, 480, string("CGUE"));
+	GameEngine *engine = new GameEngine(640, 480, string("CGUE"));
 
 	static const GLfloat colorData[] = {
 		0.583f,  0.771f,  0.014f,
@@ -95,7 +96,7 @@ int main(int argc, char **argv)
 		1.0f,-1.0f, 1.0f
 	};
 
-	auto camera = new OGLCamera(45.0f, 0.1f, 100.0f);
+	auto camera = new Camera(45.0f, 0.1f, 100.0f);
 	engine->GetRootEntity()->CreateChild()->Add(camera);
 	engine->SetMainCamera(camera);
 	camera->GetTransformation()->SetRelativeMatrix(lookAt(
@@ -105,11 +106,9 @@ int main(int argc, char **argv)
 	));
 
 	auto cube = engine->GetRootEntity()->CreateChild();
-	cube->Add(new OGLMaterial("materials/defaultshader.vert", "materials/defaultshader.frag"));
-	auto meshRenderer = new OGLMeshRenderer(bufferData, 3 * 2 * 6);
-	meshRenderer->SetVertexColorData(colorData);
-	cube->Add(meshRenderer);
-	
+	cube->Add(new Material("materials/defaultshader.vert", "materials/defaultshader.frag"));
+	cube->Add((new MeshRenderer(bufferData, 3 * 2 * 6))->SetVertexColorData(colorData));
+	cube->Add(new Game::Rotating());
 	engine->Run();
 
 	delete engine;

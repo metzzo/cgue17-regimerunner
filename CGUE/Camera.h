@@ -17,13 +17,12 @@ namespace Engine {
 		Camera(float fov, float near, float far);
 		~Camera();
 
-		virtual void RenderScreen() = 0;
+		virtual void RenderScreen();
 
 		mat4x4 GetProjectionViewMatrix() const;
 		void UpdateProjectionView() const;
 
 		void Wire() override;
 		void Init() override;
-		
 	};
 }

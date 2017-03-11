@@ -25,12 +25,6 @@
     <Filter Include="Header Files\Game">
       <UniqueIdentifier>{910cf358-8d49-406d-8a3e-545193d7fbb0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\OGL">
-      <UniqueIdentifier>{9c01476d-f7ff-4092-8cab-a296aa5c3891}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\OGL">
-      <UniqueIdentifier>{921e91e9-da37-4a84-b90f-03279eb8c8fb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Engine\Component">
       <UniqueIdentifier>{adb351c5-7e0c-4110-ae94-8ad1295dfe1b}</UniqueIdentifier>
     </Filter>
@@ -54,9 +48,6 @@
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="OGLGameEngine.cpp">
-      <Filter>Source Files\Engine\OGL</Filter>
-    </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
@@ -69,12 +60,6 @@
     <ClCompile Include="Transformation.cpp">
       <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
-    <ClCompile Include="OGLMeshRenderer.cpp">
-      <Filter>Source Files\Engine\OGL</Filter>
-    </ClCompile>
-    <ClCompile Include="OGLMaterial.cpp">
-      <Filter>Source Files\Engine\OGL</Filter>
-    </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
@@ -84,8 +69,11 @@
     <ClCompile Include="EntityUnit.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="OGLCamera.cpp">
-      <Filter>Source Files\Engine\OGL</Filter>
+    <ClCompile Include="Rotating.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,9 +85,6 @@
     </ClInclude>
     <ClInclude Include="GameEngine.h">
       <Filter>Header Files\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="OGLGameEngine.h">
-      <Filter>Header Files\Engine\OGL</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>Header Files\Engine\Component</Filter>
@@ -113,12 +98,6 @@
     <ClInclude Include="Transformation.h">
       <Filter>Header Files\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="OGLMeshRenderer.h">
-      <Filter>Header Files\Engine\OGL</Filter>
-    </ClInclude>
-    <ClInclude Include="OGLMaterial.h">
-      <Filter>Header Files\Engine\OGL</Filter>
-    </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>Header Files\Engine\Component</Filter>
     </ClInclude>
@@ -128,8 +107,11 @@
     <ClInclude Include="EntityUnit.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="OGLCamera.h">
-      <Filter>Header Files\Engine\OGL</Filter>
+    <ClInclude Include="Rotating.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Engine\Component</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
