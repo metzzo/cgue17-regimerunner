@@ -52,8 +52,13 @@ namespace Engine {
 		return this->absoluteTransform;
 	}
 
-	mat4x4 Transformation::GetMvpMatrix()
+	mat4x4 Transformation::GetMvpMatrix() const
 	{
 		return this->mvpTransform;
+	}
+
+	mat4x4 Transformation::GetRelativeMatrix() const
+	{
+		return this->relativeTransform;
 	}
 }

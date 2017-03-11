@@ -21,7 +21,8 @@ namespace Engine {
 		void UpdateAbsoluteMatrix();
 		void SetProjectionViewMatrix(mat4x4 projectionViewMatrix);
 		mat4x4 GetAbsoluteMatrix() const;
-		mat4x4 GetMvpMatrix();
+		mat4x4 GetMvpMatrix() const;
+		mat4x4 GetRelativeMatrix() const;
 	};
 
 	extern const Transformation TransformationClass;

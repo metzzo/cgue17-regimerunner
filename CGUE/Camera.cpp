@@ -30,6 +30,11 @@ namespace Engine {
 		return this->projectionMatrix * this->GetEntity()->GetTransformation()->GetAbsoluteMatrix();
 	}
 
+	void Camera::UpdateProjectionView() const
+	{
+		this->GetEngine()->GetRootEntity()->GetTransformation()->SetProjectionViewMatrix(this->GetProjectionViewMatrix());
+	}
+
 	void Camera::Wire()
 	{
 	}

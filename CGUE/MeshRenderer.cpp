@@ -4,34 +4,47 @@
 namespace Engine {
 	MeshRenderer::MeshRenderer()
 	{
-		this->bufferData = nullptr;
+		this->vertexData = nullptr;
+		this->colorData = nullptr;
 		this->numVertices = 0;
 	}
 
 	MeshRenderer::MeshRenderer(const float* bufferData, int numVertices)
 	{
-		this->bufferData = nullptr;
+		this->vertexData = nullptr;
 		this->numVertices = 0;
 
-		this->setBufferData(bufferData, numVertices);
+		this->SetVertexData(bufferData, numVertices);
 	}
 
 
 	MeshRenderer::~MeshRenderer()
 	{
-		delete[] this->bufferData;
+		delete[] this->vertexData;
+		delete[] this->colorData;
 	}
 
-	void MeshRenderer::setBufferData(const float* bufferData, int numVertices)
+	void MeshRenderer::SetVertexData(const float* vertexData, int numVertices)
 	{
-		if (this->bufferData != nullptr)
+		if (this->vertexData != nullptr)
 		{
-			delete this->bufferData;
+			delete[] this->vertexData;
 		}
 		auto arraySize = numVertices * 3;
 
 		this->numVertices = numVertices;
-		this->bufferData = new float[arraySize];
-		memcpy(this->bufferData, bufferData, sizeof(*bufferData)*arraySize);
+		this->vertexData = new float[arraySize];
+		memcpy(this->vertexData, vertexData, sizeof(*vertexData)*arraySize);
+	}
+
+	void MeshRenderer::SetVertexColorData(const float* colorData)
+	{
+		if (this->colorData != nullptr)
+		{
+			delete[] this->colorData;
+		}
+		auto arraySize = numVertices * 3;
+		this->colorData = new float[arraySize];
+		memcpy(this->colorData, colorData, sizeof(*colorData)*arraySize);
 	}
 }

@@ -6,15 +6,17 @@ namespace Engine {
 	{
 
 	protected:
-		float *bufferData;
+		float *vertexData;
+		float *colorData;
 		int numVertices;
 
 	public:
 		MeshRenderer();
-		MeshRenderer(const float *bufferData, int numVertices);
+		MeshRenderer(const float *vertexData, int numVertices);
 		~MeshRenderer();
 
-		void setBufferData(const float *bufferData, int numVertices);
+		void SetVertexData(const float *vertexData, int numVertices);
+		void SetVertexColorData(const float *colorData);
 	};
 }
 

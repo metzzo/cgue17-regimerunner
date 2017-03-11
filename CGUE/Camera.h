@@ -20,8 +20,10 @@ namespace Engine {
 		virtual void RenderScreen() = 0;
 
 		mat4x4 GetProjectionViewMatrix() const;
+		void UpdateProjectionView() const;
 
 		void Wire() override;
 		void Init() override;
+		
 	};
 }

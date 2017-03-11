@@ -1,6 +1,7 @@
 #include "OGLCamera.h"
 #include "Entity.h"
 #include "GameEngine.h"
+#include "glm/gtc/matrix_transform.inl"
 
 namespace Engine {
 	OGLCamera::~OGLCamera()

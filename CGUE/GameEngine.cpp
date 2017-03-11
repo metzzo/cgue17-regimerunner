@@ -29,8 +29,8 @@ namespace Engine {
 
 		this->rootEntity->Init();
 
-		this->rootEntity->GetTransformation()->SetProjectionViewMatrix(this->mainCamera->GetProjectionViewMatrix());
-
+		this->mainCamera->UpdateProjectionView();
+		
 		while(!cancelled)
 		{
 			this->rootEntity->Update();

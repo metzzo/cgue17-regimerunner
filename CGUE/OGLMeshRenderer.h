@@ -9,6 +9,7 @@ namespace Engine {
 	{
 		GLuint vertexBuffer;
 		GLuint vertexArray;
+		GLuint colorBuffer;
 		OGLMaterial *material;
 	public:
 		OGLMeshRenderer();
