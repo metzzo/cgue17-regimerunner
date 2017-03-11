@@ -11,9 +11,9 @@ namespace Engine {
 	class GameEngine
 	{
 		string programName;
-		bool cancelled;
-
+		
 	protected:
+		bool cancelled;
 		Entity* rootEntity;
 		Camera* mainCamera;
 		int width;
@@ -33,9 +33,7 @@ namespace Engine {
 
 		void SetMainCamera(Camera *mainCamera);
 		Camera *GetMainCamera() const;
-
 		string GetProgramName() const;
-
 		Entity *GetRootEntity() const;
 		int GetScreenWidth() const;
 		int GetScreenHeight() const;

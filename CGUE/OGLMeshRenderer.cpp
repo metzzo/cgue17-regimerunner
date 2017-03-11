@@ -45,8 +45,8 @@ namespace Engine {
 
 		glGenVertexArrays(1, &this->vertexArray);
 		glBindVertexArray(this->vertexArray);
+
 		// vertex positions
-		
 		glVertexAttribPointer(
 			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 			3,					// size

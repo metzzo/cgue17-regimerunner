@@ -81,6 +81,16 @@ namespace Engine {
 
 	void OGLGameEngine::Render()
 	{
+		SDL_Event e;
+		while (SDL_PollEvent(&e) != 0)
+		{
+			//User requests quit
+			if (e.type == SDL_QUIT)
+			{
+				cancelled = true;
+			}
+		}
+
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		this->mainCamera->RenderScreen();
