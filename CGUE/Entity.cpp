@@ -75,34 +75,38 @@ namespace Engine {
 		return this->transformation;
 	}
 
-	void Entity::WireUp(Component** target, const char *name)
+	void Entity::WireUp(Component** target, const char *name, bool force)
 	{
-		for (auto &component : this->components)
-		{
-			if (strcmp(component->GetClassName(), name) == 0)
+		if (*target == nullptr) {
+			for (auto &component : this->components)
 			{
-				*target = component;
-				return;
+				if (strcmp(component->GetClassName(), name) == 0)
+				{
+					*target = component;
+					return;
+				}
+			}
+			if (force) {
+				this->GetEngine()->RaiseEngineError("Could not WireUp Renderer " + string(name));
 			}
 		}
-
-		cout << "Could not WireUp Component " << endl;
-		exit(1);
 	}
 
-	void Entity::WireUp(Renderer** target, const char *name)
+	void Entity::WireUp(Renderer** target, const char *name, bool force)
 	{
-		for (auto &renderer : this->renderer)
-		{
-			if (strcmp(renderer->GetClassName(), name) == 0)
+		if (*target == nullptr) {
+			for (auto &renderer : this->renderer)
 			{
-				*target = renderer;
-				return;
+				if (strcmp(renderer->GetClassName(), name) == 0)
+				{
+					*target = renderer;
+					return;
+				}
+			}
+			if (force) {
+				this->GetEngine()->RaiseEngineError("Could not WireUp Renderer " + string(name));
 			}
 		}
-
-		cout << "Could not WireUp Renderer " << endl;
-		exit(1);
 	}
 
 	void Entity::Update()

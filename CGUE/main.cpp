@@ -10,13 +10,13 @@
 #include "Transformation.h"
 #include "glm/gtc/matrix_transform.inl"
 #include "Rotating.h"
+#include "Texture.h"
 
 using namespace Engine;
 
 int main(int argc, char **argv)
 {
-
-	GameEngine *engine = new GameEngine(640, 480, string("CGUE"));
+	auto engine = new GameEngine(640, 480, string("CGUE"));
 
 	static const GLfloat colorData[] = {
 		0.583f,  0.771f,  0.014f,
@@ -58,12 +58,12 @@ int main(int argc, char **argv)
 	};
 
 	static const float bufferData[] = {
-		-1.0f,-1.0f,-1.0f, // triangle 1 : begin
-		-1.0f,-1.0f, 1.0f,
-		-1.0f, 1.0f, 1.0f, // triangle 1 : end
-		1.0f, 1.0f,-1.0f, // triangle 2 : begin
 		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f,-1.0f, // triangle 2 : end
+		-1.0f,-1.0f, 1.0f,
+		-1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f,-1.0f,
+		-1.0f,-1.0f,-1.0f,
+		-1.0f, 1.0f,-1.0f,
 		1.0f,-1.0f, 1.0f,
 		-1.0f,-1.0f,-1.0f,
 		1.0f,-1.0f,-1.0f,
@@ -96,6 +96,45 @@ int main(int argc, char **argv)
 		1.0f,-1.0f, 1.0f
 	};
 
+	static const float uvData[] = {
+		0.000059f, 1.0f - 0.000004f,
+		0.000103f, 1.0f - 0.336048f,
+		0.335973f, 1.0f - 0.335903f,
+		1.000023f, 1.0f - 0.000013f,
+		0.667979f, 1.0f - 0.335851f,
+		0.999958f, 1.0f - 0.336064f,
+		0.667979f, 1.0f - 0.335851f,
+		0.336024f, 1.0f - 0.671877f,
+		0.667969f, 1.0f - 0.671889f,
+		1.000023f, 1.0f - 0.000013f,
+		0.668104f, 1.0f - 0.000013f,
+		0.667979f, 1.0f - 0.335851f,
+		0.000059f, 1.0f - 0.000004f,
+		0.335973f, 1.0f - 0.335903f,
+		0.336098f, 1.0f - 0.000071f,
+		0.667979f, 1.0f - 0.335851f,
+		0.335973f, 1.0f - 0.335903f,
+		0.336024f, 1.0f - 0.671877f,
+		1.000004f, 1.0f - 0.671847f,
+		0.999958f, 1.0f - 0.336064f,
+		0.667979f, 1.0f - 0.335851f,
+		0.668104f, 1.0f - 0.000013f,
+		0.335973f, 1.0f - 0.335903f,
+		0.667979f, 1.0f - 0.335851f,
+		0.335973f, 1.0f - 0.335903f,
+		0.668104f, 1.0f - 0.000013f,
+		0.336098f, 1.0f - 0.000071f,
+		0.000103f, 1.0f - 0.336048f,
+		0.000004f, 1.0f - 0.671870f,
+		0.336024f, 1.0f - 0.671877f,
+		0.000103f, 1.0f - 0.336048f,
+		0.336024f, 1.0f - 0.671877f,
+		0.335973f, 1.0f - 0.335903f,
+		0.667969f, 1.0f - 0.671889f,
+		1.000004f, 1.0f - 0.671847f,
+		0.667979f, 1.0f - 0.335851f
+	};
+
 	auto camera = new Camera(45.0f, 0.1f, 100.0f);
 	engine->GetRootEntity()->CreateChild()->Add(camera);
 	engine->SetMainCamera(camera);
@@ -106,8 +145,9 @@ int main(int argc, char **argv)
 	));
 
 	auto cube = engine->GetRootEntity()->CreateChild();
-	cube->Add(new Material("materials/defaultshader.vert", "materials/defaultshader.frag"));
-	cube->Add((new MeshRenderer(bufferData, 3 * 2 * 6))->SetVertexColorData(colorData));
+	cube->Add(new Texture("textures/testtexture.png"));
+	cube->Add(new Material("materials/default_material.vert", "materials/default_material.frag"));
+	cube->Add((new MeshRenderer(bufferData, 3 * 2 * 6))->SetVertexColorData(colorData)->SetUVData(uvData));
 	cube->Add(new Game::Rotating());
 	engine->Run();
 

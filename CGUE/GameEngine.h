@@ -21,8 +21,6 @@ namespace Engine {
 		int width;
 		int height;
 
-		void RaiseEngineError(const string error);
-
 		virtual void Init();
 		virtual void DeInit();
 		virtual void Render();
@@ -31,6 +29,7 @@ namespace Engine {
 		virtual ~GameEngine();
 
 		void Run();
+		void RaiseEngineError(const string error);
 
 		void SetMainCamera(Camera *mainCamera);
 		Camera *GetMainCamera() const;

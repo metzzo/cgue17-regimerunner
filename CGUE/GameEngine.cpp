@@ -5,6 +5,7 @@
 #include <SDL.h>
 #include "glew/glew.h"
 #include <string>
+#include <SDL_image.h>
 
 namespace Engine {
 	void checkSDLError(int line = -1) {
@@ -90,7 +91,8 @@ namespace Engine {
 
 	void GameEngine::RaiseEngineError(const string error)
 	{
-		//cout << "Engine Error: " << error << endl;
+		cout << "Engine Error: " << error << endl;
+		getchar();
 		this->DeInit();
 		exit(1);
 	}
@@ -101,6 +103,13 @@ namespace Engine {
 		if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		{
 			this->RaiseEngineError("Unable to initialize SDL: " + string(SDL_GetError()));
+		}
+
+		// load support for the JPG and PNG image formats
+		auto flags = IMG_INIT_JPG | IMG_INIT_PNG;
+		auto initted = IMG_Init(flags);
+		if ((initted&flags) != flags) {
+			this->RaiseEngineError("IMG_Init: Failed to init required jpg and png support: %s" + string(IMG_GetError()));
 		}
 
 		// set opengl versions
@@ -152,6 +161,7 @@ namespace Engine {
 	{
 		SDL_GL_DeleteContext(this->maincontext);
 		SDL_Quit();
+		IMG_Quit();
 	}
 
 	void GameEngine::Render()
@@ -166,7 +176,7 @@ namespace Engine {
 			}
 		}
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		this->mainCamera->RenderScreen();
 

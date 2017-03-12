@@ -4,6 +4,8 @@
 namespace Engine {
 	class Entity;
 	class Transformation;
+	class Component;
+	class Renderer;
 
 	class EntityUnit
 	{
