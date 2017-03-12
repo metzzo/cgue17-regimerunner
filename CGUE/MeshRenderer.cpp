@@ -172,6 +172,14 @@ namespace Engine {
 
 	MeshRenderer* MeshRenderer::SetUVData(const float* uvData)
 	{
+		if (this->colorData == nullptr)
+		{
+			auto colorData = new float[this->numVertices * 3];
+			fill_n(colorData, numVertices * 3, 1.0f);
+			SetVertexColorData(colorData);
+			delete [] colorData;
+		}
+
 		if (this->uvData != nullptr)
 		{
 			delete[] this->uvData;
