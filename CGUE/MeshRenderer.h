@@ -1,14 +1,30 @@
 #pragma once
-#include "Renderer.h"
+#include "Component.h"
 #include "glew/glew.h"
 #include "Material.h"
-#include "Transformation.h"
 #include "Texture.h"
+#include "Operation.h"
 
 namespace Engine {
-	class MeshRenderer :
-		public Renderer
+	class MeshRenderer;
+
+	class MeshRenderOperation : public Operation
 	{
+	public:
+		explicit MeshRenderOperation(Component* component)
+			: Operation(component)
+		{
+		}
+
+		bool Execute() override;
+		QUEUE_TYPE GetQueueType() override;
+	};
+
+	class MeshRenderer :
+		public Component
+	{
+		friend MeshRenderOperation;
+
 		GLuint vertexBuffer;
 		GLuint vertexArray;
 		GLuint colorBuffer;
@@ -36,7 +52,6 @@ namespace Engine {
 		MeshRenderer* SetUVData(const float *uvData);
 
 		void Init() override;
-		void Render() override;
 		void Wire() override;
 	};
 }

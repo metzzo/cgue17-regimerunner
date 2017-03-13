@@ -11,7 +11,6 @@ namespace Engine {
 		mat4x4 relativeTransform;
 		mat4x4 absoluteTransform;
 		mat4x4 projectionViewTransform;
-		mat4x4 mvpTransform;
 
 	public:
 		Transformation();
@@ -19,9 +18,7 @@ namespace Engine {
 
 		void SetRelativeMatrix(mat4x4 newRelativeMatrix);
 		void UpdateAbsoluteMatrix();
-		void SetProjectionViewMatrix(mat4x4 projectionViewMatrix);
 		mat4x4 GetAbsoluteMatrix() const;
-		mat4x4 GetMvpMatrix() const;
 		mat4x4 GetRelativeMatrix() const;
 	};
 

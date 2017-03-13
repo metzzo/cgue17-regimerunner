@@ -135,7 +135,7 @@ int main(int argc, char **argv)
 		0.667979f, 1.0f - 0.335851f
 	};
 
-	auto camera = new Camera(45.0f, 0.1f, 100.0f);
+	auto camera = new Camera(45.0f, 0.1f, 100.0f, 640, 480);
 	engine->GetRootEntity()->CreateChild()->Add(camera);
 	engine->SetMainCamera(camera);
 	camera->GetTransformation()->SetRelativeMatrix(lookAt(

@@ -1,6 +1,6 @@
 #pragma once
-#include <vector>
 #include "packages/sdl2.v140.2.0.4/build/native/include/SDL_video.h"
+#include <queue>
 
 using namespace std;
 
@@ -8,6 +8,15 @@ namespace Engine {
 	class Entity;
 	class GameState;
 	class Camera;
+	class Operation;
+
+	typedef enum QUEUE_TYPE
+	{
+		QUEUE_UPDATE = 0,
+		QUEUE_RENDER_PASS = 1,
+		QUEUE_DEPTH_PASS = 2
+	} QUEUE_TYPE;
+	const int NUM_QUEUES = 10;
 
 	class GameEngine
 	{
@@ -22,6 +31,10 @@ namespace Engine {
 		int height;
 		bool keyStates[322];
 
+
+		queue<Operation*>* newQueues[NUM_QUEUES];
+		queue<Operation*>* oldQueues[NUM_QUEUES];
+
 		virtual void Init();
 		virtual void DeInit();
 		virtual void Render();
@@ -31,6 +44,9 @@ namespace Engine {
 
 		void Run();
 		void RaiseEngineError(const string error);
+
+		void AddOperation(Operation *operation);
+		void ProcessQueue(QUEUE_TYPE type);
 
 		bool KeyDown(int keyCode);
 

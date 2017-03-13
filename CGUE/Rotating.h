@@ -1,13 +1,21 @@
 #pragma once
-#include "Component.h"
+#include "Operation.h"
 
 namespace Game {
-	class Rotating : public Engine::Component
+	class RotatingOperation : public Engine::Operation
 	{
 	public:
-		Rotating();
-		~Rotating();
+		explicit RotatingOperation(Engine::Component* component)
+			: Operation(component)
+		{
+		}
 
-		void Update() override;
+		bool Execute() override;
+		Engine::QUEUE_TYPE GetQueueType() override;
+	};
+
+	class Rotating : public Engine::Component
+	{
+		void Init() override;
 	};
 }

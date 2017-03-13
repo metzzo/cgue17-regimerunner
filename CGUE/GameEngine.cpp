@@ -6,6 +6,7 @@
 #include "glew/glew.h"
 #include <string>
 #include <SDL_image.h>
+#include "Operation.h"
 
 namespace Engine {
 	void checkSDLError(int line = -1) {
@@ -33,12 +34,35 @@ namespace Engine {
 		this->mainCamera = nullptr;
 
 		memset(this->keyStates, 0, sizeof this->keyStates);
+
+		for (auto i = 0; i < NUM_QUEUES; i++)
+		{
+			this->newQueues[i] = new queue<Operation*>;
+			this->oldQueues[i] = new queue<Operation*>;
+		}
 	}
 
 
 	GameEngine::~GameEngine()
 	{
+		for (auto i = 0; i < NUM_QUEUES; i++)
+		{
+			auto queue = this->oldQueues[i];
+			while (!queue->empty())
+			{
+				delete queue->front();
+				queue->pop();
+			}
+			delete queue;
 
+			queue = this->newQueues[i];
+			while (!queue->empty())
+			{
+				delete queue->front();
+				queue->pop();
+			}
+			delete queue;
+		}
 	}
 
 	void GameEngine::Run()
@@ -48,12 +72,10 @@ namespace Engine {
 		this->rootEntity->Wire();
 
 		this->rootEntity->Init();
-
-		this->mainCamera->UpdateProjectionView();
 		
 		while(!cancelled)
 		{
-			this->rootEntity->Update();
+			ProcessQueue(QUEUE_UPDATE);
 
 			this->Render();
 		}
@@ -97,6 +119,33 @@ namespace Engine {
 		getchar();
 		this->DeInit();
 		exit(1);
+	}
+
+	void GameEngine::AddOperation(Operation* operation)
+	{
+		this->newQueues[operation->GetQueueType()]->push(operation);
+	}
+
+	void GameEngine::ProcessQueue(QUEUE_TYPE type)
+	{
+		auto tmpQueue = this->oldQueues[type];
+		auto queue = this->newQueues[type];
+		this->oldQueues[type] = queue;
+		this->newQueues[type] = tmpQueue;
+		assert(this->newQueues[type]->empty());
+
+		while(!queue->empty())
+		{
+			auto operation = queue->front();
+			queue->pop();
+			if (operation->Execute())
+			{
+				AddOperation(operation);
+			} else
+			{
+				delete operation;
+			}
+		}
 	}
 
 	bool GameEngine::KeyDown(int keyCode)

@@ -5,24 +5,28 @@
 #include <SDL.h>
 
 namespace Game {
-	Rotating::Rotating()
+	bool RotatingOperation::Execute()
 	{
-	}
+		auto component = this->GetComponent();
 
-
-	Rotating::~Rotating()
-	{
-	}
-
-	void Rotating::Update()
-	{
-		auto direction_lr = this->GetEngine()->KeyDown(SDL_SCANCODE_LEFT) - this->GetEngine()->KeyDown(SDL_SCANCODE_RIGHT);
-		auto direction_ud = this->GetEngine()->KeyDown(SDL_SCANCODE_UP) - this->GetEngine()->KeyDown(SDL_SCANCODE_DOWN);
+		auto direction_lr = component->GetEngine()->KeyDown(SDL_SCANCODE_LEFT) - component->GetEngine()->KeyDown(SDL_SCANCODE_RIGHT);
+		auto direction_ud = component->GetEngine()->KeyDown(SDL_SCANCODE_UP) - component->GetEngine()->KeyDown(SDL_SCANCODE_DOWN);
 
 		if (direction_lr || direction_ud) {
-			auto mat = this->GetTransformation()->GetRelativeMatrix();
+			auto mat = component->GetTransformation()->GetRelativeMatrix();
 			mat = glm::rotate(mat, 0.05f, vec3(1.0f * direction_lr, 0.0f, 1.0f*direction_ud));
-			this->GetTransformation()->SetRelativeMatrix(mat);
+			component->GetTransformation()->SetRelativeMatrix(mat);
 		}
+		return true;
+	}
+
+	Engine::QUEUE_TYPE RotatingOperation::GetQueueType()
+	{
+		return Engine::QUEUE_UPDATE;
+	}
+
+	void Rotating::Init()
+	{
+		GetEngine()->AddOperation(new RotatingOperation(this));
 	}
 }

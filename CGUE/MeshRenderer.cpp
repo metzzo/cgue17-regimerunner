@@ -1,15 +1,49 @@
 #include "MeshRenderer.h"
 #include <cstring>
 #include "Entity.h"
+#include "Camera.h"
 
 namespace Engine {
+	bool MeshRenderOperation::Execute()
+	{
+		auto component = static_cast<MeshRenderer*>(this->GetComponent());
+
+		auto programId = component->material->GetProgramId();
+
+		glUseProgram(programId);
+
+		if (component->matrixId == -2) {
+			component->matrixId = glGetUniformLocation(programId, "MVP");
+		}
+		if (component->textureSamplerId == -2 && component->uvBuffer) {
+			component->textureSamplerId = glGetUniformLocation(programId, "textureSampler");
+		}
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, component->texture->GetTextureId());
+		glUniform1i(component->textureSamplerId, 0);
+
+		auto projectionViewMatrix = component->GetEngine()->GetMainCamera()->GetProjectionViewMatrix();
+		auto mvp = projectionViewMatrix * component->GetTransformation()->GetAbsoluteMatrix();
+
+		glUniformMatrix4fv(component->matrixId, 1, GL_FALSE, &mvp[0][0]);
+		glBindVertexArray(component->vertexArray);
+		glDrawArrays(GL_TRIANGLES, 0, component->numVertices);
+		glUseProgram(0);
+
+		return true;
+	}
+
+	QUEUE_TYPE MeshRenderOperation::GetQueueType()
+	{
+		return QUEUE_RENDER_PASS;
+	}
 
 	void MeshRenderer::Wire()
 	{
 		WIRE_COMPONENT(this->material, MaterialClass);
 		WIRE_COMPONENT(this->texture, TextureClass);
 	}
-
 
 	void MeshRenderer::Init()
 	{
@@ -72,31 +106,8 @@ namespace Engine {
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+		GetEngine()->AddOperation(new MeshRenderOperation(this));
 	}
-
-	void MeshRenderer::Render()
-	{
-		auto programId = this->material->GetProgramId();
-
-		glUseProgram(programId);
-
-		if (this->matrixId == -2) {
-			this->matrixId = glGetUniformLocation(programId, "MVP");
-		}
-		if (this->textureSamplerId == -2 && this->uvBuffer) {
-			this->textureSamplerId = glGetUniformLocation(programId, "textureSampler");
-		}
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, this->texture->GetTextureId());
-		glUniform1i(this->textureSamplerId, 0);
-
-		glUniformMatrix4fv(this->matrixId, 1, GL_FALSE, &this->GetTransformation()->GetMvpMatrix()[0][0]);
-		glBindVertexArray(this->vertexArray);
-		glDrawArrays(GL_TRIANGLES, 0, this->numVertices);
-		glUseProgram(0);
-	}
-
 
 	MeshRenderer::MeshRenderer()
 	{

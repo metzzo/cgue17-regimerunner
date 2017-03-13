@@ -27,10 +27,6 @@ namespace Engine {
 		{
 			delete component;
 		}
-		for (auto &renderer : this->renderer)
-		{
-			delete renderer;
-		}
 	}
 
 	GameEngine* Entity::GetEngine() const
@@ -43,13 +39,6 @@ namespace Engine {
 		component->entity = this;
 		this->components.push_back(component);
 		return component;
-	}
-
-	Renderer* Entity::Add(Renderer* renderer)
-	{
-		renderer->entity = this;
-		this->renderer.push_back(renderer);
-		return renderer;
 	}
 
 	Entity* Entity::CreateChild()
@@ -92,49 +81,6 @@ namespace Engine {
 		}
 	}
 
-	void Entity::WireUp(Renderer** target, const char *name, bool force)
-	{
-		if (*target == nullptr) {
-			for (auto &renderer : this->renderer)
-			{
-				if (strcmp(renderer->GetClassName(), name) == 0)
-				{
-					*target = renderer;
-					return;
-				}
-			}
-			if (force) {
-				this->GetEngine()->RaiseEngineError("Could not WireUp Renderer " + string(name));
-			}
-		}
-	}
-
-	void Entity::Update()
-	{
-		for (auto &component : this->components)
-		{
-			component->Update();
-		}
-
-		for (auto &child : this->children)
-		{
-			child->Update();
-		}
-	}
-
-	void Entity::Render()
-	{
-		for (auto &renderer : this->renderer)
-		{
-			renderer->Render();
-		}
-
-		for (auto &child : this->children)
-		{
-			child->Render();
-		}
-	}
-
 	void Entity::Wire()
 	{
 		// set Transformation of Entity
@@ -143,11 +89,6 @@ namespace Engine {
 		for (auto &component : this->components)
 		{
 			component->Wire();
-		}
-
-		for (auto &renderer : this->renderer)
-		{
-			renderer->Wire();
 		}
 
 		for (auto &child : this->children)
@@ -161,11 +102,6 @@ namespace Engine {
 		for (auto &component : this->components)
 		{
 			component->Init();
-		}
-
-		for (auto &renderer : this->renderer)
-		{
-			renderer->Init();
 		}
 
 		for (auto &child : this->children)
