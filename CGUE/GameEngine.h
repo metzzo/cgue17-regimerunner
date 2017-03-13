@@ -20,6 +20,7 @@ namespace Engine {
 		Camera* mainCamera;
 		int width;
 		int height;
+		bool keyStates[322];
 
 		virtual void Init();
 		virtual void DeInit();
@@ -30,6 +31,8 @@ namespace Engine {
 
 		void Run();
 		void RaiseEngineError(const string error);
+
+		bool KeyDown(int keyCode);
 
 		void SetMainCamera(Camera *mainCamera);
 		Camera *GetMainCamera() const;

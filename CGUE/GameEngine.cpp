@@ -31,6 +31,8 @@ namespace Engine {
 
 		this->rootEntity = new Entity(this);
 		this->mainCamera = nullptr;
+
+		memset(this->keyStates, 0, sizeof this->keyStates);
 	}
 
 
@@ -97,6 +99,11 @@ namespace Engine {
 		exit(1);
 	}
 
+	bool GameEngine::KeyDown(int keyCode)
+	{
+		return this->keyStates[keyCode];
+	}
+
 
 	void GameEngine::Init()
 	{
@@ -155,6 +162,9 @@ namespace Engine {
 		cout << "Using OpenGL Version: " << glGetString(GL_VERSION) << endl;
 
 		glClearColor(0.0, 0.0, 1.0, 1.0);
+
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
 	}
 
 	void GameEngine::DeInit()
@@ -170,9 +180,23 @@ namespace Engine {
 		while (SDL_PollEvent(&e) != 0)
 		{
 			//User requests quit
-			if (e.type == SDL_QUIT)
+			switch(e.type)
 			{
+			case SDL_QUIT:
 				cancelled = true;
+				break;
+			case SDL_KEYDOWN:
+				if (e.key.repeat == 0) {
+					this->keyStates[e.key.keysym.scancode] = true;
+				}
+				break;
+			case SDL_KEYUP:
+				if (e.key.repeat == 0) {
+					this->keyStates[e.key.keysym.scancode] = false;
+				}
+				break;
+			default:
+				break;
 			}
 		}
 
