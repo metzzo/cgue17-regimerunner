@@ -3,6 +3,24 @@
 #include "Entity.h"
 
 namespace Engine {
+	void SpotLightRenderOperation::Execute()
+	{
+		auto component = static_cast<SpotLight*>(this->GetComponent());
+
+		// render depth buffer
+		glBindFramebuffer(GL_FRAMEBUFFER, component->depthMapFbo);
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		component->camera->RenderScreen(QUEUE_DEPTH_PASS);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	QUEUE_TYPE SpotLightRenderOperation::GetQueueType()
+	{
+		return QUEUE_LIGHT_PASS;
+	}
+
 	SpotLight::SpotLight(int shadowMapSize, float near, float far)
 	{
 		this->shadowMapSize = shadowMapSize;
@@ -17,17 +35,6 @@ namespace Engine {
 	SpotLight::~SpotLight()
 	{
 	}
-
-	/*void SpotLight::PostRender()
-	{
-		// render depth buffer
-		glBindFramebuffer(GL_FRAMEBUFFER, this->depthMapFbo);
-		glClear(GL_DEPTH_BUFFER_BIT);
-
-		this->camera->RenderScreen();
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}*/
 
 	void SpotLight::Init()
 	{

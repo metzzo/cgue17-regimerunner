@@ -4,11 +4,12 @@
 #include "Camera.h"
 
 namespace Engine {
-	bool MeshRenderOperation::Execute()
+	void MeshRenderOperation::Execute()
 	{
+
 		auto component = static_cast<MeshRenderer*>(this->GetComponent());
 
-		auto programId = component->material->GetProgramId();
+		auto programId = component->material->GetRenderShader()->GetProgramId();
 
 		glUseProgram(programId);
 
@@ -30,13 +31,28 @@ namespace Engine {
 		glBindVertexArray(component->vertexArray);
 		glDrawArrays(GL_TRIANGLES, 0, component->numVertices);
 		glUseProgram(0);
-
-		return true;
 	}
 
 	QUEUE_TYPE MeshRenderOperation::GetQueueType()
 	{
 		return QUEUE_RENDER_PASS;
+	}
+
+	void DepthRenderOperation::Execute()
+	{
+		auto component = static_cast<MeshRenderer*>(this->GetComponent());
+		auto projectionViewMatrix = component->GetEngine()->GetMainCamera()->GetProjectionViewMatrix();
+		auto mvp = projectionViewMatrix * component->GetTransformation()->GetAbsoluteMatrix();
+
+		glUniformMatrix4fv(component->matrixId, 1, GL_FALSE, &mvp[0][0]);
+		glBindVertexArray(component->vertexArray);
+		glDrawArrays(GL_TRIANGLES, 0, component->numVertices);
+		glUseProgram(0);
+	}
+
+	QUEUE_TYPE DepthRenderOperation::GetQueueType()
+	{
+		return QUEUE_DEPTH_PASS;
 	}
 
 	void MeshRenderer::Wire()
@@ -107,6 +123,7 @@ namespace Engine {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		GetEngine()->AddOperation(new MeshRenderOperation(this));
+		GetEngine()->AddOperation(new DepthRenderOperation(this));
 	}
 
 	MeshRenderer::MeshRenderer()

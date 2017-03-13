@@ -45,9 +45,6 @@
     <ClCompile Include="Transformation.cpp">
       <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Source Files\Engine\Component</Filter>
-    </ClCompile>
     <ClCompile Include="Rotating.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
@@ -69,6 +66,9 @@
     <ClCompile Include="SpotLight.cpp">
       <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source Files\Engine\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -81,9 +81,6 @@
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
     <ClInclude Include="Transformation.h">
-      <Filter>Header Files\Engine\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
       <Filter>Header Files\Engine\Component</Filter>
     </ClInclude>
     <ClInclude Include="Rotating.h">
@@ -105,6 +102,9 @@
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
     <ClInclude Include="SpotLight.h">
+      <Filter>Header Files\Engine\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
       <Filter>Header Files\Engine\Component</Filter>
     </ClInclude>
   </ItemGroup>

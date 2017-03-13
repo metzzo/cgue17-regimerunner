@@ -14,7 +14,8 @@ namespace Engine {
 	{
 		QUEUE_UPDATE = 0,
 		QUEUE_RENDER_PASS = 1,
-		QUEUE_DEPTH_PASS = 2
+		QUEUE_LIGHT_PASS = 2,
+		QUEUE_DEPTH_PASS = 3,
 	} QUEUE_TYPE;
 	const int NUM_QUEUES = 10;
 
@@ -23,7 +24,7 @@ namespace Engine {
 		string programName;
 		SDL_Window *mainwindow;
 		SDL_GLContext maincontext;
-	protected:
+
 		bool cancelled;
 		Entity* rootEntity;
 		Camera* mainCamera;
@@ -31,9 +32,7 @@ namespace Engine {
 		int height;
 		bool keyStates[322];
 
-
-		queue<Operation*>* newQueues[NUM_QUEUES];
-		queue<Operation*>* oldQueues[NUM_QUEUES];
+		vector<Operation*> operations[NUM_QUEUES];
 
 		virtual void Init();
 		virtual void DeInit();

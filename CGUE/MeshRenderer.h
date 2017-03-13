@@ -16,7 +16,19 @@ namespace Engine {
 		{
 		}
 
-		bool Execute() override;
+		void Execute() override;
+		QUEUE_TYPE GetQueueType() override;
+	};
+
+	class DepthRenderOperation : public Operation
+	{
+	public:
+		explicit DepthRenderOperation(Component* component)
+			: Operation(component)
+		{
+		}
+
+		void Execute() override;
 		QUEUE_TYPE GetQueueType() override;
 	};
 
@@ -24,6 +36,7 @@ namespace Engine {
 		public Component
 	{
 		friend MeshRenderOperation;
+		friend DepthRenderOperation;
 
 		GLuint vertexBuffer;
 		GLuint vertexArray;

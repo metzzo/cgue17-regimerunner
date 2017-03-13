@@ -11,7 +11,7 @@ namespace Engine {
 		explicit Operation(Component *component);
 		virtual ~Operation();
 
-		virtual bool Execute() = 0;
+		virtual void Execute() = 0;
 
 		virtual QUEUE_TYPE GetQueueType() = 0;
 

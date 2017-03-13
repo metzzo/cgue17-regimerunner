@@ -71,14 +71,14 @@ namespace Engine {
 		}
 	}
 
-	void Camera::RenderScreen()
+	void Camera::RenderScreen(QUEUE_TYPE type)
 	{
 		auto oldMainCamera = this->GetEngine()->GetMainCamera();
 		this->GetEngine()->SetMainCamera(this);
 
 		glViewport(0, 0, width, height);
 		// TODO: only draw objects that could potentially visible for the camera
-		this->GetEngine()->ProcessQueue(QUEUE_RENDER_PASS);
+		this->GetEngine()->ProcessQueue(type);
 
 		this->GetEngine()->SetMainCamera(oldMainCamera);
 	}

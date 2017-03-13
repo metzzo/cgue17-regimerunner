@@ -3,7 +3,6 @@
 #include "GameEngine.h"
 #include "GameEngine.h"
 #include "Transformation.h"
-#include "Material.h"
 #include "OGLMeshRenderer.h"
 #include "Entity.h"
 #include "Camera.h"
@@ -11,6 +10,7 @@
 #include "glm/gtc/matrix_transform.inl"
 #include "Rotating.h"
 #include "Texture.h"
+#include "Material.h"
 
 using namespace Engine;
 
@@ -144,9 +144,13 @@ int main(int argc, char **argv)
 		vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
 	));
 
+	auto mat = new Material();
+	mat->SetRenderMaterial(new Shader("materials/default_material.vert", "materials/default_material.frag"));
+	mat->SetDepthMaterial(new Shader("materials/depth_material.vert", "materials/depth_material.frag"));
+
 	auto cube = engine->GetRootEntity()->CreateChild();
 	cube->Add(new Texture("textures/testtexture.png"));
-	cube->Add(new Material("materials/default_material.vert", "materials/default_material.frag"));
+	cube->Add(mat);
 	cube->Add((new MeshRenderer(bufferData, 3 * 2 * 6))->SetVertexColorData(colorData)->SetUVData(uvData));
 	cube->Add(new Game::Rotating());
 	engine->Run();

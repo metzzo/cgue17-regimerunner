@@ -24,7 +24,7 @@ namespace Engine {
 		float GetFar() const;
 		float GetNear() const;
 
-		virtual void RenderScreen();
+		virtual void RenderScreen(QUEUE_TYPE queue);
 
 		mat4x4 GetProjectionViewMatrix() const;
 

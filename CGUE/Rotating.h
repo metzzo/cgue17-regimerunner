@@ -10,7 +10,7 @@ namespace Game {
 		{
 		}
 
-		bool Execute() override;
+		void Execute() override;
 		Engine::QUEUE_TYPE GetQueueType() override;
 	};
 

@@ -5,7 +5,7 @@
 #include <SDL.h>
 
 namespace Game {
-	bool RotatingOperation::Execute()
+	void RotatingOperation::Execute()
 	{
 		auto component = this->GetComponent();
 
@@ -17,7 +17,6 @@ namespace Game {
 			mat = glm::rotate(mat, 0.05f, vec3(1.0f * direction_lr, 0.0f, 1.0f*direction_ud));
 			component->GetTransformation()->SetRelativeMatrix(mat);
 		}
-		return true;
 	}
 
 	Engine::QUEUE_TYPE RotatingOperation::GetQueueType()

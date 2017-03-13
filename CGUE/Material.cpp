@@ -7,20 +7,14 @@
 namespace Engine {
 	const Material MaterialClass;
 
-	Material::Material()
-	{
-		// DO NOT USE THIS CONSTRUCTOR
-		this->program = 0;
-	}
-
-	Material::Material(string vertexShader, string fragmentShader)
+	Shader::Shader(string vertexShader, string fragmentShader)
 	{
 		this->vertexShader = vertexShader;
 		this->fragmentShader = fragmentShader;
 		this->program = 0;
 	}
 
-	void Material::Init()
+	void Shader::Init()
 	{
 		// Create the shaders
 		auto VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
@@ -121,13 +115,51 @@ namespace Engine {
 		this->program = ProgramID;
 	}
 
-	Material::~Material()
+	Shader::~Shader()
 	{
 		glDeleteProgram(this->program);
 	}
 
-	GLuint Material::GetProgramId() const
+	GLuint Shader::GetProgramId() const
 	{
 		return this->program;
+	}
+
+	Material::Material()
+	{
+		this->renderShader = nullptr;
+		this->depthShader = nullptr;
+	}
+
+	Material::~Material()
+	{
+		delete this->renderShader;
+		delete this->depthShader;
+	}
+
+	void Material::Init()
+	{
+		this->renderShader->Init();
+		this->depthShader->Init();
+	}
+
+	Shader* Material::GetRenderShader() const
+	{
+		return this->renderShader;
+	}
+
+	Shader* Material::GetDepthShader() const
+	{
+		return this->depthShader;
+	}
+
+	void Material::SetRenderMaterial(Shader *shader)
+	{
+		this->renderShader = shader;
+	}
+
+	void Material::SetDepthMaterial(Shader *shader)
+	{
+		this->depthShader = shader;
 	}
 }

@@ -4,19 +4,34 @@
 #include "glew/glew.h"
 
 namespace Engine {
-	class Material : public Component
+	class Shader
 	{
 		GLuint program;
 		string vertexShader;
 		string fragmentShader;
 	public:
-		Material();
-		Material(string vertexShader, string fragmentShader);
-		~Material();
+		Shader(string vertexShader, string fragmentShader);
+		~Shader();
 
 		GLuint GetProgramId() const;
 
+		void Init();
+	};
+
+	class Material : public Component
+	{
+		Shader *renderShader;
+		Shader *depthShader;
+	public:
+		Material();
+		~Material();
+
 		void Init() override;
+		void SetRenderMaterial(Shader *shader);
+		void SetDepthMaterial(Shader *shader);
+
+		Shader *GetRenderShader() const;
+		Shader *GetDepthShader() const;
 	};
 
 

@@ -34,12 +34,6 @@ namespace Engine {
 		this->mainCamera = nullptr;
 
 		memset(this->keyStates, 0, sizeof this->keyStates);
-
-		for (auto i = 0; i < NUM_QUEUES; i++)
-		{
-			this->newQueues[i] = new queue<Operation*>;
-			this->oldQueues[i] = new queue<Operation*>;
-		}
 	}
 
 
@@ -47,21 +41,10 @@ namespace Engine {
 	{
 		for (auto i = 0; i < NUM_QUEUES; i++)
 		{
-			auto queue = this->oldQueues[i];
-			while (!queue->empty())
+			for (auto &operation : this->operations[i])
 			{
-				delete queue->front();
-				queue->pop();
+				delete operation;
 			}
-			delete queue;
-
-			queue = this->newQueues[i];
-			while (!queue->empty())
-			{
-				delete queue->front();
-				queue->pop();
-			}
-			delete queue;
 		}
 	}
 
@@ -123,28 +106,14 @@ namespace Engine {
 
 	void GameEngine::AddOperation(Operation* operation)
 	{
-		this->newQueues[operation->GetQueueType()]->push(operation);
+		this->operations[operation->GetQueueType()].push_back(operation);
 	}
 
 	void GameEngine::ProcessQueue(QUEUE_TYPE type)
 	{
-		auto tmpQueue = this->oldQueues[type];
-		auto queue = this->newQueues[type];
-		this->oldQueues[type] = queue;
-		this->newQueues[type] = tmpQueue;
-		assert(this->newQueues[type]->empty());
-
-		while(!queue->empty())
+		for (auto &operation : operations[type])
 		{
-			auto operation = queue->front();
-			queue->pop();
-			if (operation->Execute())
-			{
-				AddOperation(operation);
-			} else
-			{
-				delete operation;
-			}
+			operation->Execute();
 		}
 	}
 
@@ -251,7 +220,8 @@ namespace Engine {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		this->mainCamera->RenderScreen();
+		this->mainCamera->RenderScreen(QUEUE_RENDER_PASS);
+		ProcessQueue(QUEUE_LIGHT_PASS);
 
 		SDL_GL_SwapWindow(this->mainwindow);
 	}
