@@ -54,6 +54,11 @@ namespace Engine {
 		return this->projectionMatrix * this->GetEntity()->GetTransformation()->GetAbsoluteMatrix();
 	}
 
+	mat4x4 Camera::GetProjectionMatrix() const
+	{
+		return this->projectionMatrix;
+	}
+
 	void Camera::Wire()
 	{
 	}
@@ -71,7 +76,7 @@ namespace Engine {
 		}
 	}
 
-	void Camera::RenderScreen(QUEUE_TYPE type)
+	void Camera::RenderScreen(OPERATION_TYPE type)
 	{
 		auto oldMainCamera = this->GetEngine()->GetMainCamera();
 		this->GetEngine()->SetMainCamera(this);

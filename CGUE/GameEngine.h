@@ -10,14 +10,14 @@ namespace Engine {
 	class Camera;
 	class Operation;
 
-	typedef enum QUEUE_TYPE
+	typedef enum OPERATION_TYPE
 	{
-		QUEUE_UPDATE = 0,
-		QUEUE_RENDER_PASS = 1,
-		QUEUE_LIGHT_PASS = 2,
-		QUEUE_DEPTH_PASS = 3,
-	} QUEUE_TYPE;
-	const int NUM_QUEUES = 10;
+		UPDATE_OPERATION = 0,
+		RENDER_PASS_OPERATION = 1,
+		LIGHT_PASS_OPERATION = 2,
+		DEPTH_PASS_OPERATION = 3,
+	} OPERATION_TYPE;
+	const int NUM_OPERATIONS = 10;
 
 	class GameEngine
 	{
@@ -32,7 +32,7 @@ namespace Engine {
 		int height;
 		bool keyStates[322];
 
-		vector<Operation*> operations[NUM_QUEUES];
+		vector<Operation*> operations[NUM_OPERATIONS];
 
 		virtual void Init();
 		virtual void DeInit();
@@ -45,7 +45,8 @@ namespace Engine {
 		void RaiseEngineError(const string error);
 
 		void AddOperation(Operation *operation);
-		void ProcessQueue(QUEUE_TYPE type);
+		void ProcessQueue(OPERATION_TYPE type);
+		vector<Operation*>* GetOperations(OPERATION_TYPE type);
 
 		bool KeyDown(int keyCode);
 

@@ -19,9 +19,9 @@ namespace Game {
 		}
 	}
 
-	Engine::QUEUE_TYPE RotatingOperation::GetQueueType()
+	Engine::OPERATION_TYPE RotatingOperation::GetOperationType()
 	{
-		return Engine::QUEUE_UPDATE;
+		return Engine::UPDATE_OPERATION;
 	}
 
 	void Rotating::Init()

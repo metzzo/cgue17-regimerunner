@@ -20,6 +20,7 @@ namespace Engine {
 		GameEngine* GetEngine() const;
 		Transformation* GetTransformation() const;
 
+		virtual void AttachedToEntity();
 		virtual void Init();
 		virtual void Wire();
 		const char *GetClassName() const;

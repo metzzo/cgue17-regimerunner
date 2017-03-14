@@ -3,7 +3,7 @@
 #include "Entity.h"
 
 namespace Engine {
-	void SpotLightRenderOperation::Execute()
+	void LightRenderOperation::Execute()
 	{
 		auto component = static_cast<SpotLight*>(this->GetComponent());
 
@@ -11,14 +11,20 @@ namespace Engine {
 		glBindFramebuffer(GL_FRAMEBUFFER, component->depthMapFbo);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		component->camera->RenderScreen(QUEUE_DEPTH_PASS);
+		component->camera->RenderScreen(DEPTH_PASS_OPERATION);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	QUEUE_TYPE SpotLightRenderOperation::GetQueueType()
+	OPERATION_TYPE LightRenderOperation::GetOperationType()
 	{
-		return QUEUE_LIGHT_PASS;
+		return LIGHT_PASS_OPERATION;
+	}
+
+	GLuint LightRenderOperation::GetDepthTexture() const
+	{
+		auto component = static_cast<SpotLight*>(this->GetComponent());
+		return component->depthMap;
 	}
 
 	SpotLight::SpotLight(int shadowMapSize, float near, float far)
@@ -36,14 +42,13 @@ namespace Engine {
 	{
 	}
 
+	Camera* SpotLight::GetCamera() const
+	{
+		return this->camera;
+	}
+
 	void SpotLight::Init()
 	{
-		// SpotLight needs a camera => create it, and wire it up
-		auto camera = new Camera(0, near, far, shadowMapSize, shadowMapSize);
-		this->GetEntity()->Add(camera);
-
-		WIRE_COMPONENT(this->camera, CameraClass);
-
 		// create depth map FBO
 		glGenFramebuffers(1, &this->depthMapFbo);
 		glGenTextures(1, &this->depthMap);
@@ -54,9 +59,20 @@ namespace Engine {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+
+		GetEngine()->AddOperation(new LightRenderOperation(this));
 	}
 
 	void SpotLight::Wire()
 	{
+		WIRE_COMPONENT(this->camera, CameraClass);
+	}
+
+	void SpotLight::AttachedToEntity()
+	{
+		// SpotLight needs a camera => create it, and wire it up
+		auto camera = new Camera(0, near, far, shadowMapSize, shadowMapSize);
+		this->GetEntity()->Add(camera);
 	}
 }

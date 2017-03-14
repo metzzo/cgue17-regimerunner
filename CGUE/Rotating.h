@@ -11,7 +11,7 @@ namespace Game {
 		}
 
 		void Execute() override;
-		Engine::QUEUE_TYPE GetQueueType() override;
+		Engine::OPERATION_TYPE GetOperationType() override;
 	};
 
 	class Rotating : public Engine::Component

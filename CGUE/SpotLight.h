@@ -4,22 +4,23 @@
 #include "Operation.h"
 
 namespace Engine {
-	class SpotLightRenderOperation : public Operation
+	class LightRenderOperation : public Operation
 	{
 	public:
-		explicit SpotLightRenderOperation(Component* component)
+		explicit LightRenderOperation(Component* component)
 			: Operation(component)
 		{
 		}
 
 		void Execute() override;
-		QUEUE_TYPE GetQueueType() override;
+		OPERATION_TYPE GetOperationType() override;
+		GLuint GetDepthTexture() const;
 	};
 
 	class SpotLight :
 		public Component
 	{
-		friend SpotLightRenderOperation;
+		friend LightRenderOperation;
 
 		int shadowMapSize;
 		Camera *camera;
@@ -28,11 +29,14 @@ namespace Engine {
 		float near;
 		float far;
 	public:
-		explicit SpotLight(int shadowMapSize = 1024, float near = 1.0f, float far = 1.0f);
+		explicit SpotLight(int shadowMapSize = 1024, float near = 1.0f, float far = 10.0f);
 		~SpotLight();
+
+		Camera *GetCamera() const;
 
 		void Init() override;
 		void Wire() override;
+		void AttachedToEntity() override;
 	};
 }
 

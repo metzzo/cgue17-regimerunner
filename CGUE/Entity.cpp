@@ -38,6 +38,7 @@ namespace Engine {
 	{
 		component->entity = this;
 		this->components.push_back(component);
+		component->AttachedToEntity();
 		return component;
 	}
 

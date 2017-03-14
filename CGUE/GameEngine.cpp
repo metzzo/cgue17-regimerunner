@@ -39,7 +39,7 @@ namespace Engine {
 
 	GameEngine::~GameEngine()
 	{
-		for (auto i = 0; i < NUM_QUEUES; i++)
+		for (auto i = 0; i < NUM_OPERATIONS; i++)
 		{
 			for (auto &operation : this->operations[i])
 			{
@@ -58,7 +58,7 @@ namespace Engine {
 		
 		while(!cancelled)
 		{
-			ProcessQueue(QUEUE_UPDATE);
+			ProcessQueue(UPDATE_OPERATION);
 
 			this->Render();
 		}
@@ -106,15 +106,20 @@ namespace Engine {
 
 	void GameEngine::AddOperation(Operation* operation)
 	{
-		this->operations[operation->GetQueueType()].push_back(operation);
+		this->operations[operation->GetOperationType()].push_back(operation);
 	}
 
-	void GameEngine::ProcessQueue(QUEUE_TYPE type)
+	void GameEngine::ProcessQueue(OPERATION_TYPE type)
 	{
 		for (auto &operation : operations[type])
 		{
 			operation->Execute();
 		}
+	}
+
+	vector<Operation*>* GameEngine::GetOperations(OPERATION_TYPE type)
+	{
+		return &this->operations[type];
 	}
 
 	bool GameEngine::KeyDown(int keyCode)
@@ -220,8 +225,10 @@ namespace Engine {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		this->mainCamera->RenderScreen(QUEUE_RENDER_PASS);
-		ProcessQueue(QUEUE_LIGHT_PASS);
+
+		ProcessQueue(LIGHT_PASS_OPERATION);
+		this->mainCamera->RenderScreen(RENDER_PASS_OPERATION);
+		
 
 		SDL_GL_SwapWindow(this->mainwindow);
 	}

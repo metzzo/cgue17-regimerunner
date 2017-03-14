@@ -11,6 +11,7 @@
 #include "Rotating.h"
 #include "Texture.h"
 #include "Material.h"
+#include "SpotLight.h"
 
 using namespace Engine;
 
@@ -153,6 +154,16 @@ int main(int argc, char **argv)
 	cube->Add(mat);
 	cube->Add((new MeshRenderer(bufferData, 3 * 2 * 6))->SetVertexColorData(colorData)->SetUVData(uvData));
 	cube->Add(new Game::Rotating());
+
+	auto light = engine->GetRootEntity()->CreateChild();
+	light->Add(new SpotLight());
+	light->GetTransformation()->SetRelativeMatrix(lookAt(
+		vec3(-4, 2, 3.5), // Camera is at (4,3,3), in World Space
+		vec3(0, 0, 0), // and looks at the origin
+		vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+	));
+
+
 	engine->Run();
 
 	delete engine;

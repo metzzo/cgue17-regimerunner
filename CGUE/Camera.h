@@ -24,9 +24,10 @@ namespace Engine {
 		float GetFar() const;
 		float GetNear() const;
 
-		virtual void RenderScreen(QUEUE_TYPE queue);
+		virtual void RenderScreen(OPERATION_TYPE queue);
 
 		mat4x4 GetProjectionViewMatrix() const;
+		mat4x4 GetProjectionMatrix() const;
 
 		void Wire() override;
 		void Init() override;

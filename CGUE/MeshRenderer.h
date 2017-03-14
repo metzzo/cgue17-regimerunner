@@ -17,7 +17,7 @@ namespace Engine {
 		}
 
 		void Execute() override;
-		QUEUE_TYPE GetQueueType() override;
+		OPERATION_TYPE GetOperationType() override;
 	};
 
 	class DepthRenderOperation : public Operation
@@ -29,7 +29,7 @@ namespace Engine {
 		}
 
 		void Execute() override;
-		QUEUE_TYPE GetQueueType() override;
+		OPERATION_TYPE GetOperationType() override;
 	};
 
 	class MeshRenderer :
@@ -42,17 +42,25 @@ namespace Engine {
 		GLuint vertexArray;
 		GLuint colorBuffer;
 		GLuint uvBuffer;
+		GLuint normalBuffer;
 
 		Material *material;
 		Texture *texture;
 
-		GLint matrixId;
-		GLint textureSamplerId;
+		GLint shaderProjectionId;
+		GLint shaderDiffuseTextureId;
+		GLint shaderViewId;
+		GLint shaderModelId;
+		GLint shaderShadowMapId;
+		GLint shaderLightPosId;
+		GLint shaderViewPosId;
+		GLint shaderLightSpaceMatrixId;
 
 	protected:
 		float *vertexData;
 		float *colorData;
 		float *uvData;
+		float *normalData;
 		int numVertices;
 
 	public:
@@ -63,6 +71,7 @@ namespace Engine {
 		MeshRenderer *SetVertexData(const float *vertexData, int numVertices);
 		MeshRenderer *SetVertexColorData(const float *colorData);
 		MeshRenderer* SetUVData(const float *uvData);
+		MeshRenderer* SetNormalData(const float *normalData);
 
 		void Init() override;
 		void Wire() override;

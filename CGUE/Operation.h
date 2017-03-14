@@ -13,7 +13,7 @@ namespace Engine {
 
 		virtual void Execute() = 0;
 
-		virtual QUEUE_TYPE GetQueueType() = 0;
+		virtual OPERATION_TYPE GetOperationType() = 0;
 
 		Component *GetComponent() const;
 	};
