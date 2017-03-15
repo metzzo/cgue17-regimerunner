@@ -14,7 +14,6 @@ namespace Engine {
 
 		void Execute() override;
 		OPERATION_TYPE GetOperationType() override;
-		GLuint GetDepthTexture() const;
 	};
 
 	class SpotLight :
@@ -24,8 +23,6 @@ namespace Engine {
 
 		int shadowMapSize;
 		Camera *camera;
-		GLuint depthMapFbo;
-		GLuint depthMap;
 		float near;
 		float far;
 	public:
@@ -38,5 +35,6 @@ namespace Engine {
 		void Wire() override;
 		void AttachedToEntity() override;
 	};
+	extern SpotLight *spotlight;
 }
 

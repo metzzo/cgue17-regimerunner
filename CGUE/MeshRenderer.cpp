@@ -12,7 +12,10 @@ namespace Engine {
 
 		auto programId = component->material->GetRenderShader()->GetProgramId();
 
-		glUseProgram(programId);
+		DEBUG_OGL(glUseProgram(programId));
+
+		DEBUG_OGL(glUniform1i(glGetUniformLocation(programId, "diffuseTexture"), 0));
+		DEBUG_OGL(glUniform1i(glGetUniformLocation(programId, "shadowMap"), 1));
 
 		if (component->shaderProjectionId == -2)
 		{
@@ -25,14 +28,6 @@ namespace Engine {
 		if (component->shaderModelId == -2)
 		{
 			component->shaderModelId = glGetUniformLocation(programId, "model");
-		}
-		if (component->shaderDiffuseTextureId == -2 && component->uvBuffer)
-		{
-			component->shaderDiffuseTextureId = glGetUniformLocation(programId, "diffuseTexture");
-		}
-		if (component->shaderShadowMapId == -2)
-		{
-			component->shaderShadowMapId = glGetUniformLocation(programId, "shadowMap");
 		}
 		if (component->shaderLightPosId == -2)
 		{
@@ -49,32 +44,36 @@ namespace Engine {
 
 		// TODO: handle multiple lights properly
 		auto cam = component->GetEngine()->GetMainCamera();
-		auto operation = static_cast<LightRenderOperation*>(component->GetEngine()->GetOperations(LIGHT_PASS_OPERATION)->at(0));
-		auto lightMatrix = operation->GetComponent()->GetTransformation()->GetAbsoluteMatrix();
-		auto lightPos = vec3(lightMatrix[4][0], lightMatrix[4][1], lightMatrix[4][2]);
+		// TODO: do not use global spotlight
+		auto lightMatrix = spotlight->GetTransformation()->GetAbsoluteMatrix();
+		auto lightPos = -vec3(4, 3, 3);
 		auto projection = cam->GetProjectionMatrix();
 		auto view = cam->GetTransformation()->GetAbsoluteMatrix();
-		auto viewPos = vec3(view[4][0], view[4][1], view[4][2]);
-		auto lightSpaceMatrix = static_cast<SpotLight*>(operation->GetComponent())->GetCamera()->GetProjectionViewMatrix();
-		glUniformMatrix4fv(component->shaderProjectionId, 1, GL_FALSE, &projection[0][0]);
-		glUniformMatrix4fv(component->shaderViewId, 1, GL_FALSE, &view[0][0]);
-		glUniformMatrix4fv(component->shaderLightSpaceMatrixId, 1, GL_FALSE, &lightSpaceMatrix[0][0]);
+		auto viewPos = vec3(4, 3, 3);
+		auto lightSpaceMatrix = spotlight->GetCamera()->GetProjectionViewMatrix();
+		auto model = component->GetTransformation()->GetAbsoluteMatrix();
 
-		glUniform3fv(component->shaderLightPosId, 1, &lightPos[0]);
-		glUniform3fv(component->shaderViewPosId, 1, &viewPos[0]);
+		DEBUG_OGL(glUniformMatrix4fv(component->shaderProjectionId, 1, GL_FALSE, &projection[0][0]));
+		DEBUG_OGL(glUniformMatrix4fv(component->shaderViewId, 1, GL_FALSE, &view[0][0]));
+		DEBUG_OGL(glUniformMatrix4fv(component->shaderLightSpaceMatrixId, 1, GL_FALSE, &lightSpaceMatrix[0][0]));
+		DEBUG_OGL(glUniformMatrix4fv(component->shaderModelId, 1, GL_FALSE, &model[0][0]));
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, component->texture->GetTextureId());
-		glUniform1i(component->shaderDiffuseTextureId, 0);
+		DEBUG_OGL(glUniform3fv(component->shaderLightPosId, 1, &lightPos[0]));
+		DEBUG_OGL(glUniform3fv(component->shaderViewPosId, 1, &viewPos[0]));
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, operation->GetDepthTexture());
-		glUniform1i(component->shaderDiffuseTextureId, 0);
 
-		glBindVertexArray(component->vertexArray);
-		glDrawArrays(GL_TRIANGLES, 0, component->numVertices);
-		glUseProgram(0);
+		DEBUG_OGL(glActiveTexture(GL_TEXTURE0));
+		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, component->texture->GetTextureId()));
+
+		DEBUG_OGL(glActiveTexture(GL_TEXTURE1));
+		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, spotlight->GetCamera()->GetTexture()));
+
+		DEBUG_OGL(glBindVertexArray(component->vertexArray));
+		DEBUG_OGL(glDrawArrays(GL_TRIANGLES, 0, component->numVertices));
+		DEBUG_OGL(glBindVertexArray(0));
 	}
+
+
 
 	OPERATION_TYPE MeshRenderOperation::GetOperationType()
 	{
@@ -83,19 +82,18 @@ namespace Engine {
 
 	void DepthRenderOperation::Execute()
 	{
-		return;
 		auto component = static_cast<MeshRenderer*>(this->GetComponent());
 		auto programId = component->material->GetDepthShader()->GetProgramId();
 
-		glUseProgram(programId);
+		DEBUG_OGL(glUseProgram(programId));
 
 		auto projectionViewMatrix = component->GetEngine()->GetMainCamera()->GetProjectionViewMatrix();
 		auto mvp = projectionViewMatrix * component->GetTransformation()->GetAbsoluteMatrix();
 
-		glUniformMatrix4fv(glGetUniformLocation(programId, "MVP"), 1, GL_FALSE, &mvp[0][0]);
-		glBindVertexArray(component->vertexArray);
-		glDrawArrays(GL_TRIANGLES, 0, component->numVertices);
-		glUseProgram(0);
+		DEBUG_OGL(glUniformMatrix4fv(glGetUniformLocation(programId, "MVP"), 1, GL_FALSE, &mvp[0][0]));
+		DEBUG_OGL(glBindVertexArray(component->vertexArray));
+		DEBUG_OGL(glDrawArrays(GL_TRIANGLES, 0, component->numVertices));
+		//glUseProgram(0);
 	}
 
 	OPERATION_TYPE DepthRenderOperation::GetOperationType()
@@ -113,8 +111,68 @@ namespace Engine {
 	{
 		static_assert(sizeof(GLfloat) == sizeof(float), "GLfloat must have same size as float.");
 		assert(this->vertexData);
+		GLfloat vertices[] = {
+			// Back face
+			-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // Bottom-left
+			0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, // top-right
+			0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, // bottom-right
+			0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,  // top-right
+			-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,  // bottom-left
+			-0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,// top-left
+			// Front face
+			-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom-left
+			0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,  // bottom-right
+			0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,  // top-right
+			0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // top-right
+			-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,  // top-left
+			-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,  // bottom-left
+			// Left face
+			-0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-right
+			-0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top-left
+			-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,  // bottom-left
+			-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-left
+			-0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,  // bottom-right
+			-0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-right
+			// Right face
+			0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-left
+			0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-right
+			0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top-right
+			0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,  // bottom-right
+			0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,  // top-left
+			0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // bottom-left
+			// Bottom face
+			-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, // top-right
+			0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f, // top-left
+			0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,// bottom-left
+			0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, // bottom-left
+			-0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom-right
+			-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, // top-right
+			// Top face
+			-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,// top-left
+			0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom-right
+			0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, // top-right
+			0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom-right
+			-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,// top-left
+			-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f // bottom-left
+		};
 
-		glGenBuffers(1, &this->vertexBuffer);
+		DEBUG_OGL(glGenVertexArrays(1, &this->vertexArray));
+		DEBUG_OGL(glGenBuffers(1, &this->vertexBuffer));
+		// Fill buffer
+		DEBUG_OGL(glBindBuffer(GL_ARRAY_BUFFER, this->vertexBuffer));
+		DEBUG_OGL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
+		// Link vertex attributes
+		DEBUG_OGL(glBindVertexArray(this->vertexArray));
+		DEBUG_OGL(glEnableVertexAttribArray(0));
+		DEBUG_OGL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0));
+		DEBUG_OGL(glEnableVertexAttribArray(1));
+		DEBUG_OGL(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat))));
+		DEBUG_OGL(glEnableVertexAttribArray(2));
+		DEBUG_OGL(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat))));
+		DEBUG_OGL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+		DEBUG_OGL(glBindVertexArray(0));
+
+		/*glGenBuffers(1, &this->vertexBuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, this->vertexBuffer);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*this->numVertices * 3, this->vertexData, GL_STATIC_DRAW);
 
@@ -122,6 +180,7 @@ namespace Engine {
 		glBindVertexArray(this->vertexArray);
 
 		// vertex positions
+		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(
 			0,                  // attribute 0.
 			3,					// size
@@ -130,14 +189,14 @@ namespace Engine {
 			0,                  // stride
 			nullptr	            // array buffer offset
 		);
-		glEnableVertexAttribArray(0);
 
 		if (this->normalData) {
 			glGenBuffers(1, &this->normalBuffer);
 			glBindBuffer(GL_ARRAY_BUFFER, this->normalBuffer);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*this->numVertices * 3, this->normalData, GL_STATIC_DRAW);
 
-			// vertex color
+			// normals
+			glEnableVertexAttribArray(1);
 			glVertexAttribPointer(
 				1,                  // attribute 1.
 				3,					// size
@@ -146,8 +205,6 @@ namespace Engine {
 				0,                  // stride
 				nullptr	            // array buffer offset
 			);
-
-			glEnableVertexAttribArray(1);
 		}
 
 		if (this->uvData)
@@ -156,6 +213,7 @@ namespace Engine {
 			glBindBuffer(GL_ARRAY_BUFFER, this->uvBuffer);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*this->numVertices * 2, this->uvData, GL_STATIC_DRAW);
 			// uv buffer
+			glEnableVertexAttribArray(2);
 			glVertexAttribPointer(
 				2,                                // attribute 2.
 				2,                                // size : U+V => 2
@@ -164,12 +222,10 @@ namespace Engine {
 				0,                                // stride
 				nullptr							  // array buffer offset
 			);
-
-			glEnableVertexAttribArray(2);
 		}
 
 
-		if (this->colorData) {
+		/*if (this->colorData) {
 			glGenBuffers(1, &this->colorBuffer);
 			glBindBuffer(GL_ARRAY_BUFFER, this->colorBuffer);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*this->numVertices * 3, this->colorData, GL_STATIC_DRAW);
@@ -184,11 +240,11 @@ namespace Engine {
 				nullptr	            // array buffer offset
 			);
 
-			glEnableVertexAttribArray(1);
-		}
+			glEnableVertexAttribArray(3);
+		}*/
 
-		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
 
 		GetEngine()->AddOperation(new MeshRenderOperation(this));
 		GetEngine()->AddOperation(new DepthRenderOperation(this));
@@ -259,6 +315,36 @@ namespace Engine {
 		this->numVertices = numVertices;
 		this->vertexData = new float[arraySize];
 		memcpy(this->vertexData, vertexData, sizeof(*vertexData)*arraySize);
+		
+		if (this->normalData != nullptr)
+		{
+			delete[] this->normalData;
+		}
+
+		this->normalData = new float[numVertices*3];
+		auto j = 0;
+		auto i = 0;
+		while (i < numVertices)
+		{
+			vec3 v1(this->vertexData[i*3], this->vertexData[i * 3 + 1], this->vertexData[i * 3 + 2]);
+			i++;
+			vec3 v2(this->vertexData[i * 3], this->vertexData[i * 3 + 1], this->vertexData[i * 3 + 2]);
+			i++;
+			vec3 v3(this->vertexData[i * 3], this->vertexData[i * 3 + 1], this->vertexData[i * 3 + 2]);
+			i++;
+
+			auto e1 = v2 - v1;
+			auto e2 = v3 - v1;
+			auto normal = normalize(cross(e1, e2));
+			this->normalData[j] = normal.x;
+			j++;
+			this->normalData[j] = normal.y;
+			j++;
+			this->normalData[j] = normal.z;
+			j++;
+
+		}
+
 
 		return this;
 	}

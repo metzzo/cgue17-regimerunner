@@ -44,8 +44,12 @@ namespace Engine {
 
 		glTexImage2D(GL_TEXTURE_2D, 0, Mode, this->sdlImage->w, this->sdlImage->h, 0, Mode, GL_UNSIGNED_BYTE, this->sdlImage->pixels);
 
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	GLuint Texture::GetTextureId() const

@@ -1,6 +1,7 @@
 #pragma once
 #include "packages/sdl2.v140.2.0.4/build/native/include/SDL_video.h"
 #include <queue>
+#include "glew/glew.h"
 
 using namespace std;
 
@@ -9,18 +10,23 @@ namespace Engine {
 	class GameState;
 	class Camera;
 	class Operation;
-
+	
+	GLenum glCheckError_(const char *file, int line);
+#define glCheckError() glCheckError_(__FILE__, __LINE__);
+#define DEBUG_OGL(X) X; glCheckError_(__FILE__, __LINE__); 
 	typedef enum OPERATION_TYPE
 	{
+		UNDEFINED_OPERATION = -1,
 		UPDATE_OPERATION = 0,
-		RENDER_PASS_OPERATION = 1,
-		LIGHT_PASS_OPERATION = 2,
-		DEPTH_PASS_OPERATION = 3,
+		CAMERA_PASS_OPERATION = 1,
+		DEPTH_PASS_OPERATION = 2,
+		RENDER_PASS_OPERATION = 3,
 	} OPERATION_TYPE;
 	const int NUM_OPERATIONS = 10;
 
 	class GameEngine
 	{
+	protected:
 		string programName;
 		SDL_Window *mainwindow;
 		SDL_GLContext maincontext;
@@ -37,6 +43,9 @@ namespace Engine {
 		virtual void Init();
 		virtual void DeInit();
 		virtual void Render();
+
+
+		void SortPriorities();
 	public:
 		GameEngine(int width, int height, string programName);
 		virtual ~GameEngine();

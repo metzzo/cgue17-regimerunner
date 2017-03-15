@@ -1,8 +1,7 @@
 #pragma once
-#include "Camera.h"
+#include "Component.h"
 
 namespace Engine {
-	class GameLogicComponent;
 
 	class Operation
 	{
@@ -12,7 +11,7 @@ namespace Engine {
 		virtual ~Operation();
 
 		virtual void Execute() = 0;
-
+		virtual int GetPriority();
 		virtual OPERATION_TYPE GetOperationType() = 0;
 
 		Component *GetComponent() const;

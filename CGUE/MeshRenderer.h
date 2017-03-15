@@ -6,8 +6,6 @@
 #include "Operation.h"
 
 namespace Engine {
-	class MeshRenderer;
-
 	class MeshRenderOperation : public Operation
 	{
 	public:

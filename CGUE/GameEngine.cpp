@@ -22,6 +22,30 @@ namespace Engine {
 #endif
 	}
 
+	GLenum glCheckError_(const char *file, int line)
+	{
+		GLenum errorCode;
+		while ((errorCode = glGetError()) != GL_NO_ERROR)
+		{
+			std::string error;
+			switch (errorCode)
+			{
+			case GL_INVALID_ENUM:                  error = "INVALID_ENUM"; break;
+			case GL_INVALID_VALUE:                 error = "INVALID_VALUE"; break;
+			case GL_INVALID_OPERATION:             error = "INVALID_OPERATION"; break;
+			case GL_STACK_OVERFLOW:                error = "STACK_OVERFLOW"; break;
+			case GL_STACK_UNDERFLOW:               error = "STACK_UNDERFLOW"; break;
+			case GL_OUT_OF_MEMORY:                 error = "OUT_OF_MEMORY"; break;
+			case GL_INVALID_FRAMEBUFFER_OPERATION: error = "INVALID_FRAMEBUFFER_OPERATION"; break;
+			default:							   error = "Unknown"; break;
+			}
+			std::cout << error << " | " << file << " (" << line << ")" << std::endl;
+			getchar();
+			exit(1);
+		}
+		return errorCode;
+	}
+
 
 	GameEngine::GameEngine(int width, int height, const string programName)
 	{
@@ -55,6 +79,8 @@ namespace Engine {
 		this->rootEntity->Wire();
 
 		this->rootEntity->Init();
+
+		this->SortPriorities();
 		
 		while(!cancelled)
 		{
@@ -223,13 +249,22 @@ namespace Engine {
 			}
 		}
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-		ProcessQueue(LIGHT_PASS_OPERATION);
-		this->mainCamera->RenderScreen(RENDER_PASS_OPERATION);
+		ProcessQueue(CAMERA_PASS_OPERATION);
 		
-
 		SDL_GL_SwapWindow(this->mainwindow);
+	}
+
+	bool PrioritySortFunc(Operation *a, Operation *b)
+	{
+		return a->GetPriority() < b->GetPriority();
+	}
+
+	void GameEngine::SortPriorities()
+	{
+		for (auto i = 0; i < NUM_OPERATIONS; i++)
+		{
+			auto operations = &this->operations[i];
+			sort(operations->begin(), operations->end(), PrioritySortFunc);
+		}
 	}
 }

@@ -16,6 +16,11 @@ namespace Engine {
 		
 	}
 
+	void Transformation::AttachedToEntity()
+	{
+		this->UpdateAbsoluteMatrix();
+	}
+
 	void Transformation::SetRelativeMatrix(mat4x4 newRelativeMatrix)
 	{
 		this->relativeTransform = newRelativeMatrix;
@@ -24,7 +29,9 @@ namespace Engine {
 
 	void Transformation::UpdateAbsoluteMatrix()
 	{
-		this->absoluteTransform = relativeTransform * this->GetEntity()->GetParent()->GetTransformation()->absoluteTransform;
+		if (this->GetEntity()->GetParent() != nullptr) {
+			this->absoluteTransform = relativeTransform * this->GetEntity()->GetParent()->GetTransformation()->absoluteTransform;
+		}
 
 		auto children = this->GetEntity()->GetChildren();
 		for (auto &child : *children)

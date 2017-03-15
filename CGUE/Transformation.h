@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Component.h"
-#include "glm/mat4x4.hpp"
+#include "glm/glm.hpp"
 
 using namespace glm;
 
@@ -15,6 +15,8 @@ namespace Engine {
 	public:
 		Transformation();
 		~Transformation();
+
+		void AttachedToEntity() override;
 
 		void SetRelativeMatrix(mat4x4 newRelativeMatrix);
 		void UpdateAbsoluteMatrix();

@@ -1,4 +1,5 @@
 #include "Operation.h"
+#include <cassert>
 
 
 namespace Engine {
@@ -10,6 +11,11 @@ namespace Engine {
 
 	Operation::~Operation()
 	{
+	}
+
+	int Operation::GetPriority()
+	{
+		return 0;
 	}
 
 	Component* Operation::GetComponent() const

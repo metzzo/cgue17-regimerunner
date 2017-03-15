@@ -32,6 +32,7 @@ namespace Engine {
 
 		Shader *GetRenderShader() const;
 		Shader *GetDepthShader() const;
+
 	};
 
 
