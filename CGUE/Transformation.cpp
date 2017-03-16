@@ -1,5 +1,9 @@
 #include "Transformation.h"
 #include "Entity.h"
+#include "glm/glm.hpp"
+#include "glm/gtx/transform.hpp"
+#include "glm/gtx/string_cast.hpp"
+#include <iostream>
 
 namespace Engine {
 	const Transformation TransformationClass;
@@ -31,7 +35,12 @@ namespace Engine {
 	{
 		if (this->GetEntity()->GetParent() != nullptr) {
 			this->absoluteTransform = relativeTransform * this->GetEntity()->GetParent()->GetTransformation()->absoluteTransform;
+		} else
+		{
+			this->absoluteTransform = relativeTransform;
 		}
+
+		this->GetEntity()->TransformationUpdated();
 
 		auto children = this->GetEntity()->GetChildren();
 		for (auto &child : *children)
@@ -48,5 +57,15 @@ namespace Engine {
 	mat4x4 Transformation::GetRelativeMatrix() const
 	{
 		return this->relativeTransform;
+	}
+
+	vec3 Transformation::GetAbsolutePosition()
+	{
+		return vec3(this->absoluteTransform[3]);
+	}
+
+	void Transformation::Translate(vec3 move)
+	{
+		SetRelativeMatrix(translate(relativeTransform, move));
 	}
 }

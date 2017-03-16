@@ -23,21 +23,19 @@ namespace Engine {
 
 	void SpotLight::Init()
 	{
+		this->GetEngine()->AddLight(this);
 	}
 
 	void SpotLight::Wire()
 	{
-		WIRE_COMPONENT(this->camera, CameraClass);
 	}
 
 	void SpotLight::AttachedToEntity()
 	{
 		// SpotLight needs a camera => create it, and wire it up
-		auto camera = new Camera(0, near, far, shadowMapSize, shadowMapSize, true);
+		this->camera = new Camera(0, near, far, shadowMapSize, shadowMapSize, true);
 		this->GetEntity()->Add(camera);
 
 		camera->EnableRender2Texture(this->shadowMapSize, this->shadowMapSize, DEPTH_PASS_OPERATION);
 	}
-
-	SpotLight *spotlight;
 }

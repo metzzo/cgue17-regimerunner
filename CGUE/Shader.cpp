@@ -124,42 +124,4 @@ namespace Engine {
 	{
 		return this->program;
 	}
-
-	Material::Material()
-	{
-		this->renderShader = nullptr;
-		this->depthShader = nullptr;
-	}
-
-	Material::~Material()
-	{
-		delete this->renderShader;
-		delete this->depthShader;
-	}
-
-	void Material::Init()
-	{
-		this->renderShader->Init();
-		this->depthShader->Init();
-	}
-
-	Shader* Material::GetRenderShader() const
-	{
-		return this->renderShader;
-	}
-
-	Shader* Material::GetDepthShader() const
-	{
-		return this->depthShader;
-	}
-
-	void Material::SetRenderMaterial(Shader *shader)
-	{
-		this->renderShader = shader;
-	}
-
-	void Material::SetDepthMaterial(Shader *shader)
-	{
-		this->depthShader = shader;
-	}
 }

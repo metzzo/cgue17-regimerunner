@@ -8,36 +8,6 @@
 namespace Engine {
 	const Camera CameraClass;
 
-	GLuint quadVAO = 0;
-	GLuint quadVBO;
-	void RenderQuad()
-	{
-		if (quadVAO == 0)
-		{
-			GLfloat quadVertices[] = {
-				// Positions        // Texture Coords
-				-1.0f,  1.0f, 0.0f,  0.0f, 1.0f,
-				-1.0f, -1.0f, 0.0f,  0.0f, 0.0f,
-				1.0f,  1.0f, 0.0f,  1.0f, 1.0f,
-				1.0f, -1.0f, 0.0f,  1.0f, 0.0f,
-			};
-			// Setup plane VAO
-			glGenVertexArrays(1, &quadVAO);
-			glGenBuffers(1, &quadVBO);
-			glBindVertexArray(quadVAO);
-			glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-		}
-		glBindVertexArray(quadVAO);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		glBindVertexArray(0);
-	}
-
-
 	void CameraRenderOperation::Execute()
 	{
 		auto component = static_cast<Camera*>(this->GetComponent());
@@ -61,16 +31,6 @@ namespace Engine {
 		if (component->depthMapFbo)
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-			/*glViewport(0, 0, 640, 480);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-			glUseProgram(component->debugShader->GetProgramId());
-			glUniform1f(glGetUniformLocation(component->debugShader->GetProgramId(), "near_plane"), 1.0);
-			glUniform1f(glGetUniformLocation(component->debugShader->GetProgramId(), "far_plane"), 10.0);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, component->depthMap);
-			RenderQuad();*/
 		}
 
 		component->GetEngine()->SetMainCamera(oldMainCamera);
@@ -104,7 +64,7 @@ namespace Engine {
 		this->textureWidth = 0;
 		this->textureHeight = 0;
 		this->renderOperation = RENDER_PASS_OPERATION;
-		this->debugShader = nullptr;
+		this->upVector = vec3(0.0, 1.0, 0.0);
 	}
 
 	Camera::~Camera()
@@ -133,14 +93,25 @@ namespace Engine {
 		this->textureHeight = textureHeight;
 	}
 
-	mat4x4 Camera::GetProjectionViewMatrix() const
+	void Camera::SetLookAtVector(vec3 lookAt)
 	{
-		return this->projectionMatrix * this->GetEntity()->GetTransformation()->GetAbsoluteMatrix();
+		this->lookAtVector = lookAt;
+		this->TransformationUpdated();
+	}
+
+	mat4x4 Camera::GetViewMatrix() const
+	{
+		return this->viewMatrix;
 	}
 
 	mat4x4 Camera::GetProjectionMatrix() const
 	{
 		return this->projectionMatrix;
+	}
+
+	mat4x4 Camera::GetProjectionViewMatrix() const
+	{
+		return GetProjectionMatrix() * GetViewMatrix();
 	}
 
 	GLuint Camera::GetTexture() const
@@ -183,9 +154,13 @@ namespace Engine {
 			glReadBuffer(GL_NONE);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
-		this->debugShader = new Shader("materials/debug_depth_material.vert", "materials/debug_depth_material.frag");
-		this->debugShader->Init();
 
 		GetEngine()->AddOperation(new CameraRenderOperation(this));
+	}
+
+	void Camera::TransformationUpdated()
+	{
+		auto pos = GetTransformation()->GetAbsolutePosition();
+		this->viewMatrix = lookAt(pos, pos + lookAtVector, upVector);
 	}
 }

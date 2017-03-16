@@ -22,6 +22,9 @@ namespace Engine {
 		void UpdateAbsoluteMatrix();
 		mat4x4 GetAbsoluteMatrix() const;
 		mat4x4 GetRelativeMatrix() const;
+
+		vec3 GetAbsolutePosition();
+		void Translate(vec3 move);
 	};
 
 	extern const Transformation TransformationClass;

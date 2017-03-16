@@ -35,6 +35,5 @@ namespace Engine {
 		void Wire() override;
 		void AttachedToEntity() override;
 	};
-	extern SpotLight *spotlight;
 }
 

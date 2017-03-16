@@ -35,13 +35,15 @@ namespace Engine {
 		int height;
 
 		mat4x4 projectionMatrix;
+		mat4x4 viewMatrix;
+		vec3 lookAtVector;
+		vec3 upVector;
 		bool ortho;
 
 		GLuint depthMapFbo;
 		OPERATION_TYPE renderOperation;
 		int textureWidth;
 		int textureHeight;
-		Shader* debugShader	;
 	public:
 		GLuint depthMap; // TODO: not public
 
@@ -53,12 +55,15 @@ namespace Engine {
 		float GetNear() const; 
 		virtual void EnableRender2Texture(int textureWidth, int textureHeight, OPERATION_TYPE renderOperation);
 
-		mat4x4 GetProjectionViewMatrix() const;
+		void SetLookAtVector(vec3 lookAt);
+		mat4x4 GetViewMatrix() const;
 		mat4x4 GetProjectionMatrix() const;
+		mat4x4 GetProjectionViewMatrix() const;
 		GLuint GetTexture() const;
 
 		void Wire() override;
 		void Init() override;
+		void TransformationUpdated() override;
 	};
 
 	extern const Camera CameraClass;

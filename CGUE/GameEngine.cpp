@@ -7,6 +7,7 @@
 #include <string>
 #include <SDL_image.h>
 #include "Operation.h"
+#include "Shader.h"
 
 namespace Engine {
 	void checkSDLError(int line = -1) {
@@ -84,6 +85,30 @@ namespace Engine {
 		
 		while(!cancelled)
 		{
+			SDL_Event e;
+			while (SDL_PollEvent(&e) != 0)
+			{
+				//User requests quit
+				switch (e.type)
+				{
+				case SDL_QUIT:
+					cancelled = true;
+					break;
+				case SDL_KEYDOWN:
+					if (e.key.repeat == 0) {
+						this->keyStates[e.key.keysym.scancode] = true;
+					}
+					break;
+				case SDL_KEYUP:
+					if (e.key.repeat == 0) {
+						this->keyStates[e.key.keysym.scancode] = false;
+					}
+					break;
+				default:
+					break;
+				}
+			}
+
 			ProcessQueue(UPDATE_OPERATION);
 
 			this->Render();
@@ -130,22 +155,14 @@ namespace Engine {
 		exit(1);
 	}
 
-	void GameEngine::AddOperation(Operation* operation)
+	void GameEngine::AddLight(SpotLight* spotLight)
 	{
-		this->operations[operation->GetOperationType()].push_back(operation);
+		this->lights.push_back(spotLight);
 	}
 
-	void GameEngine::ProcessQueue(OPERATION_TYPE type)
+	vector<SpotLight*>& GameEngine::GetLights()
 	{
-		for (auto &operation : operations[type])
-		{
-			operation->Execute();
-		}
-	}
-
-	vector<Operation*>* GameEngine::GetOperations(OPERATION_TYPE type)
-	{
-		return &this->operations[type];
+		return this->lights;
 	}
 
 	bool GameEngine::KeyDown(int keyCode)
@@ -214,6 +231,8 @@ namespace Engine {
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
+
+		this->defaultShader = new Shader("materials/default_material.vert", "materials/default_material.frag");
 	}
 
 	void GameEngine::DeInit()
@@ -225,30 +244,6 @@ namespace Engine {
 
 	void GameEngine::Render()
 	{
-		SDL_Event e;
-		while (SDL_PollEvent(&e) != 0)
-		{
-			//User requests quit
-			switch(e.type)
-			{
-			case SDL_QUIT:
-				cancelled = true;
-				break;
-			case SDL_KEYDOWN:
-				if (e.key.repeat == 0) {
-					this->keyStates[e.key.keysym.scancode] = true;
-				}
-				break;
-			case SDL_KEYUP:
-				if (e.key.repeat == 0) {
-					this->keyStates[e.key.keysym.scancode] = false;
-				}
-				break;
-			default:
-				break;
-			}
-		}
-
 		ProcessQueue(CAMERA_PASS_OPERATION);
 		
 		SDL_GL_SwapWindow(this->mainwindow);

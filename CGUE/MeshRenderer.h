@@ -42,7 +42,6 @@ namespace Engine {
 		GLuint uvBuffer;
 		GLuint normalBuffer;
 
-		Material *material;
 		Texture *texture;
 
 		GLint shaderProjectionId;

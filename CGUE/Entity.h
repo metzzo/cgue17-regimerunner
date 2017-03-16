@@ -23,6 +23,7 @@ namespace Engine {
 		GameEngine *GetEngine() const;
 
 		Component *Add(Component *component);
+		// TODO: Add Remove
 		Entity *CreateChild();
 
 		Entity *GetParent() const;
@@ -30,6 +31,7 @@ namespace Engine {
 		Transformation *GetTransformation() const;
 
 		void WireUp(Component **target, const char *name, bool force=true);
+		void TransformationUpdated();
 
 		void Init();
 		void Wire();

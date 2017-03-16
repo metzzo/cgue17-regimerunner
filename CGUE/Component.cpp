@@ -28,6 +28,11 @@ namespace Engine {
 		return this->entity->GetTransformation();
 	}
 
+	void Component::TransformationUpdated()
+	{
+		// nothing \o/
+	}
+
 	void Component::AttachedToEntity()
 	{
 		// nothing \o/

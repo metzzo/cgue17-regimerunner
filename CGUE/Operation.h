@@ -6,14 +6,15 @@ namespace Engine {
 	class Operation
 	{
 		Component *component;
+		Pass* pass;
 	public:
-		explicit Operation(Component *component);
+		explicit Operation(Pass *pass, Component *component);
 		virtual ~Operation();
 
 		virtual void Execute() = 0;
 		virtual int GetPriority();
-		virtual OPERATION_TYPE GetOperationType() = 0;
 
 		Component *GetComponent() const;
+		Pass *GetPass() const;
 	};
 }

@@ -82,6 +82,14 @@ namespace Engine {
 		}
 	}
 
+	void Entity::TransformationUpdated()
+	{
+		for (auto &component : this->components)
+		{
+			component->TransformationUpdated();
+		}
+	}
+
 	void Entity::Wire()
 	{
 		// set Transformation of Entity

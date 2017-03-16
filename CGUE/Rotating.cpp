@@ -15,6 +15,8 @@ namespace Game {
 		if (direction_lr || direction_ud) {
 			auto mat = component->GetTransformation()->GetRelativeMatrix();
 			mat = glm::rotate(mat, 0.05f, vec3(1.0f * direction_lr, 0.0f, 1.0f*direction_ud));
+
+			//mat = glm::translate(mat, vec3(0.1f * direction_lr, 0.0f, 0.1f*direction_ud));
 			component->GetTransformation()->SetRelativeMatrix(mat);
 		}
 	}

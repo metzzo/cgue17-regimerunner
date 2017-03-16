@@ -139,29 +139,20 @@ int main(int argc, char **argv)
 	auto camera = new Camera(45.0f, 0.1f, 100.0f, 640, 480);
 	engine->GetRootEntity()->CreateChild()->Add(camera);
 	engine->SetMainCamera(camera);
-	camera->GetTransformation()->SetRelativeMatrix(lookAt(
-		vec3(4, 3, 3), // Camera is at (4,3,3), in World Space
-		vec3(0, 0, 0), // and looks at the origin
-		vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-	));
+	camera->GetTransformation()->Translate(vec3(4.0, 3.0, 3.0));
+	camera->SetLookAtVector(-vec3(4.0, 3.0, 3.0));
 
-	auto mat = new Material();
-	mat->SetRenderMaterial(new Shader("materials/default_material.vert", "materials/default_material.frag"));
-	mat->SetDepthMaterial(new Shader("materials/depth_material.vert", "materials/depth_material.frag"));
 	auto cube = engine->GetRootEntity()->CreateChild();
 	cube->Add(new Texture("textures/schimon.png"));
-	cube->Add(mat);
 	cube->Add((new MeshRenderer(bufferData, 3 * 2 * 6))->SetVertexColorData(colorData)->SetUVData(uvData));
 	cube->Add(new Game::Rotating());
 
+	
 	auto light = engine->GetRootEntity()->CreateChild();
-	light->Add(spotlight = new SpotLight());
-	light->GetTransformation()->SetRelativeMatrix(lookAt(
-		-vec3(4, 3, 3), // Camera is at (4,3,3), in World Space
-		vec3(3, 2, 2), // and looks at the origin
-		vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-	));
-
+	auto spotLight = new SpotLight();
+	light->Add(spotLight);
+	spotLight->GetCamera()->GetTransformation()->Translate(vec3(4.0, 3.0, 3.0));
+	spotLight->GetCamera()->SetLookAtVector(-vec3(4.0, 3.0, 3.0));
 
 	engine->Run();
 

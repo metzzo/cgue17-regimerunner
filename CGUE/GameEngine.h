@@ -9,20 +9,12 @@ namespace Engine {
 	class Entity;
 	class GameState;
 	class Camera;
-	class Operation;
+	class SpotLight;
+	class Pass;
 	
 	GLenum glCheckError_(const char *file, int line);
 #define glCheckError() glCheckError_(__FILE__, __LINE__);
 #define DEBUG_OGL(X) X; glCheckError_(__FILE__, __LINE__); 
-	typedef enum OPERATION_TYPE
-	{
-		UNDEFINED_OPERATION = -1,
-		UPDATE_OPERATION = 0,
-		CAMERA_PASS_OPERATION = 1,
-		DEPTH_PASS_OPERATION = 2,
-		RENDER_PASS_OPERATION = 3,
-	} OPERATION_TYPE;
-	const int NUM_OPERATIONS = 10;
 
 	class GameEngine
 	{
@@ -38,12 +30,14 @@ namespace Engine {
 		int height;
 		bool keyStates[322];
 
-		vector<Operation*> operations[NUM_OPERATIONS];
+		vector<SpotLight*> lights;
+
+		Pass *updatePass;
+		Pass *depthPass;
 
 		virtual void Init();
 		virtual void DeInit();
 		virtual void Render();
-
 
 		void SortPriorities();
 	public:
@@ -53,9 +47,9 @@ namespace Engine {
 		void Run();
 		void RaiseEngineError(const string error);
 
-		void AddOperation(Operation *operation);
-		void ProcessQueue(OPERATION_TYPE type);
-		vector<Operation*>* GetOperations(OPERATION_TYPE type);
+		void AddLight(SpotLight* spotLight);
+		// TODO: add RemoveLight
+		vector<SpotLight*>& GetLights();
 
 		bool KeyDown(int keyCode);
 
