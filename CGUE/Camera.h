@@ -2,7 +2,6 @@
 #include "Transformation.h"
 #include "glew/glew.h"
 #include "Operation.h"
-#include "Material.h"
 
 namespace Engine {
 	const int MAIN_CAMERA_PRIORITY = 1000;
@@ -16,7 +15,6 @@ namespace Engine {
 		}
 
 		void Execute() override;
-		OPERATION_TYPE GetOperationType() override;
 		int GetPriority() override;
 	};
 
@@ -41,9 +39,10 @@ namespace Engine {
 		bool ortho;
 
 		GLuint depthMapFbo;
-		OPERATION_TYPE renderOperation;
 		int textureWidth;
 		int textureHeight;
+		bool r2t;
+		Pass* cameraPass;
 	public:
 		GLuint depthMap; // TODO: not public
 
@@ -53,7 +52,8 @@ namespace Engine {
 		float GetFov() const;
 		float GetFar() const;
 		float GetNear() const; 
-		virtual void EnableRender2Texture(int textureWidth, int textureHeight, OPERATION_TYPE renderOperation);
+		virtual void EnableRender2Texture(int textureWidth, int textureHeight);
+		void SetCameraPass(Pass *pass);
 
 		void SetLookAtVector(vec3 lookAt);
 		mat4x4 GetViewMatrix() const;

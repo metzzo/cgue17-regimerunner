@@ -1,26 +1,10 @@
 #pragma once
-#include "glew/glew.h"
 #include "Component.h"
-#include "Operation.h"
 
 namespace Engine {
-	class LightRenderOperation : public Operation
-	{
-	public:
-		explicit LightRenderOperation(Component* component)
-			: Operation(component)
-		{
-		}
-
-		void Execute() override;
-		OPERATION_TYPE GetOperationType() override;
-	};
-
 	class SpotLight :
 		public Component
 	{
-		friend LightRenderOperation;
-
 		int shadowMapSize;
 		Camera *camera;
 		float near;

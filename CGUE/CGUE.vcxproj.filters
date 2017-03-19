@@ -31,6 +31,12 @@
     <Filter Include="Header Files\Engine\Component">
       <UniqueIdentifier>{27149ecf-b310-4e5e-8cae-3f20e15c535d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine\Pass">
+      <UniqueIdentifier>{8bbb1d55-c262-4c15-8aea-2fe995128915}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Pass">
+      <UniqueIdentifier>{977409aa-353b-4129-9a85-616231faa047}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -54,9 +60,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
-    <ClCompile Include="Component.cpp">
-      <Filter>Source Files\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Operation.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
@@ -66,8 +69,20 @@
     <ClCompile Include="SpotLight.cpp">
       <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
-    <ClCompile Include="Material.cpp">
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
       <Filter>Source Files\Engine\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Pass.cpp">
+      <Filter>Source Files\Engine\Pass</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthPass.cpp">
+      <Filter>Source Files\Engine\Pass</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderPass.cpp">
+      <Filter>Source Files\Engine\Pass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -92,9 +107,6 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>Header Files\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="MeshRenderer.h">
       <Filter>Header Files\Engine\Component</Filter>
     </ClInclude>
@@ -104,8 +116,20 @@
     <ClInclude Include="SpotLight.h">
       <Filter>Header Files\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
       <Filter>Header Files\Engine\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthPass.h">
+      <Filter>Header Files\Engine\Pass</Filter>
+    </ClInclude>
+    <ClInclude Include="Pass.h">
+      <Filter>Header Files\Engine\Pass</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPass.h">
+      <Filter>Header Files\Engine\Pass</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

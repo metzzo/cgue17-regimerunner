@@ -20,6 +20,8 @@ namespace Engine {
 
 	void DepthPass::BeforePass()
 	{
+		glClear(GL_DEPTH_BUFFER_BIT);
+
 		DEBUG_OGL(glUseProgram(this->shader->GetProgramId()));
 	}
 

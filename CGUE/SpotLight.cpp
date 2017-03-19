@@ -36,6 +36,6 @@ namespace Engine {
 		this->camera = new Camera(0, near, far, shadowMapSize, shadowMapSize, true);
 		this->GetEntity()->Add(camera);
 
-		camera->EnableRender2Texture(this->shadowMapSize, this->shadowMapSize, DEPTH_PASS_OPERATION);
+		camera->EnableRender2Texture(this->shadowMapSize, this->shadowMapSize);
 	}
 }

@@ -3,11 +3,11 @@
 
 
 namespace Engine {
-	Operation::Operation(Pass *pass, Component *component)
+	Operation::Operation(Component *component)
 	{
 		assert(component != nullptr);
 		this->component = component;
-		this->pass = pass;
+		this->pass = nullptr;
 	}
 
 	Operation::~Operation()
@@ -27,5 +27,10 @@ namespace Engine {
 	Pass* Operation::GetPass() const
 	{
 		return this->pass;
+	}
+
+	void Operation::SetPass(Pass* pass)
+	{
+		this->pass = pass;
 	}
 }

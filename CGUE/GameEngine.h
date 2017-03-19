@@ -11,6 +11,8 @@ namespace Engine {
 	class Camera;
 	class SpotLight;
 	class Pass;
+	class RenderPass;
+	class DepthPass;
 	
 	GLenum glCheckError_(const char *file, int line);
 #define glCheckError() glCheckError_(__FILE__, __LINE__);
@@ -33,13 +35,13 @@ namespace Engine {
 		vector<SpotLight*> lights;
 
 		Pass *updatePass;
-		Pass *depthPass;
+		Pass *cameraPass;
+		DepthPass *depthPass;
+		RenderPass *renderPass;
 
 		virtual void Init();
 		virtual void DeInit();
 		virtual void Render();
-
-		void SortPriorities();
 	public:
 		GameEngine(int width, int height, string programName);
 		virtual ~GameEngine();
@@ -52,6 +54,11 @@ namespace Engine {
 		vector<SpotLight*>& GetLights();
 
 		bool KeyDown(int keyCode);
+
+		RenderPass *GetRenderPass() const;
+		DepthPass *GetDepthPass() const;
+		Pass *GetUpdatePass() const;
+		Pass* GetCameraPass() const;
 
 		void SetMainCamera(Camera *mainCamera);
 		Camera *GetMainCamera() const;

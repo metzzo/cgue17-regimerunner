@@ -5,7 +5,7 @@ namespace Engine {
 	class Pass
 	{
 	protected:
-		vector<Operation*> operations;
+		vector<Operation*>* operations;
 		GameEngine *gameEngine;
 	public:
 		explicit Pass(GameEngine *gameEngine);
@@ -13,7 +13,7 @@ namespace Engine {
 
 		void AddOperation(Operation *operation);
 		// TODO: add RemoveOperation
-		vector<Operation*>& GetOperations();
+		vector<Operation*>& GetOperations() const;
 
 		void DoPass();
 		virtual void BeforePass();

@@ -8,7 +8,7 @@ namespace Engine {
 		Component *component;
 		Pass* pass;
 	public:
-		explicit Operation(Pass *pass, Component *component);
+		explicit Operation(Component *component);
 		virtual ~Operation();
 
 		virtual void Execute() = 0;
@@ -16,5 +16,6 @@ namespace Engine {
 
 		Component *GetComponent() const;
 		Pass *GetPass() const;
+		void SetPass(Pass *pass);
 	};
 }

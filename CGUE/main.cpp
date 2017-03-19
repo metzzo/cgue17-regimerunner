@@ -9,7 +9,6 @@
 #include "glm/gtc/matrix_transform.inl"
 #include "Rotating.h"
 #include "Texture.h"
-#include "Material.h"
 #include "SpotLight.h"
 #include "MeshRenderer.h"
 

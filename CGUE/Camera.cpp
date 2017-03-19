@@ -4,6 +4,8 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtx/transform.hpp"
 #include "glew/glew.h"
+#include "Pass.h"
+#include "RenderPass.h"
 
 namespace Engine {
 	const Camera CameraClass;
@@ -20,25 +22,15 @@ namespace Engine {
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, component->depthMapFbo);
 		}
-		if (component->renderOperation == DEPTH_PASS_OPERATION) {
-			glClear(GL_DEPTH_BUFFER_BIT);
-		} else
-		{
-			glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-		}
 		// TODO: only draw objects that could potentially visible for the camera
-		component->GetEngine()->ProcessQueue(component->renderOperation);
+		component->cameraPass->DoPass();
+
 		if (component->depthMapFbo)
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
 		component->GetEngine()->SetMainCamera(oldMainCamera);
-	}
-
-	OPERATION_TYPE CameraRenderOperation::GetOperationType()
-	{
-		return CAMERA_PASS_OPERATION;
 	}
 
 	int CameraRenderOperation::GetPriority()
@@ -63,8 +55,9 @@ namespace Engine {
 		this->depthMap = 0;
 		this->textureWidth = 0;
 		this->textureHeight = 0;
-		this->renderOperation = RENDER_PASS_OPERATION;
+		this->cameraPass = nullptr;
 		this->upVector = vec3(0.0, 1.0, 0.0);
+		this->r2t = false;
 	}
 
 	Camera::~Camera()
@@ -86,11 +79,16 @@ namespace Engine {
 		return this->near;
 	}
 
-	void Camera::EnableRender2Texture(int textureWidth, int textureHeight, OPERATION_TYPE renderOperation)
+	void Camera::EnableRender2Texture(int textureWidth, int textureHeight)
 	{
-		this->renderOperation = renderOperation;
 		this->textureWidth = textureWidth;
 		this->textureHeight = textureHeight;
+		this->r2t = true;
+	}
+
+	void Camera::SetCameraPass(Pass* pass)
+	{
+		this->cameraPass = pass;
 	}
 
 	void Camera::SetLookAtVector(vec3 lookAt)
@@ -135,7 +133,12 @@ namespace Engine {
 			projectionMatrix = perspective(radians(fov), ratio, near, far);
 		}
 
-		if (this->renderOperation == DEPTH_PASS_OPERATION)
+		if (this->cameraPass == nullptr)
+		{
+			this->cameraPass = GetEngine()->GetRenderPass();
+		}
+
+		if (this->r2t)
 		{
 			// create depth map FBO
 			glGenFramebuffers(1, &this->depthMapFbo);
@@ -155,7 +158,7 @@ namespace Engine {
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
-		GetEngine()->AddOperation(new CameraRenderOperation(this));
+		GetEngine()->GetCameraPass()->AddOperation(new CameraRenderOperation(this));
 	}
 
 	void Camera::TransformationUpdated()

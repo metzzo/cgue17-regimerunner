@@ -121,11 +121,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="DepthPass.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="GameEngine.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Pass.cpp" />
+    <ClCompile Include="RenderPass.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Operation.cpp" />
     <ClCompile Include="Rotating.cpp" />
@@ -138,10 +141,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="DepthPass.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="GameEngine.h" />
-    <ClInclude Include="Material.h" />
+    <ClInclude Include="Pass.h" />
+    <ClInclude Include="RenderPass.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="Operation.h" />
     <ClInclude Include="Rotating.h" />

@@ -6,74 +6,17 @@
 #include "glm/gtx/string_cast.hpp"
 #include <iostream>
 #include "DepthPass.h"
+#include "RenderPass.h"
 
 namespace Engine {
 	void MeshRenderOperation::Execute()
 	{
-		// TODO: hand le case where no light exists
 		auto component = static_cast<MeshRenderer*>(this->GetComponent());
+		auto pass = static_cast<RenderPass*>(this->GetPass());
 
-		auto programId = component->material->GetRenderShader()->GetProgramId();
+		pass->SetDrawingTransform(component->GetTransformation());
 
-		DEBUG_OGL(glUseProgram(programId));
-
-		DEBUG_OGL(glUniform1i(glGetUniformLocation(programId, "diffuseTexture"), 0));
-		DEBUG_OGL(glUniform1i(glGetUniformLocation(programId, "shadowMap"), 1));
-
-		if (component->shaderProjectionId == -2)
-		{
-			component->shaderProjectionId = glGetUniformLocation(programId, "projection");
-		}
-		if (component->shaderViewId == -2) 
-		{
-			component->shaderViewId = glGetUniformLocation(programId, "view");
-		}
-		if (component->shaderModelId == -2)
-		{
-			component->shaderModelId = glGetUniformLocation(programId, "model");
-		}
-		if (component->shaderLightPosId == -2)
-		{
-			component->shaderLightPosId = glGetUniformLocation(programId, "lightPos");
-		}
-		if (component->shaderViewPosId == -2)
-		{
-			component->shaderViewPosId = glGetUniformLocation(programId, "viewPos");
-		}
-		if (component->shaderLightSpaceMatrixId == -2)
-		{
-			component->shaderLightSpaceMatrixId = glGetUniformLocation(programId, "lightSpaceMatrix");
-		}
-
-		// TODO: handle multiple lights properly
-		auto cam = component->GetEngine()->GetMainCamera();
-		// TODO: do not use global spotlight
-		for (auto light : this->GetComponent()->GetEngine()->GetLights())
-		{
-			auto lightSpaceMatrix = light->GetCamera()->GetProjectionViewMatrix();
-			auto lightPos = light->GetTransformation()->GetAbsolutePosition();
-
-			DEBUG_OGL(glUniform3fv(component->shaderLightPosId, 1, &lightPos[0]));
-			DEBUG_OGL(glUniformMatrix4fv(component->shaderLightSpaceMatrixId, 1, GL_FALSE, &lightSpaceMatrix[0][0]));
-
-			DEBUG_OGL(glActiveTexture(GL_TEXTURE1));
-			DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, light->GetCamera()->GetTexture()));
-		}
-
-		auto projection = cam->GetProjectionMatrix();
-		auto view = cam->GetViewMatrix();
-		auto viewPos = cam->GetTransformation()->GetAbsolutePosition();
-		auto model = component->GetTransformation()->GetAbsoluteMatrix();
-
-		DEBUG_OGL(glUniformMatrix4fv(component->shaderProjectionId, 1, GL_FALSE, &projection[0][0]));
-		DEBUG_OGL(glUniformMatrix4fv(component->shaderViewId, 1, GL_FALSE, &view[0][0]));
-		DEBUG_OGL(glUniformMatrix4fv(component->shaderModelId, 1, GL_FALSE, &model[0][0]));
-
-		DEBUG_OGL(glUniform3fv(component->shaderViewPosId, 1, &viewPos[0]));
-
-		DEBUG_OGL(glActiveTexture(GL_TEXTURE0));
 		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, component->texture->GetTextureId()));
-
 		DEBUG_OGL(glBindVertexArray(component->vertexArray));
 		DEBUG_OGL(glDrawArrays(GL_TRIANGLES, 0, component->numVertices));
 		DEBUG_OGL(glBindVertexArray(0));
@@ -236,8 +179,8 @@ namespace Engine {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
-		GetEngine()->AddOperation(new MeshRenderOperation(this));
-		GetEngine()->AddOperation(new DepthRenderOperation(this));
+		GetEngine()->GetRenderPass()->AddOperation(new MeshRenderOperation(this));
+		GetEngine()->GetDepthPass()->AddOperation(new DepthRenderOperation(this));
 	}
 
 	MeshRenderer::MeshRenderer()
@@ -254,18 +197,7 @@ namespace Engine {
 		this->uvBuffer = 0;
 		this->normalBuffer = 0;
 
-		this->shaderDiffuseTextureId = -2;
-		this->shaderProjectionId = -2;
-		this->shaderModelId = -2;
-		this->shaderViewId = -2;
-		this->shaderShadowMapId = -2;
-		this->shaderDiffuseTextureId = -2;
-		this->shaderLightPosId = -2;
-		this->shaderLightSpaceMatrixId = -2;
-		this->shaderViewPosId = -2;
-
 		this->texture = nullptr;
-		this->material = nullptr;
 	}
 
 	MeshRenderer::MeshRenderer(const float* bufferData, int numVertices) : MeshRenderer()

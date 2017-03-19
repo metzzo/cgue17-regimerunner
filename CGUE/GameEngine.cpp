@@ -6,8 +6,9 @@
 #include "glew/glew.h"
 #include <string>
 #include <SDL_image.h>
-#include "Operation.h"
-#include "Shader.h"
+#include "Pass.h"
+#include "RenderPass.h"
+#include "DepthPass.h"
 
 namespace Engine {
 	void checkSDLError(int line = -1) {
@@ -59,18 +60,24 @@ namespace Engine {
 		this->mainCamera = nullptr;
 
 		memset(this->keyStates, 0, sizeof this->keyStates);
+
+
+		this->renderPass = new RenderPass(this);
+		this->updatePass = new Pass(this);
+		this->depthPass = new DepthPass(this);
+		this->cameraPass = new Pass(this);
 	}
 
 
 	GameEngine::~GameEngine()
 	{
-		for (auto i = 0; i < NUM_OPERATIONS; i++)
-		{
-			for (auto &operation : this->operations[i])
-			{
-				delete operation;
-			}
-		}
+		delete updatePass;
+		delete renderPass;
+		delete depthPass;
+
+		delete this->rootEntity;
+
+		// TODO: clear other stuff too
 	}
 
 	void GameEngine::Run()
@@ -80,8 +87,6 @@ namespace Engine {
 		this->rootEntity->Wire();
 
 		this->rootEntity->Init();
-
-		this->SortPriorities();
 		
 		while(!cancelled)
 		{
@@ -109,7 +114,7 @@ namespace Engine {
 				}
 			}
 
-			ProcessQueue(UPDATE_OPERATION);
+			GetUpdatePass()->DoPass();
 
 			this->Render();
 		}
@@ -168,6 +173,25 @@ namespace Engine {
 	bool GameEngine::KeyDown(int keyCode)
 	{
 		return this->keyStates[keyCode];
+	}
+
+	RenderPass* GameEngine::GetRenderPass() const
+	{
+		return renderPass;
+	}
+
+	DepthPass* GameEngine::GetDepthPass() const
+	{
+		return depthPass;
+	}
+
+	Pass* GameEngine::GetUpdatePass() const
+	{
+		return updatePass;
+	}
+	Pass* GameEngine::GetCameraPass() const
+	{
+		return cameraPass;
 	}
 
 
@@ -232,7 +256,10 @@ namespace Engine {
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
 
-		this->defaultShader = new Shader("materials/default_material.vert", "materials/default_material.frag");
+		this->renderPass->Init();
+		this->updatePass->Init();
+		this->depthPass->Init();
+		this->cameraPass->Init();
 	}
 
 	void GameEngine::DeInit()
@@ -244,22 +271,8 @@ namespace Engine {
 
 	void GameEngine::Render()
 	{
-		ProcessQueue(CAMERA_PASS_OPERATION);
+		GetCameraPass()->DoPass();
 		
 		SDL_GL_SwapWindow(this->mainwindow);
-	}
-
-	bool PrioritySortFunc(Operation *a, Operation *b)
-	{
-		return a->GetPriority() < b->GetPriority();
-	}
-
-	void GameEngine::SortPriorities()
-	{
-		for (auto i = 0; i < NUM_OPERATIONS; i++)
-		{
-			auto operations = &this->operations[i];
-			sort(operations->begin(), operations->end(), PrioritySortFunc);
-		}
 	}
 }

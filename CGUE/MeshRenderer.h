@@ -1,7 +1,6 @@
 #pragma once
 #include "Component.h"
 #include "glew/glew.h"
-#include "Material.h"
 #include "Texture.h"
 #include "Operation.h"
 
@@ -15,7 +14,6 @@ namespace Engine {
 		}
 
 		void Execute() override;
-		OPERATION_TYPE GetOperationType() override;
 	};
 
 	class DepthRenderOperation : public Operation
@@ -27,7 +25,6 @@ namespace Engine {
 		}
 
 		void Execute() override;
-		OPERATION_TYPE GetOperationType() override;
 	};
 
 	class MeshRenderer :
@@ -43,16 +40,6 @@ namespace Engine {
 		GLuint normalBuffer;
 
 		Texture *texture;
-
-		GLint shaderProjectionId;
-		GLint shaderDiffuseTextureId;
-		GLint shaderViewId;
-		GLint shaderModelId;
-		GLint shaderShadowMapId;
-		GLint shaderLightPosId;
-		GLint shaderViewPosId;
-		GLint shaderLightSpaceMatrixId;
-
 	protected:
 		float *vertexData;
 		float *colorData;

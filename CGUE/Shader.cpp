@@ -1,11 +1,10 @@
-#include "Material.h"
+#include "Shader.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
 #include <vector>
 
 namespace Engine {
-	const Material MaterialClass;
 
 	Shader::Shader(string vertexShader, string fragmentShader)
 	{

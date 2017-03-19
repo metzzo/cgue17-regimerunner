@@ -15,6 +15,6 @@ namespace Engine {
 		void BeforePass() override;
 		void AfterPass() override;
 		void Init() override;
-		void SetDrawingTransform(Transformation* transformation);
+		void SetDrawingTransform(Transformation* transformation) const;
 	};
 }

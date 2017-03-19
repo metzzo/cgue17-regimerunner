@@ -1,5 +1,5 @@
 #include "Rotating.h"
-
+#include "Pass.h"
 #include "Transformation.h"
 #include "glm/gtc/matrix_transform.inl"
 #include <SDL.h>
@@ -21,13 +21,9 @@ namespace Game {
 		}
 	}
 
-	Engine::OPERATION_TYPE RotatingOperation::GetOperationType()
-	{
-		return Engine::UPDATE_OPERATION;
-	}
 
 	void Rotating::Init()
 	{
-		GetEngine()->AddOperation(new RotatingOperation(this));
+		GetEngine()->GetUpdatePass()->AddOperation(new RotatingOperation(this));
 	}
 }
