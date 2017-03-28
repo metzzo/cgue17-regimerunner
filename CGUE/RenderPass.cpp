@@ -38,7 +38,6 @@ namespace Engine {
 
 		// TODO: handle multiple lights properly
 		auto cam = gameEngine->GetMainCamera();
-		// TODO: do not use global spotlight
 		for (auto light : gameEngine->GetLights())
 		{
 			auto lightSpaceMatrix = light->GetCamera()->GetProjectionViewMatrix();

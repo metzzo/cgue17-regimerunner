@@ -164,6 +164,6 @@ namespace Engine {
 	void Camera::TransformationUpdated()
 	{
 		auto pos = GetTransformation()->GetAbsolutePosition();
-		this->viewMatrix = lookAt(pos, pos + lookAtVector, upVector);
+		this->viewMatrix = lookAt(pos, lookAtVector, upVector);
 	}
 }

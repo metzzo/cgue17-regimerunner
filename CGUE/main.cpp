@@ -139,7 +139,7 @@ int main(int argc, char **argv)
 	engine->GetRootEntity()->CreateChild()->Add(camera);
 	engine->SetMainCamera(camera);
 	camera->GetTransformation()->Translate(vec3(4.0, 3.0, 3.0));
-	camera->SetLookAtVector(-vec3(4.0, 3.0, 3.0));
+	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 
 	auto cube = engine->GetRootEntity()->CreateChild();
 	cube->Add(new Texture("textures/schimon.png"));
@@ -157,7 +157,7 @@ int main(int argc, char **argv)
 	auto spotLight = new SpotLight();
 	light->Add(spotLight);
 	spotLight->GetCamera()->GetTransformation()->Translate(vec3(4.0, 3.0, 3.0));
-	spotLight->GetCamera()->SetLookAtVector(vec3(4.0, 3.0, 3.0));
+	spotLight->GetCamera()->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 
 	engine->Run();
 
