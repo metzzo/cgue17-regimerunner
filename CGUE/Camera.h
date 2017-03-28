@@ -39,12 +39,12 @@ namespace Engine {
 		bool ortho;
 
 		GLuint depthMapFbo;
+		GLuint depthMap;
 		int textureWidth;
 		int textureHeight;
 		bool r2t;
 		Pass* cameraPass;
 	public:
-		GLuint depthMap; // TODO: not public
 
 		explicit Camera(float fov = 45.0f, float near = 0.1f, float far=100.0f, int width=640, int height=480, bool ortho = false);
 		~Camera();

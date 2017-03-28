@@ -144,14 +144,20 @@ int main(int argc, char **argv)
 	auto cube = engine->GetRootEntity()->CreateChild();
 	cube->Add(new Texture("textures/schimon.png"));
 	cube->Add((new MeshRenderer(bufferData, 3 * 2 * 6))->SetVertexColorData(colorData)->SetUVData(uvData));
+	//cube->Add(new Game::Rotating());
+
+	cube = engine->GetRootEntity()->CreateChild();
+	cube->Add(new Texture("textures/schimon.png"));
+	cube->Add((new MeshRenderer(bufferData, 3 * 2 * 6))->SetVertexColorData(colorData)->SetUVData(uvData));
 	cube->Add(new Game::Rotating());
+	cube->GetTransformation()->Translate(vec3(2.0f, .3f, 0.4f));
 
 	
 	auto light = engine->GetRootEntity()->CreateChild();
 	auto spotLight = new SpotLight();
 	light->Add(spotLight);
 	spotLight->GetCamera()->GetTransformation()->Translate(vec3(4.0, 3.0, 3.0));
-	spotLight->GetCamera()->SetLookAtVector(-vec3(4.0, 3.0, 3.0));
+	spotLight->GetCamera()->SetLookAtVector(vec3(4.0, 3.0, 3.0));
 
 	engine->Run();
 
