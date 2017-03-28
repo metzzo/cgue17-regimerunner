@@ -10,7 +10,7 @@
 #include "Rotating.h"
 #include "Texture.h"
 #include "SpotLight.h"
-#include "MeshRenderer.h"
+#include "Model.h"
 
 using namespace Engine;
 
@@ -143,12 +143,12 @@ int main(int argc, char **argv)
 
 	auto cube = engine->GetRootEntity()->CreateChild();
 	cube->Add(new Texture("textures/schimon.png"));
-	cube->Add((new MeshRenderer(bufferData, 3 * 2 * 6))->SetVertexColorData(colorData)->SetUVData(uvData));
+	cube->Add((new Model(bufferData, 3 * 2 * 6))->SetVertexColorData(colorData)->SetUVData(uvData));
 	//cube->Add(new Game::Rotating());
 
 	cube = engine->GetRootEntity()->CreateChild();
 	cube->Add(new Texture("textures/schimon.png"));
-	cube->Add((new MeshRenderer(bufferData, 3 * 2 * 6))->SetVertexColorData(colorData)->SetUVData(uvData));
+	cube->Add((new Model(bufferData, 3 * 2 * 6))->SetVertexColorData(colorData)->SetUVData(uvData));
 	cube->Add(new Game::Rotating());
 	cube->GetTransformation()->Translate(vec3(2.0f, .3f, 0.4f));
 
