@@ -68,4 +68,9 @@ namespace Engine {
 	{
 		SetRelativeMatrix(translate(relativeTransform, move));
 	}
+
+	void Transformation::Scale(vec3 size)
+	{
+		SetRelativeMatrix(scale(relativeTransform, size));
+	}
 }

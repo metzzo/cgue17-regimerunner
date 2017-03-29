@@ -1,10 +1,9 @@
 #include "Texture.h"
 #include <SDL_image.h>
 #include <cassert>
+#include <iostream>
 
 namespace Engine {
-	const Texture TextureClass;
-
 	Texture::Texture()
 	{
 		// do NOT use this implementation on your own
@@ -30,7 +29,7 @@ namespace Engine {
 		this->sdlImage = IMG_Load(filename.c_str());
 		if (!this->sdlImage)
 		{
-			GetEngine()->RaiseEngineError("Could not load image " + filename);
+			RaiseEngineError("Could not load image");
 		}
 
 		glGenTextures(1, &this->textureId);
@@ -55,5 +54,10 @@ namespace Engine {
 	GLuint Texture::GetTextureId() const
 	{
 		return this->textureId;
+	}
+
+	string& Texture::GetFileName()
+	{
+		return filename;
 	}
 }

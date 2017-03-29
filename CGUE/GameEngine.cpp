@@ -48,6 +48,12 @@ namespace Engine {
 		return errorCode;
 	}
 
+	void RaiseEngineError(const string error)
+	{
+		cout << "Engine Error: " << error << endl;
+		getchar();
+		exit(1);
+	}
 
 	GameEngine::GameEngine(int width, int height, const string programName)
 	{
@@ -152,14 +158,6 @@ namespace Engine {
 		return this->height;
 	}
 
-	void GameEngine::RaiseEngineError(const string error)
-	{
-		cout << "Engine Error: " << error << endl;
-		getchar();
-		this->DeInit();
-		exit(1);
-	}
-
 	void GameEngine::AddLight(SpotLight* spotLight)
 	{
 		this->lights.push_back(spotLight);
@@ -199,14 +197,14 @@ namespace Engine {
 	{
 		if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		{
-			this->RaiseEngineError("Unable to initialize SDL: " + string(SDL_GetError()));
+			RaiseEngineError("Unable to initialize SDL: " + string(SDL_GetError()));
 		}
 
 		// load support for the JPG and PNG image formats
 		auto flags = IMG_INIT_JPG | IMG_INIT_PNG;
 		auto initted = IMG_Init(flags);
 		if ((initted&flags) != flags) {
-			this->RaiseEngineError("IMG_Init: Failed to init required jpg and png support: %s" + string(IMG_GetError()));
+			RaiseEngineError("IMG_Init: Failed to init required jpg and png support: %s" + string(IMG_GetError()));
 		}
 
 		// set opengl versions
@@ -233,7 +231,7 @@ namespace Engine {
 
 		if (!this->mainwindow)
 		{
-			this->RaiseEngineError("Unable to create window: " + string(SDL_GetError()));
+			RaiseEngineError("Unable to create window: " + string(SDL_GetError()));
 		}
 		checkSDLError(__LINE__);
 
@@ -244,7 +242,7 @@ namespace Engine {
 		auto error = glewInit();
 		if (GLEW_OK != error)
 		{
-			this->RaiseEngineError("Glew init error: " + to_string(error));
+			RaiseEngineError("Glew init error: " + to_string(error));
 		}
 
 		SDL_GL_SetSwapInterval(1);

@@ -3,6 +3,8 @@
 #include "GameEngine.h"
 #include "SpotLight.h"
 #include "Camera.h"
+#include <string>
+#include <sstream>
 
 namespace Engine {
 	RenderPass::RenderPass(GameEngine *gameEngine) : Pass(gameEngine)
@@ -88,5 +90,21 @@ namespace Engine {
 	void RenderPass::SetDrawingTransform(Transformation* transformation) const
 	{
 		DEBUG_OGL(glUniformMatrix4fv(this->shaderModelId, 1, GL_FALSE, &transformation->GetAbsoluteMatrix()[0][0]));
+	}
+
+	GLint RenderPass::GetDiffuseUniform(int number) const
+	{
+		// TODO: cache result
+		std::ostringstream out;
+		out << "texture_diffuse" << number;
+		return glGetUniformLocation(shader->GetProgramId(), out.str().c_str());
+	}
+
+	GLint RenderPass::GetSpecularUniform(int number) const
+	{
+		// TODO: cache result
+		std::ostringstream out;
+		out << "texture_specular" << number;
+		return glGetUniformLocation(shader->GetProgramId(), out.str().c_str());
 	}
 }

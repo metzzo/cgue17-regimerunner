@@ -1,4 +1,5 @@
 #include "Pass.h"
+#include <algorithm>
 
 
 namespace Engine {

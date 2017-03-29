@@ -5,6 +5,10 @@
 #include "Operation.h"
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+#include <vector>
 
 using namespace glm;
 
@@ -41,23 +45,29 @@ namespace Engine {
 		vec3 Position;
 		vec3 Normal;
 		vec2 TexCoords;
+		vec3 Tangent;
+		vec3 Bitangent;
 	};
 	class Model;
 
 	class Mesh
 	{
 		friend Model;
+		friend MeshRenderOperation;
+		friend DepthRenderOperation;
 
 		GLuint VAO, VBO, EBO;
 
 		vector<Vertex> vertices;
 		vector<GLuint> indices;
-		vector<GLuint> diffuseTexture;
-		vector<GLuint> specularTexture;
+		vector<Texture*> diffuseTexture;
+		vector<Texture*> specularTexture;
+		vector<Texture*> normalTexture;
+		vector<Texture*> heightTexture;
 
-		void SetUp();
+		void Init();
 	public:
-		Mesh(vector<Vertex> vertices, vector<GLuint> indices, vector<GLuint> diffuseTexture, vector<GLuint> specularTexture);
+		Mesh(vector<Vertex> vertices, vector<GLuint> indices, vector<Texture*> diffuseTexture, vector<Texture*> specularTexture, vector<Texture*> normalTexture, vector<Texture*> heightTexture);
 		~Mesh();
 
 	};
@@ -65,18 +75,20 @@ namespace Engine {
 	class Model :
 		public Component
 	{
-		friend MeshRenderOperation;
-		friend DepthRenderOperation;
+		vector<Mesh*> meshes;
+		string directory;
+		vector<Texture*> textures_loaded;
+		string path;
 
-		vector<Mesh> meshes;
-
-		Texture *texture;
-	protected:
-
-
+		void ProcessNode(aiNode* node, const aiScene* scene);
+		Mesh *ProcessMesh(aiMesh* mesh, const aiScene* scene);
+		vector<Texture*> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName);
 	public:
 		Model();
+		explicit Model(string path);
 		~Model();
+
+		void LoadModel(string path);
 
 		void Init() override;
 		void Wire() override;

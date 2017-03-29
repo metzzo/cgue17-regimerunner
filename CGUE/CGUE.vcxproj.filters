@@ -37,6 +37,12 @@
     <Filter Include="Header Files\Engine\Pass">
       <UniqueIdentifier>{977409aa-353b-4129-9a85-616231faa047}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine\Resource">
+      <UniqueIdentifier>{7611b841-95fd-4523-8c32-28cea0636423}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Resource">
+      <UniqueIdentifier>{60771bac-1c9a-4381-80cd-e3045b537ca3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -54,17 +60,11 @@
     <ClCompile Include="Rotating.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files\Engine\Component</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
     <ClCompile Include="Operation.cpp">
       <Filter>Source Files\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshRenderer.cpp">
-      <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
     <ClCompile Include="SpotLight.cpp">
       <Filter>Source Files\Engine\Component</Filter>
@@ -84,6 +84,12 @@
     <ClCompile Include="RenderPass.cpp">
       <Filter>Source Files\Engine\Pass</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files\Engine\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -101,13 +107,7 @@
     <ClInclude Include="Rotating.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files\Engine\Component</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Header Files\Engine\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshRenderer.h">
       <Filter>Header Files\Engine\Component</Filter>
     </ClInclude>
     <ClInclude Include="Operation.h">
@@ -130,6 +130,12 @@
     </ClInclude>
     <ClInclude Include="RenderPass.h">
       <Filter>Header Files\Engine\Pass</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files\Engine\Component</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -22,5 +22,7 @@ namespace Engine {
 		void AfterPass() override;
 		void Init() override;
 		void SetDrawingTransform(Transformation* transformation) const;
+		GLint GetDiffuseUniform(int number) const;
+		GLint GetSpecularUniform(int number) const;
 	};
 }

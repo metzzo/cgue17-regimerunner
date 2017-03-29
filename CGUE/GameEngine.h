@@ -1,7 +1,8 @@
 #pragma once
 #include "packages/sdl2.v140.2.0.4/build/native/include/SDL_video.h"
-#include <queue>
 #include "glew/glew.h"
+#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -13,6 +14,8 @@ namespace Engine {
 	class Pass;
 	class RenderPass;
 	class DepthPass;
+
+	void RaiseEngineError(const string error);
 	
 	GLenum glCheckError_(const char *file, int line);
 #define glCheckError() glCheckError_(__FILE__, __LINE__);
@@ -47,7 +50,6 @@ namespace Engine {
 		virtual ~GameEngine();
 
 		void Run();
-		void RaiseEngineError(const string error);
 
 		void AddLight(SpotLight* spotLight);
 		// TODO: add RemoveLight

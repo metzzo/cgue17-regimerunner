@@ -77,7 +77,7 @@ namespace Engine {
 				}
 			}
 			if (force) {
-				this->GetEngine()->RaiseEngineError("Could not WireUp Renderer " + string(name));
+				RaiseEngineError("Could not WireUp Renderer " + string(name));
 			}
 		}
 	}

@@ -4,8 +4,7 @@
 #include "glew/glew.h"
 
 namespace Engine {
-	class Texture :
-		public Component
+	class Texture
 	{
 		string filename;
 		SDL_Surface* sdlImage;
@@ -15,9 +14,8 @@ namespace Engine {
 		explicit Texture(string filename);
 		~Texture();
 
-		void Init() override;
+		void Init();
 		GLuint GetTextureId() const;
+		string& GetFileName();
 	};
-
-	extern const Texture TextureClass;
 }
