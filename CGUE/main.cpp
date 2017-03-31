@@ -11,12 +11,14 @@
 #include "Texture.h"
 #include "SpotLight.h"
 #include "Model.h"
+#include "ModelResource.h"
 
 using namespace Engine;
 
 int main(int argc, char **argv)
 {
 	auto engine = new GameEngine(640, 480, string("CGUE"));
+	auto modelResource = new ModelResource("objects/nanosuit/nanosuit.obj");
 
 	auto camera = new Camera(45.0f, 0.1f, 100.0f, 640, 480);
 	engine->GetRootEntity()->CreateChild()->Add(camera);
@@ -25,12 +27,12 @@ int main(int argc, char **argv)
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 
 	auto cube = engine->GetRootEntity()->CreateChild();
-	cube->Add(new Model("objects/nanosuit/nanosuit.obj"));
+	cube->Add(new Model(modelResource));
 	cube->GetTransformation()->Scale(vec3(0.1f, 0.1f, 0.1f));
 	//cube->Add(new Game::Rotating());
 
 	cube = engine->GetRootEntity()->CreateChild();
-	cube->Add(new Model("objects/nanosuit/nanosuit.obj"));
+	cube->Add(new Model(modelResource));
 	cube->Add(new Game::Rotating());
 	cube->GetTransformation()->Translate(vec3(2.0f, .3f, 0.4f));
 	cube->GetTransformation()->Scale(vec3(0.1f, 0.1f, 0.1f));
@@ -43,6 +45,7 @@ int main(int argc, char **argv)
 
 	engine->Run();
 
+	delete modelResource;
 	delete engine;
 
 	return 0;

@@ -90,6 +90,9 @@
     <ClCompile Include="Model.cpp">
       <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
+    <ClCompile Include="ModelResource.cpp">
+      <Filter>Source Files\Engine\Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -136,6 +139,9 @@
     </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Header Files\Engine\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelResource.h">
+      <Filter>Header Files\Engine\Resource</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
