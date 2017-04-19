@@ -3,7 +3,10 @@
 #include "glew/glew.h"
 #include <string>
 #include <vector>
+#include <ctype.h>
+#include "PxPhysicsAPI.h"
 
+using namespace physx;
 using namespace std;
 
 namespace Engine {
@@ -41,6 +44,15 @@ namespace Engine {
 		Pass *cameraPass;
 		DepthPass *depthPass;
 		RenderPass *renderPass;
+
+		PxDefaultAllocator		allocator;
+		PxDefaultErrorCallback	errorCallback;
+
+		PxFoundation*			foundation;
+		PxPhysics*				physics;
+
+		PxDefaultCpuDispatcher*	dispatcher;
+		PxScene*				scene;
 
 		virtual void Init();
 		virtual void DeInit();

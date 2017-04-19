@@ -10,6 +10,7 @@
 #include "RenderPass.h"
 #include "DepthPass.h"
 
+
 namespace Engine {
 	void checkSDLError(int line = -1) {
 #ifndef NDEBUG
@@ -66,6 +67,11 @@ namespace Engine {
 		this->mainCamera = nullptr;
 
 		memset(this->keyStates, 0, sizeof this->keyStates);
+
+		this->foundation = nullptr;
+		this->dispatcher = nullptr;
+		this->scene = nullptr;
+		this->physics = nullptr;
 
 
 		this->renderPass = new RenderPass(this);
@@ -253,6 +259,16 @@ namespace Engine {
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
+
+		// init physics
+		foundation = PxCreateFoundation(PX_FOUNDATION_VERSION, this->allocator, this->errorCallback);
+		physics = PxCreatePhysics(PX_PHYSICS_VERSION, *this->foundation, PxTolerancesScale(), true, nullptr);
+		PxSceneDesc sceneDesc(this->physics->getTolerancesScale());
+		sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
+		this->dispatcher = PxDefaultCpuDispatcherCreate(2);
+		sceneDesc.cpuDispatcher = this->dispatcher;
+		sceneDesc.filterShader = PxDefaultSimulationFilterShader;
+		this->scene = this->physics->createScene(sceneDesc);
 
 		this->renderPass->Init();
 		this->updatePass->Init();
