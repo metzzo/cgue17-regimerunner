@@ -1,30 +1,20 @@
-#include "Texture.h"
+#include "TextureResource.h"
 #include <SDL_image.h>
-#include <cassert>
-#include <iostream>
 
 namespace Engine {
-	Texture::Texture()
+	TextureResource::TextureResource(string filename) : BaseResource(filename)
 	{
-		// do NOT use this implementation on your own
 		this->sdlImage = nullptr;
 		this->textureId = 0;
 	}
 
-	Texture::Texture(string filename)
+
+	TextureResource::~TextureResource()
 	{
-		this->sdlImage = nullptr;
-		this->filename = filename;
-		this->textureId = 0;
+		// TODO: free resources
 	}
 
-
-	Texture::~Texture()
-	{
-
-	}
-
-	void Texture::Init()
+	void TextureResource::Load()
 	{
 		this->sdlImage = IMG_Load(filename.c_str());
 		if (!this->sdlImage)
@@ -51,13 +41,8 @@ namespace Engine {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	GLuint Texture::GetTextureId() const
+	GLuint TextureResource::GetTextureId() const
 	{
 		return this->textureId;
-	}
-
-	string& Texture::GetFileName()
-	{
-		return filename;
 	}
 }

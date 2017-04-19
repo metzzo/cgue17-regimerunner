@@ -2,9 +2,13 @@
 #include <iostream>
 
 namespace Engine {
-	ModelResource::ModelResource(string path)
+	string ModelResource::GetDirectory() const
 	{
-		this->path = path;
+		return filename.substr(0, filename.find_last_of('/'));;
+	}
+
+	ModelResource::ModelResource(string filename) : BaseResource(filename)
+	{
 		this->initialized = false;
 	}
 
@@ -17,26 +21,17 @@ namespace Engine {
 		}
 	}
 
-	void ModelResource::Init()
+	void ModelResource::Load()
 	{
-		if (initialized)
-		{
-			return;
-		}
-		initialized = true;
-
 		// Read file via ASSIMP
 		Assimp::Importer importer;
-		auto scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+		auto scene = importer.ReadFile(filename, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 		// Check for errors
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 		{
 			cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
 			return;
 		}
-		// Retrieve the directory path of the filepath
-		this->directory = path.substr(0, path.find_last_of('/'));
-
 		// Process ASSIMP's root node recursively
 		this->ProcessNode(scene->mRootNode, scene);
 
@@ -148,9 +143,9 @@ namespace Engine {
 		return engineMesh;
 	}
 
-	vector<Texture*> ModelResource::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName)
+	vector<TextureResource*> ModelResource::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName)
 	{
-		vector<Texture*> textures;
+		vector<TextureResource*> textures;
 		for (GLuint i = 0; i < mat->GetTextureCount(type); i++)
 		{
 			aiString str;
@@ -169,9 +164,9 @@ namespace Engine {
 			if (!skip)
 			{   // If texture hasn't been loaded already, load it
 				auto filename = string(str.C_Str());
-				filename = directory + '/' + filename;
+				filename = GetDirectory() + '/' + filename;
 
-				auto texture = new Texture(filename);
+				auto texture = new TextureResource(filename);
 				texture->Init();
 				textures.push_back(texture);
 				this->textures_loaded.push_back(texture);  // Store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.

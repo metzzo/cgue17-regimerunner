@@ -120,6 +120,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BaseResource.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DepthPass.cpp" />
     <ClCompile Include="Entity.cpp" />
@@ -134,13 +135,14 @@
     <ClCompile Include="Operation.cpp" />
     <ClCompile Include="Rotating.cpp" />
     <ClCompile Include="SpotLight.cpp" />
-    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureResource.cpp" />
     <ClCompile Include="Transformation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseResource.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DepthPass.h" />
     <ClInclude Include="Entity.h" />
@@ -154,7 +156,7 @@
     <ClInclude Include="Operation.h" />
     <ClInclude Include="Rotating.h" />
     <ClInclude Include="SpotLight.h" />
-    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureResource.h" />
     <ClInclude Include="Transformation.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

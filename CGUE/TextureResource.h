@@ -2,20 +2,18 @@
 #include "Component.h"
 #include "packages/sdl2.v140.2.0.4/build/native/include/SDL_surface.h"
 #include "glew/glew.h"
+#include "BaseResource.h"
 
 namespace Engine {
-	class Texture
+	class TextureResource : public BaseResource
 	{
-		string filename;
 		SDL_Surface* sdlImage;
 		GLuint textureId;
 	public:
-		Texture();
-		explicit Texture(string filename);
-		~Texture();
+		explicit TextureResource(string filename);
+		~TextureResource();
 
-		void Init();
+		void Load() override;
 		GLuint GetTextureId() const;
-		string& GetFileName();
 	};
 }

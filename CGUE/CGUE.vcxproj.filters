@@ -84,13 +84,16 @@
     <ClCompile Include="RenderPass.cpp">
       <Filter>Source Files\Engine\Pass</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files\Engine\Resource</Filter>
-    </ClCompile>
     <ClCompile Include="Model.cpp">
       <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
     <ClCompile Include="ModelResource.cpp">
+      <Filter>Source Files\Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseResource.cpp">
+      <Filter>Source Files\Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureResource.cpp">
       <Filter>Source Files\Engine\Resource</Filter>
     </ClCompile>
   </ItemGroup>
@@ -134,13 +137,16 @@
     <ClInclude Include="RenderPass.h">
       <Filter>Header Files\Engine\Pass</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files\Engine\Resource</Filter>
-    </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Header Files\Engine\Component</Filter>
     </ClInclude>
     <ClInclude Include="ModelResource.h">
+      <Filter>Header Files\Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureResource.h">
+      <Filter>Header Files\Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseResource.h">
       <Filter>Header Files\Engine\Resource</Filter>
     </ClInclude>
   </ItemGroup>

@@ -7,7 +7,8 @@
 #include "glm/vec3.hpp"
 #include <vector>
 
-#include "Texture.h"
+#include "TextureResource.h"
+#include "BaseResource.h"
 
 using namespace glm;
 
@@ -35,29 +36,29 @@ namespace Engine {
 
 		vector<Vertex> vertices;
 		vector<GLuint> indices;
-		vector<Texture*> diffuseTexture;
-		vector<Texture*> specularTexture;
-		vector<Texture*> normalTexture;
-		vector<Texture*> heightTexture;
+		vector<TextureResource*> diffuseTexture;
+		vector<TextureResource*> specularTexture;
+		vector<TextureResource*> normalTexture;
+		vector<TextureResource*> heightTexture;
 	};
 
-	class ModelResource
+	class ModelResource : public BaseResource
 	{
 		vector<Mesh*> meshes;
-		string directory;
-		vector<Texture*> textures_loaded;
-		string path;
+		vector<TextureResource*> textures_loaded;
 
 		void ProcessNode(aiNode* node, const aiScene* scene);
 		Mesh *ProcessMesh(aiMesh* mesh, const aiScene* scene);
-		vector<Texture*> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName);
+		vector<TextureResource*> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName);
 
 		bool initialized;
+
+		string GetDirectory() const;
 	public:
-		explicit ModelResource(string path);
+		explicit ModelResource(string filename);
 		~ModelResource();
 
-		void Init();
+		void Load() override;
 
 		vector<Mesh*>& GetMeshes();
 	};

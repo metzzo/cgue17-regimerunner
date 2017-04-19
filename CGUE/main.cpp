@@ -8,7 +8,6 @@
 #include "Transformation.h"
 #include "glm/gtc/matrix_transform.inl"
 #include "Rotating.h"
-#include "Texture.h"
 #include "SpotLight.h"
 #include "Model.h"
 #include "ModelResource.h"
