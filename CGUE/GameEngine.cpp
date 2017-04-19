@@ -255,7 +255,7 @@ namespace Engine {
 
 		cout << "Using OpenGL Version: " << glGetString(GL_VERSION) << endl;
 
-		glClearColor(0.0, 0.0, 1.0, 1.0);
+		glClearColor(0.0, 0.0, 0.0, 1.0);
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);

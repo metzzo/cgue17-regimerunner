@@ -19,6 +19,7 @@ namespace Engine {
 		this->sdlImage = IMG_Load(filename.c_str());
 		if (!this->sdlImage)
 		{
+			return;
 			RaiseEngineError("Could not load image");
 		}
 

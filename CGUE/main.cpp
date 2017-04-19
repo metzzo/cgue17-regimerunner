@@ -16,25 +16,19 @@ using namespace Engine;
 
 int main(int argc, char **argv)
 {
-	auto engine = new GameEngine(640, 480, string("CGUE"));
-	auto modelResource = new ModelResource("objects/nanosuit/nanosuit.obj");
+	auto engine = new GameEngine(1024, 640, string("CGUE"));
+	auto modelResource = new ModelResource("objects/mapobj.obj");
 
-	auto camera = new Camera(45.0f, 0.1f, 100.0f, 640, 480);
+	auto camera = new Camera(45.0f, 0.1f, 100.0f, 1024, 640);
 	engine->GetRootEntity()->CreateChild()->Add(camera);
 	engine->SetMainCamera(camera);
-	camera->GetTransformation()->Translate(vec3(4.0, 3.0, 3.0));
+	camera->GetTransformation()->Translate(vec3(6.0, 2.0, 1.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 
 	auto cube = engine->GetRootEntity()->CreateChild();
 	cube->Add(new Model(modelResource));
 	cube->GetTransformation()->Scale(vec3(0.1f, 0.1f, 0.1f));
 	//cube->Add(new Game::Rotating());
-
-	cube = engine->GetRootEntity()->CreateChild();
-	cube->Add(new Model(modelResource));
-	cube->Add(new Game::Rotating());
-	cube->GetTransformation()->Translate(vec3(2.0f, .3f, 0.4f));
-	cube->GetTransformation()->Scale(vec3(0.1f, 0.1f, 0.1f));
 	
 	auto light = engine->GetRootEntity()->CreateChild();
 	auto spotLight = new SpotLight();
