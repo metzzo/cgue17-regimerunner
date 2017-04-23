@@ -56,6 +56,7 @@ namespace Engine {
 		void SetCameraPass(Pass *pass);
 
 		void SetLookAtVector(vec3 lookAt);
+		vec3 GetLookAtVector();
 		mat4x4 GetViewMatrix() const;
 		mat4x4 GetProjectionMatrix() const;
 		mat4x4 GetProjectionViewMatrix() const;

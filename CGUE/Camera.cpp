@@ -6,6 +6,7 @@
 #include "glew/glew.h"
 #include "Pass.h"
 #include "RenderPass.h"
+#include <SDL.h>
 
 namespace Engine {
 	const Camera CameraClass;
@@ -29,6 +30,25 @@ namespace Engine {
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
+
+		// CAMERA MOVEMENT
+
+
+			auto mat = component->GetTransformation()->GetRelativeMatrix();
+
+			GLfloat cameraSpeed = 1.0f;
+			if (component->GetEngine()->KeyDown(SDL_SCANCODE_UP))
+				mat = glm::translate(mat, vec3(-cameraSpeed, 0.0f, 0.0f));
+			if (component->GetEngine()->KeyDown(SDL_SCANCODE_DOWN))
+				mat = glm::translate(mat, vec3(cameraSpeed, 0.0f, 0.0f));
+			if (component->GetEngine()->KeyDown(SDL_SCANCODE_LEFT))
+				mat = glm::translate(mat, vec3(0.0f, 0.0f, -cameraSpeed));
+			if (component->GetEngine()->KeyDown(SDL_SCANCODE_RIGHT))
+				mat = glm::translate(mat, vec3(0.0f, 0.0f, cameraSpeed));
+
+			//auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+			component->GetTransformation()->SetRelativeMatrix(mat);
+		
 
 		component->GetEngine()->SetMainCamera(oldMainCamera);
 	}
@@ -57,7 +77,7 @@ namespace Engine {
 		this->textureHeight = 0;
 		this->cameraPass = nullptr;
 		this->upVector = vec3(0.0, 1.0, 0.0);
-		this->r2t = false;
+		this->r2t = false;		
 	}
 
 	Camera::~Camera()
@@ -95,6 +115,10 @@ namespace Engine {
 	{
 		this->lookAtVector = lookAt;
 		this->TransformationUpdated();
+	}
+
+	vec3 Camera::GetLookAtVector() {
+		return this->lookAtVector;
 	}
 
 	mat4x4 Camera::GetViewMatrix() const

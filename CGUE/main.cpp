@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 	engine->GetRootEntity()->CreateChild()->Add(camera);
 	engine->SetMainCamera(camera);
 	camera->GetTransformation()->Translate(vec3(6.0, 2.0, 1.0));
-	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
+	camera->SetLookAtVector(vec3(0.0, 1.0, 0.0));
 
 	auto cube = engine->GetRootEntity()->CreateChild();
 	cube->Add(new Model(modelResource));
