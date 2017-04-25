@@ -6,6 +6,7 @@
 #include "glew/glew.h"
 #include "Pass.h"
 #include "RenderPass.h"
+#include <iostream>
 #include <SDL.h>
 
 namespace Engine {
@@ -33,9 +34,20 @@ namespace Engine {
 
 		// CAMERA MOVEMENT
 
-			//auto mat = component->GetTransformation()->GetRelativeMatrix();
+			auto relmat = component->GetTransformation()->GetRelativeMatrix();
 			auto cam = component->GetEngine()->GetMainCamera();
 			auto mat = cam->GetViewMatrix();
+			auto lookAt = cam->GetLookAtVector();
+
+			auto mousex = component->GetEngine()->GetMouseXOffset();
+			auto mousey = component->GetEngine()->GetMouseYOffset();
+
+			glm::vec3 front;
+			front.x = cos(glm::radians(mousex)) * cos(glm::radians(mousey));
+			front.y = sin(glm::radians(mousey));
+			front.z = sin(glm::radians(mousex)) * cos(glm::radians(mousey));
+			glm::vec3 cameraFront = glm::normalize(front);
+
 
 			GLfloat cameraSpeed = 1.0f;
 			if (component->GetEngine()->KeyDown(SDL_SCANCODE_DOWN))
@@ -46,10 +58,13 @@ namespace Engine {
 				mat = glm::translate(mat, vec3(0.0f, 0.0f, -cameraSpeed));
 			if (component->GetEngine()->KeyDown(SDL_SCANCODE_RIGHT))
 				mat = glm::translate(mat, vec3(0.0f, 0.0f, cameraSpeed));
+			
+			vec3 camerapos(mat[3]);
+			auto view = glm::lookAt(camerapos, cameraFront, cam->upVector);
 
-			//auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-			//component->GetTransformation()->SetRelativeMatrix(mat);
+
 			cam->SetViewMatrix(mat);
+
 		
 
 		component->GetEngine()->SetMainCamera(oldMainCamera);

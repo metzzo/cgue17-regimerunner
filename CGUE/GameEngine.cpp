@@ -61,7 +61,10 @@ namespace Engine {
 		this->cancelled = false;
 		this->width = width;
 		this->height = height;
-
+		this->mousexold = 0;
+		this->mouseyold = 0;
+		this->mousexoffset = 0;
+		this->mouseyoffset = 0;
 		this->rootEntity = new Entity(this);
 		this->mainCamera = nullptr;
 
@@ -115,9 +118,17 @@ namespace Engine {
 						this->keyStates[e.key.keysym.scancode] = false;
 					}
 					break;
+				case SDL_MOUSEMOTION:
+					this->mousexoffset += e.motion.xrel - this->mousexold;
+					this->mouseyoffset += this->mouseyold - e.motion.yrel;
+					this->mousexold = e.motion.xrel;
+					this->mouseyold = e.motion.yrel;
+					break;
 				default:
 					break;
 				}
+
+				
 			}
 
 			GetUpdatePass()->DoPass();
@@ -272,5 +283,13 @@ namespace Engine {
 		GetCameraPass()->DoPass();
 		
 		SDL_GL_SwapWindow(this->mainwindow);
+	}
+
+	float GameEngine::GetMouseXOffset() {
+		return this->mousexoffset;
+	}
+
+	float GameEngine::GetMouseYOffset() {
+		return this->mouseyoffset;
 	}
 }

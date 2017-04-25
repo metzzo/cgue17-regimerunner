@@ -33,6 +33,10 @@ namespace Engine {
 		Camera* mainCamera;
 		int width;
 		int height;
+		float mousexold;
+		float mouseyold;
+		float mousexoffset;
+		float mouseyoffset;
 		bool keyStates[322];
 
 		vector<SpotLight*> lights;
@@ -68,6 +72,8 @@ namespace Engine {
 		Entity *GetRootEntity() const;
 		int GetScreenWidth() const;
 		int GetScreenHeight() const;
+		float GetMouseXOffset();
+		float GetMouseYOffset();
 	};
 
 }
