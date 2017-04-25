@@ -33,13 +33,14 @@ namespace Engine {
 
 		// CAMERA MOVEMENT
 
-
-			auto mat = component->GetTransformation()->GetRelativeMatrix();
+			//auto mat = component->GetTransformation()->GetRelativeMatrix();
+			auto cam = component->GetEngine()->GetMainCamera();
+			auto mat = cam->GetViewMatrix();
 
 			GLfloat cameraSpeed = 1.0f;
-			if (component->GetEngine()->KeyDown(SDL_SCANCODE_UP))
-				mat = glm::translate(mat, vec3(-cameraSpeed, 0.0f, 0.0f));
 			if (component->GetEngine()->KeyDown(SDL_SCANCODE_DOWN))
+				mat = glm::translate(mat, vec3(-cameraSpeed, 0.0f, 0.0f));
+			if (component->GetEngine()->KeyDown(SDL_SCANCODE_UP))
 				mat = glm::translate(mat, vec3(cameraSpeed, 0.0f, 0.0f));
 			if (component->GetEngine()->KeyDown(SDL_SCANCODE_LEFT))
 				mat = glm::translate(mat, vec3(0.0f, 0.0f, -cameraSpeed));
@@ -47,7 +48,8 @@ namespace Engine {
 				mat = glm::translate(mat, vec3(0.0f, 0.0f, cameraSpeed));
 
 			//auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-			component->GetTransformation()->SetRelativeMatrix(mat);
+			//component->GetTransformation()->SetRelativeMatrix(mat);
+			cam->SetViewMatrix(mat);
 		
 
 		component->GetEngine()->SetMainCamera(oldMainCamera);
@@ -124,6 +126,11 @@ namespace Engine {
 	mat4x4 Camera::GetViewMatrix() const
 	{
 		return this->viewMatrix;
+	}
+
+	void Camera::SetViewMatrix(mat4x4 mat)
+	{
+		this->viewMatrix = mat;
 	}
 
 	mat4x4 Camera::GetProjectionMatrix() const

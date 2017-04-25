@@ -58,6 +58,7 @@ namespace Engine {
 		void SetLookAtVector(vec3 lookAt);
 		vec3 GetLookAtVector();
 		mat4x4 GetViewMatrix() const;
+		void SetViewMatrix(mat4x4 mat);
 		mat4x4 GetProjectionMatrix() const;
 		mat4x4 GetProjectionViewMatrix() const;
 		GLuint GetTexture() const;
