@@ -126,6 +126,8 @@ namespace Engine {
 				}
 			}
 
+			UpdatePhysics();
+
 			GetUpdatePass()->DoPass();
 
 			this->Render();
@@ -162,6 +164,21 @@ namespace Engine {
 	int GameEngine::GetScreenHeight() const
 	{
 		return this->height;
+	}
+
+	PxCooking* GameEngine::GetCooking() const
+	{
+		return this->cooking;
+	}
+
+	PxPhysics* GameEngine::GetPhysics() const
+	{
+		return this->physics;
+	}
+
+	PxScene* GameEngine::GetPhysicsScene() const
+	{
+		return scene;
 	}
 
 	void GameEngine::AddLight(SpotLight* spotLight)
@@ -261,14 +278,26 @@ namespace Engine {
 		glDepthFunc(GL_LESS);
 
 		// init physics
-		foundation = PxCreateFoundation(PX_FOUNDATION_VERSION, this->allocator, this->errorCallback);
-		physics = PxCreatePhysics(PX_PHYSICS_VERSION, *this->foundation, PxTolerancesScale(), true, nullptr);
+		this->physicsAccumulator = 0.0f;
+		this->physicsStepSize = 1.0f / 60.0f;
+
+		this->foundation = PxCreateFoundation(PX_FOUNDATION_VERSION, this->allocator, this->errorCallback);
+
+		auto pvd = PxCreatePvd(*foundation);
+		auto transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
+		pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
+
+		this->physics = PxCreatePhysics(PX_PHYSICS_VERSION, *this->foundation, PxTolerancesScale(), true, pvd);
+		this->cooking = PxCreateCooking(PX_PHYSICS_VERSION, *this->foundation, PxCookingParams(PxTolerancesScale()));
 		PxSceneDesc sceneDesc(this->physics->getTolerancesScale());
 		sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
 		this->dispatcher = PxDefaultCpuDispatcherCreate(2);
+
 		sceneDesc.cpuDispatcher = this->dispatcher;
 		sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 		this->scene = this->physics->createScene(sceneDesc);
+
+		// setup physx debugger
 
 		this->renderPass->Init();
 		this->updatePass->Init();
@@ -278,6 +307,12 @@ namespace Engine {
 
 	void GameEngine::DeInit()
 	{
+		scene->release();
+		dispatcher->release();
+		physics->release();
+		cooking->release();
+		foundation->release();
+
 		SDL_GL_DeleteContext(this->maincontext);
 		SDL_Quit();
 		IMG_Quit();
@@ -288,5 +323,11 @@ namespace Engine {
 		GetCameraPass()->DoPass();
 		
 		SDL_GL_SwapWindow(this->mainwindow);
+	}
+
+	void GameEngine::UpdatePhysics()
+	{
+		scene->simulate(physicsStepSize);
+		scene->fetchResults(true);
 	}
 }

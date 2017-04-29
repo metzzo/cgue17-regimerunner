@@ -50,13 +50,19 @@ namespace Engine {
 
 		PxFoundation*			foundation;
 		PxPhysics*				physics;
+		PxCooking*				cooking;
 
 		PxDefaultCpuDispatcher*	dispatcher;
 		PxScene*				scene;
 
+		float physicsAccumulator;
+		float physicsStepSize;
+
 		virtual void Init();
 		virtual void DeInit();
 		virtual void Render();
+
+		void UpdatePhysics();
 	public:
 		GameEngine(int width, int height, string programName);
 		virtual ~GameEngine();
@@ -80,6 +86,10 @@ namespace Engine {
 		Entity *GetRootEntity() const;
 		int GetScreenWidth() const;
 		int GetScreenHeight() const;
+
+		PxCooking *GetCooking() const;
+		PxPhysics *GetPhysics() const;
+		PxScene *GetPhysicsScene() const;
 	};
 
 }

@@ -43,8 +43,12 @@ namespace Engine {
 		explicit Model(ModelResource *resource);
 		~Model();
 
+		ModelResource *GetModelResource() const;
+
 		void Init() override;
 		void Wire() override;
 	};
+
+	extern const Model ModelClass;
 }
 

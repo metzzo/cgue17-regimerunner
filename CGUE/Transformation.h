@@ -26,6 +26,7 @@ namespace Engine {
 		vec3 GetAbsolutePosition();
 		void Translate(vec3 move);
 		void Scale(vec3 size);
+		PxTransform GetPhysicPosition();
 	};
 
 	extern const Transformation TransformationClass;

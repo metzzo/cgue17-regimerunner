@@ -77,7 +77,7 @@ namespace Engine {
 				}
 			}
 			if (force) {
-				RaiseEngineError("Could not WireUp Renderer " + string(name));
+				RaiseEngineError("Could not WireUp Component " + string(name));
 			}
 		}
 	}

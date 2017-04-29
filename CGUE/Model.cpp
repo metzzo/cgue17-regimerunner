@@ -8,6 +8,8 @@
 #include "ModelResource.h"
 
 namespace Engine {
+	const Model ModelClass;
+
 	void MeshRenderOperation::Execute()
 	{
 		auto component = static_cast<Model*>(this->GetComponent());
@@ -80,5 +82,10 @@ namespace Engine {
 	Model::~Model()
 	{
 
+	}
+
+	ModelResource* Model::GetModelResource() const
+	{
+		return this->resource;
 	}
 }

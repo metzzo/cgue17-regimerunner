@@ -73,4 +73,10 @@ namespace Engine {
 	{
 		SetRelativeMatrix(scale(relativeTransform, size));
 	}
+
+	PxTransform Transformation::GetPhysicPosition()
+	{
+		auto pos = GetAbsolutePosition();
+		return PxTransform(pos.x, pos.y, pos.z);
+	}
 }

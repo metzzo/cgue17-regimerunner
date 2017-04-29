@@ -92,7 +92,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalLibraryDirectories>glew;glm;assimp;physx;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;opengl32.lib;assimp-vc140-mt.lib;PhysX3CharacterKinematicDEBUG_x64.lib;PhysX3CommonDEBUG_x64.lib;PhysX3CookingDEBUG_x64.lib;PhysX3DEBUG_x64.lib;PhysX3ExtensionsDEBUG.lib;PxToolkitDEBUG.lib;PxFoundationDEBUG_x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;opengl32.lib;assimp-vc140-mt.lib;PhysX3CharacterKinematicDEBUG_x64.lib;PhysX3CommonDEBUG_x64.lib;PhysX3CookingDEBUG_x64.lib;PhysX3DEBUG_x64.lib;PhysX3ExtensionsDEBUG.lib;PxToolkitDEBUG.lib;PxFoundationDEBUG_x64.lib;LowLevelAABBDEBUG.lib;LowLevelDEBUG.lib;SimulationControllerDEBUG.lib;SceneQueryDEBUG.lib;PhysX3GpuDEBUG_x64.lib;PxPvdSDKDEBUG_x64.lib;nvToolsExt64_1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -122,8 +122,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BaseShape.cpp" />
     <ClCompile Include="BaseResource.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CapsuleShape.cpp" />
+    <ClCompile Include="ConvexShape.cpp" />
     <ClCompile Include="DepthPass.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -133,6 +136,7 @@
     <ClCompile Include="ModelResource.cpp" />
     <ClCompile Include="Pass.cpp" />
     <ClCompile Include="RenderPass.cpp" />
+    <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Operation.cpp" />
     <ClCompile Include="Rotating.cpp" />
@@ -142,10 +146,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="physx\PxPvdSDKDEBUG_x64.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseShape.h" />
     <ClInclude Include="BaseResource.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CapsuleShape.h" />
+    <ClInclude Include="ConvexShape.h" />
     <ClInclude Include="DepthPass.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Component.h" />
@@ -154,6 +162,7 @@
     <ClInclude Include="ModelResource.h" />
     <ClInclude Include="Pass.h" />
     <ClInclude Include="RenderPass.h" />
+    <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Operation.h" />
     <ClInclude Include="Rotating.h" />

@@ -43,6 +43,12 @@
     <Filter Include="Header Files\Engine\Resource">
       <UniqueIdentifier>{60771bac-1c9a-4381-80cd-e3045b537ca3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine\Component\Shape">
+      <UniqueIdentifier>{aec1afca-9c9e-4c73-bf2e-2cca470b73d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Component\Shape">
+      <UniqueIdentifier>{c531926f-c584-4df0-8fde-640f13919e90}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -96,9 +102,22 @@
     <ClCompile Include="TextureResource.cpp">
       <Filter>Source Files\Engine\Resource</Filter>
     </ClCompile>
+    <ClCompile Include="RigidBody.cpp">
+      <Filter>Source Files\Engine\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseShape.cpp">
+      <Filter>Source Files\Engine\Component\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="ConvexShape.cpp">
+      <Filter>Source Files\Engine\Component\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="CapsuleShape.cpp">
+      <Filter>Source Files\Engine\Component\Shape</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="physx\PxPvdSDKDEBUG_x64.dll" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entity.h">
@@ -148,6 +167,18 @@
     </ClInclude>
     <ClInclude Include="BaseResource.h">
       <Filter>Header Files\Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBody.h">
+      <Filter>Header Files\Engine\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseShape.h">
+      <Filter>Header Files\Engine\Component\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="CapsuleShape.h">
+      <Filter>Header Files\Engine\Component\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="ConvexShape.h">
+      <Filter>Header Files\Engine\Component\Shape</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
