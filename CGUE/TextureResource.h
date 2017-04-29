@@ -15,5 +15,9 @@ namespace Engine {
 
 		void Load() override;
 		GLuint GetTextureId() const;
+
+		int GetWidth() const;
+		int GetHeight() const;
+		void* GetPixels() const;
 	};
 }

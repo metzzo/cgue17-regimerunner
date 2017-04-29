@@ -114,10 +114,12 @@
     <ClCompile Include="CapsuleShape.cpp">
       <Filter>Source Files\Engine\Component\Shape</Filter>
     </ClCompile>
+    <ClCompile Include="HeightFieldShape.cpp">
+      <Filter>Source Files\Engine\Component\Shape</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="physx\PxPvdSDKDEBUG_x64.dll" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entity.h">
@@ -178,6 +180,9 @@
       <Filter>Header Files\Engine\Component\Shape</Filter>
     </ClInclude>
     <ClInclude Include="ConvexShape.h">
+      <Filter>Header Files\Engine\Component\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="HeightFieldShape.h">
       <Filter>Header Files\Engine\Component\Shape</Filter>
     </ClInclude>
   </ItemGroup>

@@ -131,6 +131,7 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="GameEngine.cpp" />
+    <ClCompile Include="HeightFieldShape.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelResource.cpp" />
@@ -146,7 +147,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="physx\PxPvdSDKDEBUG_x64.dll" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseShape.h" />
@@ -158,6 +158,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="GameEngine.h" />
+    <ClInclude Include="HeightFieldShape.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelResource.h" />
     <ClInclude Include="Pass.h" />

@@ -1,5 +1,6 @@
 #include "RigidBody.h"
 #include "Transformation.h"
+#include "Pass.h"
 
 namespace Engine {
 	const RigidBody RigidBodyClass;
@@ -31,7 +32,7 @@ namespace Engine {
 		return staticState;
 	}
 
-	PxRigidActor *RigidBody::GetActor()
+	PxRigidActor *RigidBody::GetActor() const
 	{
 		return actor;
 	}
@@ -50,14 +51,15 @@ namespace Engine {
 
 		if (IsStatic())
 		{
-			this->actor = GetEngine()->GetPhysics()->createRigidStatic(GetTransformation()->GetPhysicPosition());
+			this->actor = GetEngine()->GetPhysics()->createRigidStatic(PxTransform(GetTransformation()->GetPhysicMatrix()));
 		}
 		else
 		{
-			auto body = GetEngine()->GetPhysics()->createRigidDynamic(GetTransformation()->GetPhysicPosition());
+			auto body = GetEngine()->GetPhysics()->createRigidDynamic(PxTransform(GetTransformation()->GetPhysicMatrix()));
 			PxRigidBodyExt::updateMassAndInertia(*body, density);
 			this->actor = body;
 		}
+		this->actor->userData = this;
 
 		this->shape = GetActor()->createShape(*geometry, *physicsMaterial);
 
@@ -85,5 +87,10 @@ namespace Engine {
 	float RigidBody::GetDensity() const
 	{
 		return density;
+	}
+
+	PxShape* RigidBody::GetShape() const
+	{
+		return this->shape;
 	}
 }

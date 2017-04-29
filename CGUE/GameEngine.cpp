@@ -9,6 +9,7 @@
 #include "Pass.h"
 #include "RenderPass.h"
 #include "DepthPass.h"
+#include "RigidBody.h"
 
 
 namespace Engine {
@@ -127,7 +128,6 @@ namespace Engine {
 			}
 
 			UpdatePhysics();
-
 			GetUpdatePass()->DoPass();
 
 			this->Render();
@@ -296,6 +296,7 @@ namespace Engine {
 		sceneDesc.cpuDispatcher = this->dispatcher;
 		sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 		this->scene = this->physics->createScene(sceneDesc);
+		this->scene->setFlag(PxSceneFlag::eENABLE_ACTIVE_ACTORS, true);
 
 		// setup physx debugger
 
@@ -329,5 +330,18 @@ namespace Engine {
 	{
 		scene->simulate(physicsStepSize);
 		scene->fetchResults(true);
+
+		PxU32 nbActiveActors;
+		PxActor** activeActors = scene->getActiveActors(nbActiveActors);
+
+		// update each render object with the new transform
+		for (PxU32 i = 0; i < nbActiveActors; ++i)
+		{
+			RigidBody* rigidBody = static_cast<RigidBody*>(activeActors[i]->userData);
+			auto shape = rigidBody->GetShape();
+			auto actor = rigidBody->GetActor();
+			rigidBody->GetTransformation()->UpdatePhysicsMatrix(PxShapeExt::getGlobalPose(*shape, *actor));
+		}
+
 	}
 }

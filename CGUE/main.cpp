@@ -13,6 +13,7 @@
 #include "ModelResource.h"
 #include "ConvexShape.h"
 #include "CapsuleShape.h"
+#include "HeightFieldShape.h"
 
 using namespace Engine;
 
@@ -20,6 +21,7 @@ int main(int argc, char **argv)
 {
 	auto engine = new GameEngine(1024, 640, string("CGUE"));
 	auto modelResource = new ModelResource("objects/mapobj.obj");
+	auto heightMapResource = new TextureResource("textures/heightmap.png");
 
 	auto camera = new Camera(45.0f, 0.1f, 100.0f, 1024, 640);
 	auto player = engine->GetRootEntity()->CreateChild();
@@ -41,10 +43,9 @@ int main(int argc, char **argv)
 	rigidBody->SetStaticness(true);
 	rigidBody->SetMaterial(0.5, 0.5, 0.5);
 	rigidBody->SetDensity(10);
-
 	map->Add(rigidBody);
-	map->Add(new ConvexShape());
-	map->GetTransformation()->Scale(vec3(0.1f, 0.1f, 0.1f));
+	map->Add(new HeightFieldShape(heightMapResource));
+	//map->GetTransformation()->Scale(vec3(0.1f, 0.1f, 0.1f));
 	//cube->Add(new Game::Rotating());
 	
 	auto light = engine->GetRootEntity()->CreateChild();

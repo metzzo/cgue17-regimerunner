@@ -74,9 +74,19 @@ namespace Engine {
 		SetRelativeMatrix(scale(relativeTransform, size));
 	}
 
-	PxTransform Transformation::GetPhysicPosition()
+	PxMat44 Transformation::GetPhysicMatrix() const
 	{
-		auto pos = GetAbsolutePosition();
-		return PxTransform(pos.x, pos.y, pos.z);
+		return PxMat44(&GetAbsoluteMatrix()[0][0]);
+	}
+
+	void Transformation::UpdatePhysicsMatrix(PxMat44 transform)
+	{
+		auto m = mat4x4(
+			transform.column0.x, transform.column0.y, transform.column0.z, transform.column0.w,
+			transform.column1.x, transform.column1.y, transform.column1.z, transform.column1.w, 
+			transform.column2.x, transform.column2.y, transform.column2.z, transform.column2.w, 
+			transform.column3.x, transform.column3.y, transform.column3.z, transform.column3.w
+		);
+		SetRelativeMatrix(m);
 	}
 }

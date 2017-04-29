@@ -46,4 +46,19 @@ namespace Engine {
 	{
 		return this->textureId;
 	}
+
+	int TextureResource::GetWidth() const
+	{
+		return this->sdlImage->w;
+	}
+
+	int TextureResource::GetHeight() const
+	{
+		return this->sdlImage->h;
+	}
+
+	void *TextureResource::GetPixels() const
+	{
+		return this->sdlImage->pixels;
+	}
 }

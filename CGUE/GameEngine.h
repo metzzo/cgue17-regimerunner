@@ -78,7 +78,7 @@ namespace Engine {
 		RenderPass *GetRenderPass() const;
 		DepthPass *GetDepthPass() const;
 		Pass *GetUpdatePass() const;
-		Pass* GetCameraPass() const;
+		Pass *GetCameraPass() const;
 
 		void SetMainCamera(Camera *mainCamera);
 		Camera *GetMainCamera() const;
