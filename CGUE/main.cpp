@@ -8,6 +8,7 @@
 #include "Transformation.h"
 #include "glm/gtc/matrix_transform.inl"
 #include "Rotating.h"
+#include "CameraMovement.h"
 #include "SpotLight.h"
 #include "Model.h"
 #include "ModelResource.h"
@@ -24,6 +25,8 @@ int main(int argc, char **argv)
 	engine->SetMainCamera(camera);
 	camera->GetTransformation()->Translate(vec3(6.0, 2.0, 1.0));
 	camera->SetLookAtVector(vec3(0.0, 1.0, 0.0));
+	auto camentity = camera->GetEntity();
+	camentity->Add(new Game::CameraMovement);
 
 	auto cube = engine->GetRootEntity()->CreateChild();
 	cube->Add(new Model(modelResource));

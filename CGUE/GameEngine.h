@@ -35,6 +35,16 @@ namespace Engine {
 		int height;
 		bool keyStates[322];
 
+		// for Mouse Movement
+		GLfloat xoffset;
+		GLfloat yoffset;
+		GLfloat lastx;
+		GLfloat lasty;
+		GLfloat pitch;
+		GLfloat yaw;
+		bool initialMouse;
+
+
 		vector<SpotLight*> lights;
 
 		Pass *updatePass;
@@ -61,6 +71,9 @@ namespace Engine {
 		DepthPass *GetDepthPass() const;
 		Pass *GetUpdatePass() const;
 		Pass* GetCameraPass() const;
+
+		GLfloat GetYaw();
+		GLfloat GetPitch();
 
 		void SetMainCamera(Camera *mainCamera);
 		Camera *GetMainCamera() const;

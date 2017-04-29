@@ -63,6 +63,8 @@ namespace Engine {
 		mat4x4 GetProjectionViewMatrix() const;
 		GLuint GetTexture() const;
 
+		vec3 GetUpVector();
+
 		void Wire() override;
 		void Init() override;
 		void TransformationUpdated() override;

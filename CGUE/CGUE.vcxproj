@@ -122,6 +122,7 @@
   <ItemGroup>
     <ClCompile Include="BaseResource.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraMovement.cpp" />
     <ClCompile Include="DepthPass.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -144,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="BaseResource.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraMovement.h" />
     <ClInclude Include="DepthPass.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Component.h" />
