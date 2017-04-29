@@ -33,6 +33,10 @@ namespace Engine {
 		Camera* mainCamera;
 		int width;
 		int height;
+		float mousexold;
+		float mouseyold;
+		float mousexoffset;
+		float mouseyoffset;
 		bool keyStates[322];
 
 		// for Mouse Movement
@@ -81,6 +85,8 @@ namespace Engine {
 		Entity *GetRootEntity() const;
 		int GetScreenWidth() const;
 		int GetScreenHeight() const;
+		float GetMouseXOffset();
+		float GetMouseYOffset();
 	};
 
 }
