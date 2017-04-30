@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 	player->Add(rigidBody);
 
 	engine->SetMainCamera(camera);
-	camera->GetTransformation()->Translate(vec3(6.0, 2.0, 1.0));
+	camera->GetTransformation()->Translate(vec3(30.0, 30.0, 30.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 
 	auto map = engine->GetRootEntity()->CreateChild();

@@ -19,5 +19,7 @@ namespace Engine {
 		int GetWidth() const;
 		int GetHeight() const;
 		void* GetPixels() const;
+		int GetMode() const;
+		int GetBytesPerPixel() const;
 	};
 }

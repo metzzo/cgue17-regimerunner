@@ -26,13 +26,17 @@ namespace Engine {
 		glGenTextures(1, &this->textureId);
 		glBindTexture(GL_TEXTURE_2D, this->textureId);
 
-		auto Mode = GL_RGB;
-
-		if (this->sdlImage->format->BytesPerPixel == 4) {
-			Mode = GL_RGBA;
-		}
-
-		glTexImage2D(GL_TEXTURE_2D, 0, Mode, this->sdlImage->w, this->sdlImage->h, 0, Mode, GL_UNSIGNED_BYTE, this->sdlImage->pixels);
+		glTexImage2D(
+			GL_TEXTURE_2D, 
+			0, 
+			GetMode(), 
+			this->sdlImage->w,
+			this->sdlImage->h,
+			0, 
+			GetMode(),
+			GL_UNSIGNED_BYTE, 
+			this->sdlImage->pixels
+		);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -60,5 +64,20 @@ namespace Engine {
 	void *TextureResource::GetPixels() const
 	{
 		return this->sdlImage->pixels;
+	}
+
+	int TextureResource::GetMode() const
+	{
+		if (this->sdlImage->format->BytesPerPixel == 4) {
+			return  GL_RGBA;
+		} else
+		{
+			return GL_RGB;
+		}
+	}
+
+	int TextureResource::GetBytesPerPixel() const
+	{
+		return this->sdlImage->format->BytesPerPixel;
 	}
 }
