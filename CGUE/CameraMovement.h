@@ -5,10 +5,14 @@ namespace Game {
 
 	class CameraMovementMouseOperation : public Engine::Operation
 	{
+		float yaw;
+		float pitch;
 	public:
 		explicit CameraMovementMouseOperation(Engine::Component* component)
 			: Operation(component)
 		{
+			yaw = 0;
+			pitch = 0;
 		}
 
 		void Execute() override;

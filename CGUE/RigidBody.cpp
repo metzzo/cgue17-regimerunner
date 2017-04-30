@@ -21,6 +21,11 @@ namespace Engine {
 	{
 	}
 
+	void RigidBody::TransformationUpdated()
+	{
+
+	}
+
 	void RigidBody::SetStaticness(bool staticness)
 	{
 		assert(this->actor == nullptr);

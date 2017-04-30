@@ -64,6 +64,12 @@ namespace Engine {
 		return vec3(this->absoluteTransform[3]);
 	}
 
+	vec3 Transformation::GetRelativePosition()
+	{
+		return vec3(this->relativeTransform[3]);
+	}
+
+
 	void Transformation::Translate(vec3 move)
 	{
 		SetRelativeMatrix(translate(relativeTransform, move));
@@ -72,6 +78,13 @@ namespace Engine {
 	void Transformation::Scale(vec3 size)
 	{
 		SetRelativeMatrix(scale(relativeTransform, size));
+	}
+
+	void Transformation::Rotate(float angle, vec3 axis)
+	{
+		if (angle != 0.0f) {
+			SetRelativeMatrix(rotate(relativeTransform, angle, axis));
+		}
 	}
 
 	PxMat44 Transformation::GetPhysicMatrix() const

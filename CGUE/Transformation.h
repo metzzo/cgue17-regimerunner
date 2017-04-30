@@ -24,8 +24,10 @@ namespace Engine {
 		mat4x4 GetRelativeMatrix() const;
 
 		vec3 GetAbsolutePosition();
+		vec3 GetRelativePosition();
 		void Translate(vec3 move);
 		void Scale(vec3 size);
+		void Rotate(float angle, vec3 axis);
 		PxMat44 GetPhysicMatrix() const;
 		void UpdatePhysicsMatrix(PxMat44 transform);
 	};

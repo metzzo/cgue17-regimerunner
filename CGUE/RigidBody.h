@@ -17,6 +17,8 @@ namespace Engine {
 		RigidBody();
 		~RigidBody();
 
+		void TransformationUpdated() override;
+
 		void SetStaticness(bool staticness);
 		bool IsStatic() const;
 		PxRigidActor *GetActor() const;

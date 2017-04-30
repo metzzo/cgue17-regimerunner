@@ -172,7 +172,8 @@ namespace Engine {
 		GetEngine()->GetCameraPass()->AddOperation(new CameraRenderOperation(this));
 	}
 
-	vec3 Camera::GetUpVector() {
+	vec3 Camera::GetUpVector() const
+	{
 		return this->upVector;
 
 	}

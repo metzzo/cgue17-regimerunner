@@ -79,13 +79,8 @@ namespace Engine {
 		this->depthPass = new DepthPass(this);
 		this->cameraPass = new Pass(this);
 
-		this->xoffset = 0.0f;
-		this->yoffset = 0.0f;
-		this->lastx = width / 2.0f;
-		this->lasty = height / 2.0f;
-		this->yaw = -90.f;
-		this->pitch = 0.0f;
-		this->initialMouse = true;
+		this->mouseXRel = 0;
+		this->mouseYRel = 0;
 	}
 
 
@@ -108,8 +103,11 @@ namespace Engine {
 
 		this->rootEntity->Init();
 		
-		while(!cancelled)
+		while(!cancelled && !KeyDown(SDL_SCANCODE_ESCAPE))
 		{
+			this->mouseXRel = 0;
+			this->mouseYRel = 0;
+
 			SDL_Event e;
 			while (SDL_PollEvent(&e) != 0)
 			{
@@ -130,34 +128,10 @@ namespace Engine {
 					}
 					break;
 				case SDL_MOUSEMOTION:
-
-					if (initialMouse) {
-						lastx = e.motion.xrel;
-						lasty = e.motion.yrel;
-						this->initialMouse = false;
-					}
-
-					this->xoffset = e.motion.xrel;
-					this->yoffset = -e.motion.yrel;
-
-					this->lastx = e.motion.xrel;
-					this->lasty = e.motion.yrel;
-
-					xoffset *= 0.05f;
-					yoffset *= 0.05f;
-
-					this->yaw += this->xoffset;
-					this->pitch += this->yoffset; 
-
-					if (pitch > 89.0f)
-						pitch = 89.0f;
-					if (pitch < -89.0f)
-						pitch = -89.0f;
-
-					std::cout << lastx << " " << lasty << std::endl;
+					this->mouseXRel = e.motion.xrel;
+					this->mouseYRel = e.motion.yrel;
 
 					break;
-
 				default:
 					break;
 				}
@@ -251,14 +225,14 @@ namespace Engine {
 		return cameraPass;
 	}
 
-	GLfloat GameEngine::GetYaw() const
+	int GameEngine::GetMouseXRel() const
 	{
-		return this->yaw;
+		return mouseXRel;
 	}
 
-	GLfloat GameEngine::GetPitch() const
+	int GameEngine::GetMouseYRel() const
 	{
-		return this->pitch;
+		return mouseYRel;
 	}
 
 
@@ -386,7 +360,7 @@ namespace Engine {
 			RigidBody* rigidBody = static_cast<RigidBody*>(activeActors[i]->userData);
 			auto shape = rigidBody->GetShape();
 			auto actor = rigidBody->GetActor();
-			rigidBody->GetTransformation()->UpdatePhysicsMatrix(PxShapeExt::getGlobalPose(*shape, *actor));
+			//rigidBody->GetTransformation()->UpdatePhysicsMatrix(PxShapeExt::getGlobalPose(*shape, *actor));
 		}
 
 	}

@@ -5,74 +5,61 @@
 #include <SDL.h>
 #include "Camera.h"
 #include <iostream>
+#include "glm/gtx/matrix_decompose.hpp"
+#include "glm/gtx/quaternion.hpp"
 
 namespace Game {
 
 	void CameraMovementMouseOperation::Execute()
 	{
-		auto component = this->GetComponent();
+		auto engine = this->GetComponent()->GetEngine();
 
-		auto cam = component->GetEngine()->GetMainCamera();
-		auto mat = cam->GetViewMatrix();
+		auto cam = engine->GetMainCamera();
+		auto xspeed = engine->GetMouseXRel();
+		auto yspeed = engine->GetMouseYRel();
+		auto camerapos = cam->GetTransformation()->GetAbsolutePosition();
 
-		auto lookAt = cam->GetLookAtVector();
-		
-		auto yaw = component->GetEngine()->GetYaw();
-		auto pitch = component->GetEngine()->GetPitch();
+		yaw += xspeed;
+		pitch -= yspeed;
+
+		if (pitch > 89.0f)
+			pitch = 89.0f;
+		if (pitch < -89.0f)
+			pitch = -89.0f;
 
 		glm::vec3 front;
-		front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+		front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
 		front.y = sin(glm::radians(pitch));
-		front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-		glm::vec3 cameraFront = glm::normalize(front);
-		cam->SetLookAtVector(cameraFront);
+		front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+		auto cameraFront = glm::normalize(front);
 
-		vec3 camerapos = cam->GetTransformation()->GetAbsolutePosition();
-
-		auto view = glm::lookAt(camerapos, camerapos + cameraFront, cam->GetUpVector());
-		
-		cam->SetViewMatrix(view);
+		cam->SetLookAtVector(camerapos + cameraFront);
 	}
 
 	void CameraMovementKeyOperation::Execute() {
 
 		auto component = this->GetComponent();
 		auto cam = component->GetEngine()->GetMainCamera();
-		auto mat = cam->GetViewMatrix();
-		
-		auto cameraFront = cam->GetLookAtVector();
-		vec3 camerapos = cam->GetTransformation()->GetAbsolutePosition();
 
-		GLfloat cameraSpeed = 1.0f;
-		if (component->GetEngine()->KeyDown(SDL_SCANCODE_DOWN))
-			camerapos -= cameraSpeed * cameraFront;
-		if (component->GetEngine()->KeyDown(SDL_SCANCODE_UP))
-			camerapos += cameraSpeed * cameraFront;
-		if (component->GetEngine()->KeyDown(SDL_SCANCODE_LEFT))
-			camerapos -= glm::normalize(glm::cross(cameraFront, cam->GetUpVector())) * cameraSpeed;
-		if (component->GetEngine()->KeyDown(SDL_SCANCODE_RIGHT))
-			camerapos += glm::normalize(glm::cross(cameraFront, cam->GetUpVector())) * cameraSpeed;
+		auto keyDown = component->GetEngine()->KeyDown(SDL_SCANCODE_DOWN);
+		auto keyUp = component->GetEngine()->KeyDown(SDL_SCANCODE_UP);
+		auto keyLeft = component->GetEngine()->KeyDown(SDL_SCANCODE_LEFT);
+		auto keyRight = component->GetEngine()->KeyDown(SDL_SCANCODE_RIGHT);
 
-		auto view = glm::lookAt(camerapos, camerapos + cameraFront, cam->GetUpVector());
-		
-		cam->SetViewMatrix(view);
-		
+		if (keyDown || keyUp || keyLeft || keyRight) {
+			auto camerapos = cam->GetTransformation()->GetAbsolutePosition();
+			auto cameraFront = cam->GetLookAtVector() - cam->GetTransformation()->GetAbsolutePosition();
+			auto cameraSpeed = 1.0f;
 
-		/*
-		auto cam = component->GetEngine()->GetMainCamera();
-		auto mat = cam->GetViewMatrix();
-		GLfloat cameraSpeed = 1.0f;
-		if (component->GetEngine()->KeyDown(SDL_SCANCODE_DOWN))
-			mat = glm::translate(mat, vec3(-cameraSpeed, 0.0f, 0.0f));
-		if (component->GetEngine()->KeyDown(SDL_SCANCODE_UP))
-			mat = glm::translate(mat, vec3(cameraSpeed, 0.0f, 0.0f));
-		if (component->GetEngine()->KeyDown(SDL_SCANCODE_LEFT))
-			mat = glm::translate(mat, vec3(0.0f, 0.0f, -cameraSpeed));
-		if (component->GetEngine()->KeyDown(SDL_SCANCODE_RIGHT))
-			mat = glm::translate(mat, vec3(0.0f, 0.0f, cameraSpeed));
+			camerapos += cameraSpeed * (
+				cameraFront * static_cast<float>(keyUp - keyDown) +
+				glm::normalize(glm::cross(cameraFront, cam->GetUpVector())) * static_cast<float>(keyRight - keyLeft)
+			);
 
-		cam->SetViewMatrix(mat);
-		*/
+			cam->GetTransformation()->SetRelativeMatrix(translate(mat4(), camerapos));
+			cam->SetLookAtVector(camerapos + cameraFront);
+
+		}
 	}
 
 
