@@ -74,11 +74,18 @@ namespace Engine {
 		this->scene = nullptr;
 		this->physics = nullptr;
 
-
 		this->renderPass = new RenderPass(this);
 		this->updatePass = new Pass(this);
 		this->depthPass = new DepthPass(this);
 		this->cameraPass = new Pass(this);
+
+		this->xoffset = 0.0f;
+		this->yoffset = 0.0f;
+		this->lastx = width / 2.0f;
+		this->lasty = height / 2.0f;
+		this->yaw = -90.f;
+		this->pitch = 0.0f;
+		this->initialMouse = true;
 	}
 
 
@@ -122,6 +129,35 @@ namespace Engine {
 						this->keyStates[e.key.keysym.scancode] = false;
 					}
 					break;
+				case SDL_MOUSEMOTION:
+
+					if (initialMouse) {
+						lastx = e.motion.xrel;
+						lasty = e.motion.yrel;
+						this->initialMouse = false;
+					}
+
+					this->xoffset = e.motion.xrel;
+					this->yoffset = -e.motion.yrel;
+
+					this->lastx = e.motion.xrel;
+					this->lasty = e.motion.yrel;
+
+					xoffset *= 0.05f;
+					yoffset *= 0.05f;
+
+					this->yaw += this->xoffset;
+					this->pitch += this->yoffset; 
+
+					if (pitch > 89.0f)
+						pitch = 89.0f;
+					if (pitch < -89.0f)
+						pitch = -89.0f;
+
+					std::cout << lastx << " " << lasty << std::endl;
+
+					break;
+
 				default:
 					break;
 				}
@@ -213,6 +249,16 @@ namespace Engine {
 	Pass* GameEngine::GetCameraPass() const
 	{
 		return cameraPass;
+	}
+
+	GLfloat GameEngine::GetYaw() const
+	{
+		return this->yaw;
+	}
+
+	GLfloat GameEngine::GetPitch() const
+	{
+		return this->pitch;
 	}
 
 

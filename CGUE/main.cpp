@@ -8,6 +8,7 @@
 #include "Transformation.h"
 #include "glm/gtc/matrix_transform.inl"
 #include "Rotating.h"
+#include "CameraMovement.h"
 #include "SpotLight.h"
 #include "Model.h"
 #include "ModelResource.h"
@@ -35,6 +36,8 @@ int main(int argc, char **argv)
 	engine->SetMainCamera(camera);
 	camera->GetTransformation()->Translate(vec3(30.0, 30.0, 30.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
+	player->Add(new Game::CameraMovement);
+
 
 	auto map = engine->GetRootEntity()->CreateChild();
 	map->Add(new Model(modelResource));

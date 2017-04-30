@@ -6,6 +6,7 @@
 #include "glew/glew.h"
 #include "Pass.h"
 #include "RenderPass.h"
+#include <SDL.h>
 
 namespace Engine {
 	const Camera CameraClass;
@@ -29,6 +30,7 @@ namespace Engine {
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
+		
 
 		component->GetEngine()->SetMainCamera(oldMainCamera);
 	}
@@ -57,7 +59,7 @@ namespace Engine {
 		this->textureHeight = 0;
 		this->cameraPass = nullptr;
 		this->upVector = vec3(0.0, 1.0, 0.0);
-		this->r2t = false;
+		this->r2t = false;		
 	}
 
 	Camera::~Camera()
@@ -97,9 +99,18 @@ namespace Engine {
 		this->TransformationUpdated();
 	}
 
+	vec3 Camera::GetLookAtVector() {
+		return this->lookAtVector;
+	}
+
 	mat4x4 Camera::GetViewMatrix() const
 	{
 		return this->viewMatrix;
+	}
+
+	void Camera::SetViewMatrix(mat4x4 mat)
+	{
+		this->viewMatrix = mat;
 	}
 
 	mat4x4 Camera::GetProjectionMatrix() const
@@ -159,6 +170,11 @@ namespace Engine {
 		}
 
 		GetEngine()->GetCameraPass()->AddOperation(new CameraRenderOperation(this));
+	}
+
+	vec3 Camera::GetUpVector() {
+		return this->upVector;
+
 	}
 
 	void Camera::TransformationUpdated()

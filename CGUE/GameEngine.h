@@ -36,7 +36,21 @@ namespace Engine {
 		Camera* mainCamera;
 		int width;
 		int height;
+		float mousexold;
+		float mouseyold;
+		float mousexoffset;
+		float mouseyoffset;
 		bool keyStates[322];
+
+		// for Mouse Movement
+		GLfloat xoffset;
+		GLfloat yoffset;
+		GLfloat lastx;
+		GLfloat lasty;
+		GLfloat pitch;
+		GLfloat yaw;
+		bool initialMouse;
+
 
 		vector<SpotLight*> lights;
 
@@ -80,13 +94,16 @@ namespace Engine {
 		Pass *GetUpdatePass() const;
 		Pass *GetCameraPass() const;
 
+		GLfloat GetYaw() const;
+		GLfloat GetPitch() const;
+
 		void SetMainCamera(Camera *mainCamera);
 		Camera *GetMainCamera() const;
 		string GetProgramName() const;
 		Entity *GetRootEntity() const;
 		int GetScreenWidth() const;
 		int GetScreenHeight() const;
-
+	
 		PxCooking *GetCooking() const;
 		PxPhysics *GetPhysics() const;
 		PxScene *GetPhysicsScene() const;
