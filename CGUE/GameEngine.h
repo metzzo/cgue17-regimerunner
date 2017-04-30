@@ -60,6 +60,7 @@ namespace Engine {
 
 		float physicsAccumulator;
 		float physicsStepSize;
+		PxControllerManager* manager;
 
 		virtual void Init();
 		virtual void DeInit();
@@ -96,6 +97,7 @@ namespace Engine {
 		PxCooking *GetCooking() const;
 		PxPhysics *GetPhysics() const;
 		PxScene *GetPhysicsScene() const;
+		PxControllerManager *GetControllerManager() const;
 	};
 
 }

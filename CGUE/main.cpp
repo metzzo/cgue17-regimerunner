@@ -27,11 +27,6 @@ int main(int argc, char **argv)
 	auto camera = new Camera(45.0f, 0.1f, 100.0f, 1024, 640);
 	auto player = engine->GetRootEntity()->CreateChild();
 	player->Add(camera);
-	player->Add(new CapsuleShape(2.0f, 1.0f));
-	auto rigidBody = new RigidBody();
-	rigidBody->SetMaterial(0.5, 0.5, 0.5);
-	rigidBody->SetStaticness(false);
-	player->Add(rigidBody);
 
 	engine->SetMainCamera(camera);
 	camera->GetTransformation()->Translate(vec3(30.0, 30.0, 30.0));
@@ -42,7 +37,7 @@ int main(int argc, char **argv)
 	auto map = engine->GetRootEntity()->CreateChild();
 	map->Add(new Model(modelResource));
 
-	rigidBody = new RigidBody();
+	auto rigidBody = new RigidBody();
 	rigidBody->SetStaticness(true);
 	rigidBody->SetMaterial(0.5, 0.5, 0.5);
 	rigidBody->SetDensity(10);

@@ -31,6 +31,11 @@ namespace Game {
 
 	class CameraMovement : public Engine::Component
 	{
+		friend CameraMovementKeyOperation;
+		friend CameraMovementMouseOperation;
+
+		PxController* controller;
+	public:
 		void Init() override;
 	};
 }

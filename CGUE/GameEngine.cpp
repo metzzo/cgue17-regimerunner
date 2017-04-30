@@ -10,6 +10,8 @@
 #include "RenderPass.h"
 #include "DepthPass.h"
 #include "RigidBody.h"
+#include "glm/glm.hpp"
+#include "glm/gtx/transform.hpp"
 
 
 namespace Engine {
@@ -191,6 +193,11 @@ namespace Engine {
 		return scene;
 	}
 
+	PxControllerManager* GameEngine::GetControllerManager() const
+	{
+		return manager;
+	}
+
 	void GameEngine::AddLight(SpotLight* spotLight)
 	{
 		this->lights.push_back(spotLight);
@@ -317,6 +324,7 @@ namespace Engine {
 		sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 		this->scene = this->physics->createScene(sceneDesc);
 		this->scene->setFlag(PxSceneFlag::eENABLE_ACTIVE_ACTORS, true);
+		this->manager = PxCreateControllerManager(*this->scene);
 
 		// setup physx debugger
 
@@ -357,11 +365,15 @@ namespace Engine {
 		// update each render object with the new transform
 		for (PxU32 i = 0; i < nbActiveActors; ++i)
 		{
+			if (activeActors[i]->userData == nullptr)
+			{
+				continue;
+			}
+
 			RigidBody* rigidBody = static_cast<RigidBody*>(activeActors[i]->userData);
 			auto shape = rigidBody->GetShape();
 			auto actor = rigidBody->GetActor();
-			//rigidBody->GetTransformation()->UpdatePhysicsMatrix(PxShapeExt::getGlobalPose(*shape, *actor));
+			rigidBody->GetTransformation()->UpdatePhysicsMatrix(PxShapeExt::getGlobalPose(*shape, *actor));
 		}
-
 	}
 }
