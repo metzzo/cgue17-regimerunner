@@ -133,11 +133,13 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="GameEngine.cpp" />
     <ClCompile Include="HeightFieldShape.cpp" />
+    <ClCompile Include="HeightMapResource.cpp" />
     <ClCompile Include="HelicopterBehaviour.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelResource.cpp" />
     <ClCompile Include="Pass.cpp" />
+    <ClCompile Include="RenderableResource.cpp" />
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -163,10 +165,12 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="HeightFieldShape.h" />
+    <ClInclude Include="HeightMapResource.h" />
     <ClInclude Include="HelicopterBehaviour.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelResource.h" />
     <ClInclude Include="Pass.h" />
+    <ClInclude Include="RenderableResource.h" />
     <ClInclude Include="RenderPass.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Shader.h" />

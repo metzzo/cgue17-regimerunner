@@ -17,22 +17,22 @@
 #include "PalmInteraction.h"
 #include <random>
 #include "HelicopterBehaviour.h"
+#include "HeightMapResource.h"
 
 using namespace Engine;
 
-void PlacePalm(Entity *child, ModelResource *palmResource)
+void PlacePalms(Entity *child, ModelResource *palmResource, HeightMapResource *map)
 {
-	auto palm = child->CreateChild();
-	palm->Add(new Model(palmResource));
-	palm->Add(new Game::PalmInteraction);
-
-	std::random_device rd;
-	std::mt19937 eng(rd());
-	uniform_int_distribution<> distr(1, 600);
-
-	auto x = distr(eng)*1.0f;
-	auto z = distr(eng)*1.0f;
-	palm->GetTransformation()->Translate(vec3(x, -3.0f, z));
+	auto mapSize = map->GetSize();
+	for (auto x = 64; x < mapSize.x/4; x += 64)
+	{
+		for (auto z = 64; z < mapSize.z/4; z+= 64)
+		{
+			auto palm = child->CreateChild();
+			palm->Add(new Model(palmResource));
+			palm->Add(new Game::PalmInteraction(x + (rand() % 40 - 20), z + (rand() % 40 - 20), map));
+		}
+	}
 }
 
 void PlaceHeli(Entity *child, ModelResource *heliResource, int num)
@@ -53,8 +53,11 @@ void PlaceHeli(Entity *child, ModelResource *heliResource, int num)
 int main(int argc, char **argv)
 {
 	auto engine = new GameEngine(1440, 800, string("CGUE"));
-	auto modelResource = new ModelResource("objects/mapobj.obj");
-	auto heightMapResource = new TextureResource("textures/heightmap.png");
+	auto mapTexResource = new TextureResource("textures/heightmap_tex.jpg");
+	auto mapSize = vec3(2048, 512, 2048);
+	auto mapResource = new HeightMapResource("textures/heightmap.png", mapSize);
+	mapResource->AddTexture(mapTexResource);
+
 	auto palmResource = new ModelResource("objects/palm/palmtree.obj");
 	auto heliResource = new ModelResource("objects/heli2/Heli.obj");
 	
@@ -64,30 +67,28 @@ int main(int argc, char **argv)
 	player->Add(camera);
 
 	engine->SetMainCamera(camera);
-	camera->GetTransformation()->Translate(vec3(30.0, 30.0, 30.0));
+	camera->GetTransformation()->Translate(vec3(30.0, 60.0, 30.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 	player->Add(new Game::CameraMovement);
 
 
-	auto map = engine->GetRootEntity()->CreateChild();
-	map->Add(new Model(modelResource));
+	
 
 	for (auto i = 0; i < 20; i++) {
 		PlaceHeli(engine->GetRootEntity(), heliResource, i);
 	}
 
-	for (auto i = 0; i < 100; i++) {
-		PlacePalm(engine->GetRootEntity(), palmResource);
-	}
+	PlacePalms(engine->GetRootEntity(), palmResource, mapResource);
+
+	auto map = engine->GetRootEntity()->CreateChild();
+	map->Add(new Model(mapResource));
 
 	auto rigidBody = new RigidBody();
 	rigidBody->SetStaticness(true);
 	rigidBody->SetMaterial(0.5, 0.5, 0.5);
 	rigidBody->SetDensity(10);
 	map->Add(rigidBody);
-	map->Add(new HeightFieldShape(heightMapResource));
-	//map->GetTransformation()->Scale(vec3(0.1f, 0.1f, 0.1f));
-	//cube->Add(new Game::Rotating());
+	map->Add(new HeightFieldShape(mapResource->GetHeightMap(), mapSize));
 	
 	auto light = engine->GetRootEntity()->CreateChild();
 	auto spotLight = new SpotLight(1024*2, 1, 3000);
@@ -98,7 +99,6 @@ int main(int argc, char **argv)
 
 	engine->Run();
 
-	delete modelResource;
 	delete engine;
 
 	return 0;

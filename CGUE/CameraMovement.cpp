@@ -54,7 +54,7 @@ namespace Game {
 		auto keyLeft = component->GetEngine()->KeyDown(SDL_SCANCODE_LEFT);
 		auto keyRight = component->GetEngine()->KeyDown(SDL_SCANCODE_RIGHT);
 
-		auto direction = vec3(0.0f, -9.81f, 0.0f);
+		auto direction = vec3(); //vec3(0.0f, -9.81f, 0.0f);
 		if (keyDown || keyUp || keyLeft || keyRight) {
 			auto cameraSpeed = 1.0f;
 

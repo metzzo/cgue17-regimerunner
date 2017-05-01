@@ -5,9 +5,10 @@
 #include "GameEngine.h"
 
 namespace Engine {
-	HeightFieldShape::HeightFieldShape(TextureResource *resource)
+	HeightFieldShape::HeightFieldShape(TextureResource *resource, vec3 size)
 	{
 		this->resource = resource;
+		this->size = size;
 	}
 
 
@@ -17,7 +18,7 @@ namespace Engine {
 
 	void HeightFieldShape::Init()
 	{
-		this->resource->Load();
+		this->resource->Init();
 
 		PxHeightFieldDesc hfDesc;
 		hfDesc.format = PxHeightFieldFormat::eS16_TM;
@@ -37,7 +38,8 @@ namespace Engine {
 
 		auto heightField = GetEngine()->GetCooking()->createHeightField(hfDesc,
 			GetEngine()->GetPhysics()->getPhysicsInsertionCallback());
-
-		rigidBody->SetGeometry(new PxHeightFieldGeometry(heightField, PxMeshGeometryFlags(), 1.0f, 1.0f, 1.0f));
+			
+		// 1.0f/resource->GetWidth() * size.x, 1.0f/255.0*size.y, 1.0f/resource->GetHeight()*size.z
+		rigidBody->SetGeometry(new PxHeightFieldGeometry(heightField, PxMeshGeometryFlags(), 1.0, 1.0, 1.0));
 	}
 }

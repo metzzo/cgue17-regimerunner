@@ -5,6 +5,8 @@
 
 
 namespace Engine {
+	class RenderableResource;
+	class HeightMapResource;
 	class ModelResource;
 	class Mesh;
 
@@ -37,13 +39,14 @@ namespace Engine {
 	class Model :
 		public Component
 	{
-		ModelResource* resource;
+		RenderableResource* resource;
+		
 	public:
 		Model();
-		explicit Model(ModelResource *resource);
+		explicit Model(RenderableResource *resource);
 		~Model();
 
-		ModelResource *GetModelResource() const;
+		RenderableResource *GetResource() const;
 
 		void Init() override;
 		void Wire() override;

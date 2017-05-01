@@ -35,9 +35,20 @@ namespace Engine {
 		}
 		glActiveTexture(GL_TEXTURE0);
 
+		if (mesh->restartIndex != -1)
+		{
+			DEBUG_OGL(glEnable(GL_PRIMITIVE_RESTART));
+			DEBUG_OGL(glPrimitiveRestartIndex(mesh->restartIndex));
+		}
+
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));
-		DEBUG_OGL(glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
+		DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
 		DEBUG_OGL(glBindVertexArray(0));
+
+		if (mesh->restartIndex != -1)
+		{
+			DEBUG_OGL(glDisable(GL_PRIMITIVE_RESTART));
+		}
 
 		currentTexture = 0;
 		for (auto i = 0; i < mesh->diffuseTexture.size(); i++)
@@ -76,7 +87,10 @@ namespace Engine {
 
 	void Model::Init()
 	{
-		this->resource->Init();
+		if (this->resource != nullptr) 
+		{
+			this->resource->Init();
+		}
 
 		for (auto &mesh : this->resource->GetMeshes())
 		{
@@ -90,7 +104,7 @@ namespace Engine {
 		this->resource = nullptr;
 	}
 
-	Model::Model(ModelResource* resource)
+	Model::Model(RenderableResource* resource)
 	{
 		this->resource = resource;
 	}
@@ -100,7 +114,7 @@ namespace Engine {
 
 	}
 
-	ModelResource* Model::GetModelResource() const
+	RenderableResource* Model::GetResource() const
 	{
 		return this->resource;
 	}

@@ -1,7 +1,7 @@
 #include "ConvexShape.h"
 #include "Entity.h"
 #include "Model.h"
-#include "ModelResource.h"
+#include "RenderableResource.h"
 #include <iostream>
 #include "PxPhysicsAPI.h"
 #include "GameEngine.h"
@@ -28,7 +28,7 @@ namespace Engine {
 
 	void ConvexShape::Init()
 	{
-		auto resource = this->model->GetModelResource();
+		auto resource = this->model->GetResource();
 		auto meshes = resource->GetMeshes();
 		assert(meshes.size() == 1); // TODO: support submeshes
 

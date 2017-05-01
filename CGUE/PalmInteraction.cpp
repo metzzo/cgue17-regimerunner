@@ -17,6 +17,14 @@ namespace Game {
 		auto component = static_cast<PalmInteraction*>(this->GetComponent());
 		auto spaceBar = component->GetEngine()->KeyDown(SDL_SCANCODE_SPACE);
 
+		if (!positioned)
+		{
+			positioned = true;
+			auto size = component->map->GetSize();
+			auto y = component->map->GetHeightAt(component->x, component->z) - 4;
+			component->GetTransformation()->Translate(vec3(component->x, y, component->z));
+		}
+
 		if (spaceBar) {
 			auto posPalm = component->GetTransformation()->GetAbsolutePosition();
 			auto posCamera = component->GetEngine()->GetMainCamera()->GetTransformation()->GetAbsolutePosition();
@@ -36,7 +44,15 @@ namespace Game {
 		}
 	}
 
+	PalmInteraction::PalmInteraction(int x, int z, Engine::HeightMapResource *map) : Component()
+	{
+		this->map = map;
+		this->x = x;
+		this->z = z;
+	}
+
 	void PalmInteraction::Init() {
+		
 		GetEngine()->GetUpdatePass()->AddOperation(new PalmInteractionOperation(this));
 	}
 }
