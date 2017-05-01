@@ -4,8 +4,12 @@
 #include <SDL.h>
 #include <iostream>
 #include "Transformation.h"
-#include "Camera.h"
+#include "GameEngine.h"
 #include "glm/gtc/matrix_transform.inl"
+#include "RigidBody.h"
+#include "CapsuleShape.h"
+#include "Component.h"
+#include "Camera.h"
 
 namespace Game {
 
@@ -20,7 +24,14 @@ namespace Game {
 
 			if (dist < 50.0) {
 				std::cout << dist << std::endl;
-				component->GetTransformation()->Translate(vec3(0, .1f, 0));
+				auto shape = new Engine::CapsuleShape(1, 20);
+				component->GetEntity()->Add(shape);
+
+				auto rigidBody = new Engine::RigidBody();
+				rigidBody->SetStaticness(false);
+				rigidBody->SetDensity(10);
+				rigidBody->SetMaterial(0.5, 0.5, 0.5);
+				component->GetEntity()->Add(rigidBody);
 			}									
 		}
 	}

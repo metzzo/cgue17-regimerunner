@@ -5,6 +5,7 @@
 #include <vector>
 #include <ctype.h>
 #include "PxPhysicsAPI.h"
+#include "Component.h"
 
 using namespace physx;
 using namespace std;
@@ -17,6 +18,7 @@ namespace Engine {
 	class Pass;
 	class RenderPass;
 	class DepthPass;
+	class Component;
 
 	void RaiseEngineError(const string error);
 	
@@ -42,6 +44,7 @@ namespace Engine {
 
 
 		vector<SpotLight*> lights;
+		vector<Component*> initComponents;
 
 		Pass *updatePass;
 		Pass *cameraPass;
@@ -61,6 +64,7 @@ namespace Engine {
 		float physicsAccumulator;
 		float physicsStepSize;
 		PxControllerManager* manager;
+		bool started;
 
 		virtual void Init();
 		virtual void DeInit();
@@ -76,6 +80,8 @@ namespace Engine {
 		void AddLight(SpotLight* spotLight);
 		// TODO: add RemoveLight
 		vector<SpotLight*>& GetLights();
+
+		bool IsStarted() const;
 
 		bool KeyDown(int keyCode);
 
@@ -98,6 +104,7 @@ namespace Engine {
 		PxPhysics *GetPhysics() const;
 		PxScene *GetPhysicsScene() const;
 		PxControllerManager *GetControllerManager() const;
+		void AddInitComponent(Component* component);
 	};
 
 }

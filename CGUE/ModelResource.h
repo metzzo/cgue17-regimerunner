@@ -11,6 +11,7 @@
 #include "BaseResource.h"
 
 using namespace glm;
+using namespace std;
 
 namespace Engine {
 	struct Vertex {

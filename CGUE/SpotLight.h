@@ -1,5 +1,5 @@
 #pragma once
-#include "Component.h"
+#include "Camera.h"
 
 namespace Engine {
 	class SpotLight :

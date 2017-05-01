@@ -11,6 +11,7 @@
 #include "DepthPass.h"
 #include "RigidBody.h"
 #include "glm/glm.hpp"
+#include "Component.h"
 #include "glm/gtx/transform.hpp"
 
 
@@ -83,6 +84,8 @@ namespace Engine {
 
 		this->mouseXRel = 0;
 		this->mouseYRel = 0;
+
+		this->started = false;
 	}
 
 
@@ -105,6 +108,7 @@ namespace Engine {
 
 		this->rootEntity->Init();
 		
+		this->started = true;
 		while(!cancelled && !KeyDown(SDL_SCANCODE_ESCAPE))
 		{
 			this->mouseXRel = 0;
@@ -137,6 +141,20 @@ namespace Engine {
 				default:
 					break;
 				}
+			}
+
+			if (initComponents.size() > 0)
+			{
+				for (auto &component : initComponents)
+				{
+					component->Wire();
+				}
+				
+				for (auto &component : initComponents)
+				{
+					component->Init();
+				}
+				initComponents.clear();
 			}
 
 			UpdatePhysics();
@@ -198,6 +216,11 @@ namespace Engine {
 		return manager;
 	}
 
+	void GameEngine::AddInitComponent(Component* component)
+	{
+		this->initComponents.push_back(component);
+	}
+
 	void GameEngine::AddLight(SpotLight* spotLight)
 	{
 		this->lights.push_back(spotLight);
@@ -206,6 +229,11 @@ namespace Engine {
 	vector<SpotLight*>& GameEngine::GetLights()
 	{
 		return this->lights;
+	}
+
+	bool GameEngine::IsStarted() const
+	{
+		return started;
 	}
 
 	bool GameEngine::KeyDown(int keyCode)

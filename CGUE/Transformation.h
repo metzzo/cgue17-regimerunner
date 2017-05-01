@@ -2,8 +2,10 @@
 
 #include "Component.h"
 #include "glm/glm.hpp"
+#include <foundation/PxMat44.h>
 
 using namespace glm;
+using namespace physx;
 
 namespace Engine {
 	class Transformation : public Component

@@ -1,6 +1,7 @@
 #include "Entity.h"
 #include "Transformation.h"
 #include <typeinfo>
+#include "GameEngine.h"
 
 namespace Engine {
 	Component::Component()

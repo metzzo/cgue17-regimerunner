@@ -32,7 +32,8 @@ void PlacePalm(Entity *child, ModelResource *palmResource)
 	auto x = distr(eng)*1.0f;
 	auto z = distr(eng)*1.0f;
 	palm->GetTransformation()->Translate(vec3(x, -3.0f, z));
-	palm->GetTransformation()->Scale(vec3(10.0f, 10.0f, 10.0f));
+	// physics objects are not allowed to be scaled => please prescale it in the modeller
+	//palm->GetTransformation()->Scale(vec3(10.0f, 10.0f, 10.0f));
 }
 
 int main(int argc, char **argv)

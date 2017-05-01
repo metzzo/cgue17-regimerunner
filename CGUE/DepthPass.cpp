@@ -1,6 +1,7 @@
 #include "DepthPass.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "GameEngine.h"
 
 
 namespace Engine {

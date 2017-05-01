@@ -1,5 +1,8 @@
 #pragma once
 #include "Operation.h"
+#include "PxPhysicsAPI.h"
+
+using namespace physx;
 
 namespace Game {
 

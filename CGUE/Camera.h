@@ -18,6 +18,7 @@ namespace Engine {
 		int GetPriority() override;
 	};
 
+	class Pass;
 
 	class Camera :
 		public Component

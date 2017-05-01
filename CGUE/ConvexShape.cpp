@@ -3,6 +3,8 @@
 #include "Model.h"
 #include "ModelResource.h"
 #include <iostream>
+#include "PxPhysicsAPI.h"
+#include "GameEngine.h"
 
 namespace Engine {
 

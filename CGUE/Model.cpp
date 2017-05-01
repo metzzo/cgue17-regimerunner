@@ -6,6 +6,7 @@
 #include "DepthPass.h"
 #include "RenderPass.h"
 #include "ModelResource.h"
+#include "GameEngine.h"
 
 namespace Engine {
 	const Model ModelClass;

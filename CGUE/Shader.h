@@ -3,6 +3,8 @@
 #include <string>
 #include "glew/glew.h"
 
+using namespace std;
+
 namespace Engine {
 	class Shader
 	{

@@ -3,6 +3,7 @@
 #include "Transformation.h"
 #include "glm/gtc/matrix_transform.inl"
 #include <SDL.h>
+#include "GameEngine.h"
 
 namespace Game {
 	void RotatingOperation::Execute()

@@ -1,11 +1,11 @@
 #pragma once
-#include "GameEngine.h"
 
 namespace Engine {
 	class Entity;
 	class Transformation;
 	class Component;
 	class Renderer;
+	class GameEngine;
 
 	class Component
 	{

@@ -7,6 +7,7 @@
 #include <iostream>
 #include "glm/gtx/matrix_decompose.hpp"
 #include "glm/gtx/quaternion.hpp"
+#include "GameEngine.h"
 
 namespace Game {
 

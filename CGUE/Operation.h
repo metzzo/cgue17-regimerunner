@@ -2,6 +2,7 @@
 #include "Component.h"
 
 namespace Engine {
+	class Pass;
 
 	class Operation
 	{

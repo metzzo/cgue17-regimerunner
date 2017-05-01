@@ -2,6 +2,7 @@
 
 #include "Component.h"
 #include <vector>
+using namespace std;
 
 namespace Engine {
 #define WIRE_COMPONENT(A,B) this->GetEntity()->WireUp(reinterpret_cast<Component**>(&A), B.GetClassName());

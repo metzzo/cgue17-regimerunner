@@ -1,6 +1,8 @@
 #include "RigidBody.h"
 #include "Transformation.h"
 #include "Pass.h"
+#include "PxPhysicsAPI.h"
+#include "GameEngine.h"
 
 namespace Engine {
 	const RigidBody RigidBodyClass;
@@ -14,6 +16,7 @@ namespace Engine {
 		staticFriction = 0;
 		dynamicFriction = 0;
 		restitution = 0;
+		density = 10;
 	}
 
 

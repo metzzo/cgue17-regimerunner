@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Transformation.h"
 #include <algorithm>
+#include "GameEngine.h"
 
 using namespace std;
 
@@ -41,6 +42,12 @@ namespace Engine {
 		component->entity = this;
 		this->components.push_back(component);
 		component->AttachedToEntity();
+
+		if (GetEngine()->IsStarted())
+		{
+			GetEngine()->AddInitComponent(component);
+		}
+
 		return component;
 	}
 

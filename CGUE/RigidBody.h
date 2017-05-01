@@ -1,6 +1,9 @@
 #pragma once
 #include "Component.h"
 #include "Operation.h"
+#include <PxRigidActor.h>
+
+using namespace physx;
 
 namespace Engine {
 	class RigidBody : public Component

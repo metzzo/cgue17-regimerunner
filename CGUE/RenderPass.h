@@ -1,5 +1,6 @@
 #pragma once
 #include "Pass.h"
+#include "glew/glew.h"
 
 namespace Engine {
 	class Shader;

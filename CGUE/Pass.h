@@ -1,5 +1,9 @@
 #pragma once
 #include "Operation.h"
+#include <vector>
+
+
+using namespace std;
 
 namespace Engine {
 	class Pass

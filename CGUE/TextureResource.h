@@ -4,6 +4,8 @@
 #include "glew/glew.h"
 #include "BaseResource.h"
 
+using namespace std;
+
 namespace Engine {
 	class TextureResource : public BaseResource
 	{

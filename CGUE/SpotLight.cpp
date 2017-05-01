@@ -1,6 +1,6 @@
 #include "SpotLight.h"
-#include "Camera.h"
 #include "Entity.h"
+#include "GameEngine.h"
 
 namespace Engine {
 	SpotLight::SpotLight(int shadowMapSize, float near, float far)

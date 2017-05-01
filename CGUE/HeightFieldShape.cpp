@@ -1,6 +1,8 @@
 #include "HeightFieldShape.h"
 #include "TextureResource.h"
 #include <iostream>
+#include "PxPhysicsAPI.h"
+#include "GameEngine.h"
 
 namespace Engine {
 	HeightFieldShape::HeightFieldShape(TextureResource *resource)

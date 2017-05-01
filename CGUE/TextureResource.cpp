@@ -1,5 +1,6 @@
 #include "TextureResource.h"
 #include <SDL_image.h>
+#include "GameEngine.h"
 
 namespace Engine {
 	TextureResource::TextureResource(string filename) : BaseResource(filename)
@@ -19,7 +20,6 @@ namespace Engine {
 		this->sdlImage = IMG_Load(filename.c_str());
 		if (!this->sdlImage)
 		{
-			return;
 			RaiseEngineError("Could not load image");
 		}
 
