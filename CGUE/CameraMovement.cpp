@@ -53,12 +53,13 @@ namespace Game {
 		cam->SetLookAtVector(pos + cameraFront);
 
 
-		auto keyDown = component->GetEngine()->KeyDown(SDL_SCANCODE_DOWN);
-		auto keyUp = component->GetEngine()->KeyDown(SDL_SCANCODE_UP);
-		auto keyLeft = component->GetEngine()->KeyDown(SDL_SCANCODE_LEFT);
-		auto keyRight = component->GetEngine()->KeyDown(SDL_SCANCODE_RIGHT);
+		auto keyDown = component->GetEngine()->KeyDown(SDL_SCANCODE_S);
+		auto keyUp = component->GetEngine()->KeyDown(SDL_SCANCODE_W);
+		auto keyLeft = component->GetEngine()->KeyDown(SDL_SCANCODE_A);
+		auto keyRight = component->GetEngine()->KeyDown(SDL_SCANCODE_D);
+		auto keySpace = component->GetEngine()->KeyDown(SDL_SCANCODE_Q);
 
-		auto direction = vec3(); //vec3(0.0f, -9.81f, 0.0f);
+		auto direction = vec3(0.0f, -9.81f, 0.0f) + jump;
 		if (keyDown || keyUp || keyLeft || keyRight) {
 			auto cameraSpeed = 1.0f;
 
@@ -67,6 +68,18 @@ namespace Game {
 				glm::normalize(glm::cross(cameraFront, cam->GetUpVector())) * static_cast<float>(keyRight - keyLeft)
 			);
 		}
+
+		if (keySpace && !jumpPress)
+		{
+			jumpPress = true;
+ 			jump = vec3(0.0f, 9.81f, 0.0f)*3.0f;
+		} else if (!keySpace && jumpPress)
+		{
+			jumpPress = false;
+		}
+
+		jump *= 0.9;
+
 
 		component->controller->move(PxVec3(direction.x, direction.y, direction.z), 0.1f, 1, nullptr);
 	}
@@ -81,7 +94,7 @@ namespace Game {
 		desc.radius = 1.0;
 		desc.userData = GetEntity();
 		desc.position = PxExtendedVec3(pos.x, pos.y, pos.z);
-		desc.material = GetEngine()->GetPhysics()->createMaterial(0.5f, 0.5f, 0.5f);
+		desc.material = GetEngine()->GetPhysics()->createMaterial(0.25f, 0.25f, 0.25f);
 
 		this->controller = GetEngine()->GetControllerManager()->createController(desc);
 		assert(this->controller != nullptr);

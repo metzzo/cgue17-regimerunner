@@ -39,7 +39,7 @@ namespace Engine {
 		auto heightField = GetEngine()->GetCooking()->createHeightField(hfDesc,
 			GetEngine()->GetPhysics()->getPhysicsInsertionCallback());
 			
-		// 1.0f/resource->GetWidth() * size.x, 1.0f/255.0*size.y, 1.0f/resource->GetHeight()*size.z
-		rigidBody->SetGeometry(new PxHeightFieldGeometry(heightField, PxMeshGeometryFlags(), 1.0, 1.0, 1.0));
+		// 
+		rigidBody->SetGeometry(new PxHeightFieldGeometry(heightField, PxMeshGeometryFlags(), size.y/255.0f, size.x/float(resource->GetWidth()), size.z/float(resource->GetHeight())));
 	}
 }

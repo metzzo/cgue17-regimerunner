@@ -15,7 +15,7 @@ namespace Game {
 
 	void PalmInteractionOperation::Execute() {
 		auto component = static_cast<PalmInteraction*>(this->GetComponent());
-		auto spaceBar = component->GetEngine()->KeyDown(SDL_SCANCODE_SPACE);
+		auto spaceBar = component->GetEngine()->KeyDown(SDL_SCANCODE_E);
 
 		if (!positioned)
 		{

@@ -33,7 +33,7 @@ namespace Engine {
 				auto scaleR = float(y) / float(heightMap->GetHeight() - 1);
 
 
-				auto pixel = pixels[heightMap->GetBytesPerPixel()*(y*heightMap->GetWidth() + x)];
+				auto pixel = pixels[heightMap->GetBytesPerPixel()*(x*heightMap->GetHeight() + y)];
 				auto height = float(pixel) / 255.0f;
 
 				vertexData[y][x] = vec3(scaleC, height, scaleR);
@@ -162,7 +162,7 @@ namespace Engine {
 	{
 		auto xPos = int(float(x) / size.x * heightMap->GetWidth());
 		auto zPos = int(float(z) / size.z * heightMap->GetHeight());
-		return float(pixels[heightMap->GetBytesPerPixel()*(zPos*heightMap->GetWidth() + xPos)])/255.0f * size.y;
+		return float(pixels[heightMap->GetBytesPerPixel()*(xPos*heightMap->GetHeight() + zPos)])/255.0f * size.y;
 	}
 
 	TextureResource* HeightMapResource::GetHeightMap() const

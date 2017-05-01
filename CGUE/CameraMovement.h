@@ -24,10 +24,13 @@ namespace Game {
 
 	class CameraMovementKeyOperation : public Engine::Operation
 	{
+		bool jumpPress;
+		vec3 jump;
 	public:
 		explicit CameraMovementKeyOperation(Engine::Component* component)
 			: Operation(component)
 		{
+			jumpPress = false;
 		}
 
 		void Execute() override;
