@@ -8,11 +8,14 @@
 #include "glm/gtx/matrix_decompose.hpp"
 #include "glm/gtx/quaternion.hpp"
 #include "GameEngine.h"
+#include "Entity.h"
+#include "Camera.h"
 
 namespace Game {
 
 	void CameraMovementMouseOperation::Execute()
 	{
+		auto component = static_cast<CameraMovement*>(GetComponent());
 		auto engine = this->GetComponent()->GetEngine();
 
 		auto cam = engine->GetMainCamera();
@@ -35,6 +38,7 @@ namespace Game {
 		auto cameraFront = glm::normalize(front);
 
 		cam->SetLookAtVector(camerapos + cameraFront);
+		component->camera->SetLookAtVector(camerapos + cameraFront);
 	}
 
 	void CameraMovementKeyOperation::Execute() {
@@ -84,5 +88,10 @@ namespace Game {
 
 		GetEngine()->GetUpdatePass()->AddOperation(new CameraMovementMouseOperation(this));
 		GetEngine()->GetUpdatePass()->AddOperation(new CameraMovementKeyOperation(this));
+	}
+
+	void CameraMovement::Wire()
+	{
+		WIRE_COMPONENT(this->camera, Engine::CameraClass);
 	}
 }

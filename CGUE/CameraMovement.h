@@ -1,6 +1,7 @@
 #pragma once
 #include "Operation.h"
 #include "PxPhysicsAPI.h"
+#include "SpotLight.h"
 
 using namespace physx;
 
@@ -38,7 +39,9 @@ namespace Game {
 		friend CameraMovementMouseOperation;
 
 		PxController* controller;
+		Engine::Camera *camera;
 	public:
 		void Init() override;
+		void Wire() override;
 	};
 }

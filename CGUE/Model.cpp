@@ -75,8 +75,19 @@ namespace Engine {
 
 		pass->SetDrawingTransform(component->GetTransformation());
 
+		if (mesh->restartIndex != -1)
+		{
+			DEBUG_OGL(glEnable(GL_PRIMITIVE_RESTART));
+			DEBUG_OGL(glPrimitiveRestartIndex(mesh->restartIndex));
+		}
+
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));
-		DEBUG_OGL(glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
+		DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
+
+		if (mesh->restartIndex != -1)
+		{
+			DEBUG_OGL(glDisable(GL_PRIMITIVE_RESTART));
+		}
 	}
 
 
