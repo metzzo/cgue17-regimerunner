@@ -14,16 +14,33 @@
 #include "ConvexShape.h"
 #include "CapsuleShape.h"
 #include "HeightFieldShape.h"
-#include "Palm.h";
-#include "WorldInteraction.h"
+#include "PalmInteraction.h"
+#include <random>
 
 using namespace Engine;
+
+void PlacePalm(Entity *child, ModelResource *palmResource)
+{
+	auto palm = child->CreateChild();
+	palm->Add(new Model(palmResource));
+	palm->Add(new Game::PalmInteraction);
+
+	std::random_device rd;
+	std::mt19937 eng(rd());
+	uniform_int_distribution<> distr(1, 600);
+
+	auto x = distr(eng)*1.0f;
+	auto z = distr(eng)*1.0f;
+	palm->GetTransformation()->Translate(vec3(x, -3.0f, z));
+	palm->GetTransformation()->Scale(vec3(10.0f, 10.0f, 10.0f));
+}
 
 int main(int argc, char **argv)
 {
 	auto engine = new GameEngine(1440, 800, string("CGUE"));
 	auto modelResource = new ModelResource("objects/mapobj.obj");
 	auto heightMapResource = new TextureResource("textures/heightmap.png");
+	auto palmResource = new ModelResource("objects/palm/palmtree.obj");
 	
 
 	auto camera = new Camera(80.0f, 0.1f, 180.0f, 1440, 800);
@@ -34,18 +51,14 @@ int main(int argc, char **argv)
 	camera->GetTransformation()->Translate(vec3(30.0, 30.0, 30.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 	player->Add(new Game::CameraMovement);
-	player->Add(new Game::WorldInteraction);
 
 
 	auto map = engine->GetRootEntity()->CreateChild();
 	map->Add(new Model(modelResource));
 
-	auto m = new ModelResource("objects/palm/palmtree.obj");
 
-	for (int i = 0; i < 100; i++) {
-		auto p = new Game::Palm(engine,m);
-		p->PlaceRandom(1, 600);
-		engine->GetRootEntity()->AddChild(p);
+	for (auto i = 0; i < 100; i++) {
+		PlacePalm(engine->GetRootEntity(), palmResource);
 	}
 
 	auto rigidBody = new RigidBody();

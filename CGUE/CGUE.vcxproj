@@ -136,7 +136,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelResource.cpp" />
-    <ClCompile Include="Palm.cpp" />
     <ClCompile Include="Pass.cpp" />
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="RigidBody.cpp" />
@@ -146,7 +145,7 @@
     <ClCompile Include="SpotLight.cpp" />
     <ClCompile Include="TextureResource.cpp" />
     <ClCompile Include="Transformation.cpp" />
-    <ClCompile Include="WorldInteraction.cpp" />
+    <ClCompile Include="PalmInteraction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -165,7 +164,6 @@
     <ClInclude Include="HeightFieldShape.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelResource.h" />
-    <ClInclude Include="Palm.h" />
     <ClInclude Include="Pass.h" />
     <ClInclude Include="RenderPass.h" />
     <ClInclude Include="RigidBody.h" />
@@ -175,7 +173,7 @@
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="TextureResource.h" />
     <ClInclude Include="Transformation.h" />
-    <ClInclude Include="WorldInteraction.h" />
+    <ClInclude Include="PalmInteraction.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
