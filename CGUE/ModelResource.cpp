@@ -25,6 +25,7 @@ namespace Engine {
 	{
 		// Read file via ASSIMP
 		Assimp::Importer importer;
+		cout << "Load Model " << filename << endl;
 		auto scene = importer.ReadFile(filename, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 		// Check for errors
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
@@ -165,6 +166,7 @@ namespace Engine {
 			{   // If texture hasn't been loaded already, load it
 				auto filename = string(str.C_Str());
 				filename = GetDirectory() + '/' + filename;
+				cout << "Load Texture " << filename << endl;
 
 				auto texture = new TextureResource(filename);
 				texture->Init();

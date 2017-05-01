@@ -37,6 +37,21 @@ namespace Engine {
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));
 		DEBUG_OGL(glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
 		DEBUG_OGL(glBindVertexArray(0));
+
+		currentTexture = 0;
+		for (auto i = 0; i < mesh->diffuseTexture.size(); i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + currentTexture);
+			glBindTexture(GL_TEXTURE_2D, 0);
+			currentTexture++;
+		}
+		for (auto i = 0; i < mesh->specularTexture.size(); i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + currentTexture);
+			glBindTexture(GL_TEXTURE_2D, 0);
+			currentTexture++;
+		}
+		glActiveTexture(GL_TEXTURE0);
 	}
 
 
