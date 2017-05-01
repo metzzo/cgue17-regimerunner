@@ -16,6 +16,7 @@
 #include "HeightFieldShape.h"
 #include "PalmInteraction.h"
 #include <random>
+#include "HelicopterBehaviour.h"
 
 using namespace Engine;
 
@@ -32,8 +33,21 @@ void PlacePalm(Entity *child, ModelResource *palmResource)
 	auto x = distr(eng)*1.0f;
 	auto z = distr(eng)*1.0f;
 	palm->GetTransformation()->Translate(vec3(x, -3.0f, z));
-	// physics objects are not allowed to be scaled => please prescale it in the modeller
-	//palm->GetTransformation()->Scale(vec3(10.0f, 10.0f, 10.0f));
+}
+
+void PlaceHeli(Entity *child, ModelResource *heliResource, int num)
+{
+	std::random_device rd;
+	std::mt19937 eng(rd());
+	uniform_int_distribution<> distr(1, 600);
+
+	auto x = distr(eng)*1.0f;
+	auto z = distr(eng)*1.0f;
+
+	auto heli = child->CreateChild();
+	heli->Add(new Model(heliResource));
+	heli->GetTransformation()->Translate(vec3(x, 100.0f + num*10, z));
+	heli->Add(new Game::HelicopterBehaviour);
 }
 
 int main(int argc, char **argv)
@@ -42,9 +56,10 @@ int main(int argc, char **argv)
 	auto modelResource = new ModelResource("objects/mapobj.obj");
 	auto heightMapResource = new TextureResource("textures/heightmap.png");
 	auto palmResource = new ModelResource("objects/palm/palmtree.obj");
+	auto heliResource = new ModelResource("objects/heli2/Heli.obj");
 	
 
-	auto camera = new Camera(80.0f, 0.1f, 180.0f, 1440, 800);
+	auto camera = new Camera(80.0f, 0.1f, 500.0f, 1440, 800);
 	auto player = engine->GetRootEntity()->CreateChild();
 	player->Add(camera);
 
@@ -57,6 +72,9 @@ int main(int argc, char **argv)
 	auto map = engine->GetRootEntity()->CreateChild();
 	map->Add(new Model(modelResource));
 
+	for (auto i = 0; i < 20; i++) {
+		PlaceHeli(engine->GetRootEntity(), heliResource, i);
+	}
 
 	for (auto i = 0; i < 100; i++) {
 		PlacePalm(engine->GetRootEntity(), palmResource);
@@ -72,10 +90,10 @@ int main(int argc, char **argv)
 	//cube->Add(new Game::Rotating());
 	
 	auto light = engine->GetRootEntity()->CreateChild();
-	auto spotLight = new SpotLight();
+	auto spotLight = new SpotLight(1024*2, 1, 3000);
 	
 	light->Add(spotLight);
-	spotLight->GetCamera()->GetTransformation()->Translate(vec3(4.0, 3.0, 3.0));
+	spotLight->GetCamera()->GetTransformation()->Translate(vec3(30.0, 30.0, 30.0));
 	spotLight->GetCamera()->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 
 	engine->Run();

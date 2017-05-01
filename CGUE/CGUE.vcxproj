@@ -133,6 +133,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="GameEngine.cpp" />
     <ClCompile Include="HeightFieldShape.cpp" />
+    <ClCompile Include="HelicopterBehaviour.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelResource.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="HeightFieldShape.h" />
+    <ClInclude Include="HelicopterBehaviour.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelResource.h" />
     <ClInclude Include="Pass.h" />
