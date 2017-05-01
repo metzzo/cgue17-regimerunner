@@ -26,8 +26,6 @@ namespace Engine {
 		// TODO: Add Remove
 		
 		Entity *CreateChild();
-		void AddChild(Entity *e);
-		void RemoveChild(Entity *e);
 
 		Entity *GetParent() const;
 		const vector<Entity*>* GetChildren() const;

@@ -52,17 +52,6 @@ namespace Engine {
 		return child;
 	}
 
-	void Entity::AddChild(Entity *e)
-	{
-		e->parent = this;
-		this->children.push_back(e);
-	}
-
-	void Entity::RemoveChild(Entity * e)
-	{
-
-	}
-
 	Entity* Entity::GetParent() const
 	{
 		return this->parent;
