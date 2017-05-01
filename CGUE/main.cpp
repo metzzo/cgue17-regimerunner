@@ -1,5 +1,4 @@
 
-
 #include "GameEngine.h"
 #include "GameEngine.h"
 #include "Transformation.h"
@@ -15,16 +14,19 @@
 #include "ConvexShape.h"
 #include "CapsuleShape.h"
 #include "HeightFieldShape.h"
+#include "Palm.h";
+#include "WorldInteraction.h"
 
 using namespace Engine;
 
 int main(int argc, char **argv)
 {
-	auto engine = new GameEngine(1024, 640, string("CGUE"));
+	auto engine = new GameEngine(1440, 800, string("CGUE"));
 	auto modelResource = new ModelResource("objects/mapobj.obj");
 	auto heightMapResource = new TextureResource("textures/heightmap.png");
+	
 
-	auto camera = new Camera(45.0f, 0.1f, 100.0f, 1024, 640);
+	auto camera = new Camera(80.0f, 0.1f, 180.0f, 1440, 800);
 	auto player = engine->GetRootEntity()->CreateChild();
 	player->Add(camera);
 
@@ -32,10 +34,19 @@ int main(int argc, char **argv)
 	camera->GetTransformation()->Translate(vec3(30.0, 30.0, 30.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 	player->Add(new Game::CameraMovement);
+	player->Add(new Game::WorldInteraction);
 
 
 	auto map = engine->GetRootEntity()->CreateChild();
 	map->Add(new Model(modelResource));
+
+	auto m = new ModelResource("objects/palm/palmtree.obj");
+
+	for (int i = 0; i < 100; i++) {
+		auto p = new Game::Palm(engine,m);
+		p->PlaceRandom(1, 600);
+		engine->GetRootEntity()->AddChild(p);
+	}
 
 	auto rigidBody = new RigidBody();
 	rigidBody->SetStaticness(true);
@@ -48,6 +59,7 @@ int main(int argc, char **argv)
 	
 	auto light = engine->GetRootEntity()->CreateChild();
 	auto spotLight = new SpotLight();
+	
 	light->Add(spotLight);
 	spotLight->GetCamera()->GetTransformation()->Translate(vec3(4.0, 3.0, 3.0));
 	spotLight->GetCamera()->SetLookAtVector(vec3(0.0, 0.0, 0.0));

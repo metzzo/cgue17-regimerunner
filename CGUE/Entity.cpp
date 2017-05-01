@@ -2,10 +2,12 @@
 #include <typeinfo>
 #include <iostream>
 #include "Transformation.h"
+#include <algorithm>
 
 using namespace std;
 
 namespace Engine {
+
 	Entity::Entity(GameEngine *gameEngine)
 	{
 		this->gameEngine = gameEngine;
@@ -48,6 +50,17 @@ namespace Engine {
 		child->parent = this;
 		this->children.push_back(child);
 		return child;
+	}
+
+	void Entity::AddChild(Entity *e)
+	{
+		e->parent = this;
+		this->children.push_back(e);
+	}
+
+	void Entity::RemoveChild(Entity * e)
+	{
+
 	}
 
 	Entity* Entity::GetParent() const
