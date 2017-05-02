@@ -109,10 +109,14 @@ namespace Engine {
 		this->rootEntity->Init();
 		
 		this->started = true;
+		this->lastTime = SDL_GetTicks();
 		while(!cancelled && !KeyDown(SDL_SCANCODE_ESCAPE))
 		{
 			this->mouseXRel = 0;
 			this->mouseYRel = 0;
+			auto newTime = SDL_GetTicks();
+			this->deltaTime = newTime - this->lastTime;
+			this->lastTime = newTime;
 
 			SDL_Event e;
 			while (SDL_PollEvent(&e) != 0)
@@ -384,7 +388,7 @@ namespace Engine {
 
 	void GameEngine::UpdatePhysics()
 	{
-		scene->simulate(physicsStepSize);
+		scene->simulate((1 + deltaTime)*physicsStepSize);
 		scene->fetchResults(true);
 
 		PxU32 nbActiveActors;

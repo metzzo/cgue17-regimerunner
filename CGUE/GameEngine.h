@@ -33,6 +33,9 @@ namespace Engine {
 		SDL_Window *mainwindow;
 		SDL_GLContext maincontext;
 
+		int lastTime;
+		int deltaTime;
+
 		bool cancelled;
 		Entity* rootEntity;
 		Camera* mainCamera;

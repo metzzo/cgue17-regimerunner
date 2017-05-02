@@ -15,7 +15,6 @@ namespace Engine {
 
 	void CapsuleShape::Init()
 	{
-		
 		rigidBody->SetGeometry(new PxCapsuleGeometry(radius, halfHeight));
 	}
 }

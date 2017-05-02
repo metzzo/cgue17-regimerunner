@@ -72,13 +72,13 @@ namespace Game {
 		if (keySpace && !jumpPress)
 		{
 			jumpPress = true;
- 			jump = vec3(0.0f, 9.81f, 0.0f)*3.0f;
+ 			jump = vec3(0.0f, 9.81f, 0.0f)*1.5f;
 		} else if (!keySpace && jumpPress)
 		{
 			jumpPress = false;
 		}
 
-		jump *= 0.9;
+		jump *= 0.95;
 
 
 		component->controller->move(PxVec3(direction.x, direction.y, direction.z), 0.1f, 1, nullptr);
