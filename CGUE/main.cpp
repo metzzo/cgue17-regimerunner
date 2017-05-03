@@ -67,7 +67,8 @@ int main(int argc, char **argv)
 	player->Add(camera);
 
 	auto light = player->CreateChild();
-	auto spotLight = new SpotLight(1024, 1, 500);
+	//light->GetTransformation()->Translate(vec3(0, -2, 0));
+	auto spotLight = new SpotLight(glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 1.0f, 500.0f)/*perspective(radians(25.0f), 1.0f, 1.0f, 500.0f)*/, 1024);
 	light->Add(spotLight);
 
 

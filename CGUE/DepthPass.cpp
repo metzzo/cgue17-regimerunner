@@ -42,6 +42,7 @@ namespace Engine {
 	void DepthPass::Init()
 	{
 		this->shader = new Shader("materials/depth_material.vert", "materials/depth_material.frag");
+		this->shader->Init();
 	}
 
 	void DepthPass::SetDrawingTransform(Transformation* transformation) const

@@ -7,10 +7,9 @@ namespace Engine {
 	{
 		int shadowMapSize;
 		Camera *camera;
-		float near;
-		float far;
+		mat4 projectionMatrix;
 	public:
-		explicit SpotLight(int shadowMapSize = 1024, float near = 1.0f, float far = 10.0f);
+		explicit SpotLight(mat4 projectionMatrix, int shadowMapSize = 1024);
 		~SpotLight();
 
 		Camera *GetCamera() const;

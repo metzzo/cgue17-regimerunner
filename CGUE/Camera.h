@@ -41,13 +41,13 @@ namespace Engine {
 
 		GLuint depthMapFbo;
 		GLuint depthMap;
-		int textureWidth;
-		int textureHeight;
 		bool r2t;
 		Pass* cameraPass;
+		bool projectionMatrixSet;
 	public:
 
 		explicit Camera(float fov = 45.0f, float near = 0.1f, float far=100.0f, int width=640, int height=480, bool ortho = false);
+		explicit Camera(mat4x4 projectionMatrix);
 		~Camera();
 
 		float GetFov() const;
@@ -57,9 +57,8 @@ namespace Engine {
 		void SetCameraPass(Pass *pass);
 
 		void SetLookAtVector(vec3 lookAt);
-		vec3 GetLookAtVector();
+		vec3 GetLookAtVector() const;
 		mat4x4 GetViewMatrix() const;
-		void SetViewMatrix(mat4x4 mat);
 		mat4x4 GetProjectionMatrix() const;
 		mat4x4 GetProjectionViewMatrix() const;
 		GLuint GetTexture() const;

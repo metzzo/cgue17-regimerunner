@@ -1,14 +1,14 @@
 #include "SpotLight.h"
 #include "Entity.h"
 #include "GameEngine.h"
+#include "DepthPass.h"
 
 namespace Engine {
-	SpotLight::SpotLight(int shadowMapSize, float near, float far)
+	SpotLight::SpotLight(mat4 projectionMatrix, int shadowMapSize)
 	{
 		this->shadowMapSize = shadowMapSize;
 		this->camera = nullptr;
-		this->near = near;
-		this->far = far;
+		this->projectionMatrix = projectionMatrix;
 	}
 
 
@@ -33,9 +33,10 @@ namespace Engine {
 	void SpotLight::AttachedToEntity()
 	{
 		// SpotLight needs a camera => create it, and wire it up
-		this->camera = new Camera(0, near, far, shadowMapSize, shadowMapSize, true);
+		this->camera = new Camera(projectionMatrix);
 		this->GetEntity()->Add(camera);
 
 		camera->EnableRender2Texture(this->shadowMapSize, this->shadowMapSize);
+		camera->SetCameraPass(GetEngine()->GetDepthPass());
 	}
 }

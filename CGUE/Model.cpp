@@ -83,6 +83,7 @@ namespace Engine {
 
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));
 		DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
+		DEBUG_OGL(glBindVertexArray(0));
 
 		if (mesh->restartIndex != -1)
 		{

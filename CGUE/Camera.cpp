@@ -53,13 +53,18 @@ namespace Engine {
 		this->width = width;
 		this->height = height;
 		this->ortho = ortho;
+		this->projectionMatrixSet = false;
 		this->depthMapFbo = 0;
 		this->depthMap = 0;
-		this->textureWidth = 0;
-		this->textureHeight = 0;
 		this->cameraPass = nullptr;
 		this->upVector = vec3(0.0, 1.0, 0.0);
 		this->r2t = false;		
+	}
+
+	Camera::Camera(mat4x4 projectionMatrix) : Camera()
+	{
+		this->projectionMatrix = projectionMatrix;
+		this->projectionMatrixSet = true;
 	}
 
 	Camera::~Camera()
@@ -83,8 +88,8 @@ namespace Engine {
 
 	void Camera::EnableRender2Texture(int textureWidth, int textureHeight)
 	{
-		this->textureWidth = textureWidth;
-		this->textureHeight = textureHeight;
+		this->width = textureWidth;
+		this->height = textureHeight;
 		this->r2t = true;
 	}
 
@@ -99,18 +104,14 @@ namespace Engine {
 		this->TransformationUpdated();
 	}
 
-	vec3 Camera::GetLookAtVector() {
+	vec3 Camera::GetLookAtVector() const
+	{
 		return this->lookAtVector;
 	}
 
 	mat4x4 Camera::GetViewMatrix() const
 	{
 		return this->viewMatrix;
-	}
-
-	void Camera::SetViewMatrix(mat4x4 mat)
-	{
-		this->viewMatrix = mat;
 	}
 
 	mat4x4 Camera::GetProjectionMatrix() const
@@ -134,14 +135,17 @@ namespace Engine {
 
 	void Camera::Init()
 	{
-		if (ortho)
-		{
-			projectionMatrix = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, this->near, this->far);
-		}
-		else {
-			auto engine = this->GetEntity()->GetEngine();
-			auto ratio = float(engine->GetScreenWidth()) / float(engine->GetScreenHeight());
-			projectionMatrix = perspective(radians(fov), ratio, near, far);
+		if (!projectionMatrixSet) {
+			projectionMatrixSet = true;
+			if (ortho)
+			{
+				projectionMatrix = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, this->near, this->far);
+			}
+			else {
+				auto engine = this->GetEntity()->GetEngine();
+				auto ratio = float(engine->GetScreenWidth()) / float(engine->GetScreenHeight());
+				projectionMatrix = perspective(radians(fov), ratio, near, far);
+			}
 		}
 
 		if (this->cameraPass == nullptr)
@@ -156,7 +160,7 @@ namespace Engine {
 			glGenTextures(1, &this->depthMap);
 			glBindTexture(GL_TEXTURE_2D, depthMap);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-				textureWidth, textureHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+				this->width, this->height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -170,6 +174,8 @@ namespace Engine {
 		}
 
 		GetEngine()->GetCameraPass()->AddOperation(new CameraRenderOperation(this));
+
+		TransformationUpdated(); // update view matrix
 	}
 
 	vec3 Camera::GetUpVector() const
