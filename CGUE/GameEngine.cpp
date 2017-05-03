@@ -388,7 +388,11 @@ namespace Engine {
 
 	void GameEngine::UpdatePhysics()
 	{
-		scene->simulate((1 + deltaTime)*physicsStepSize);
+		if (deltaTime == 0)
+		{
+			return;
+		}
+		scene->simulate(deltaTime*physicsStepSize);
 		scene->fetchResults(true);
 
 		PxU32 nbActiveActors;

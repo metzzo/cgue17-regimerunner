@@ -136,7 +136,7 @@ namespace Engine {
 	{
 		if (ortho)
 		{
-			projectionMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, this->near, this->far);
+			projectionMatrix = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, this->near, this->far);
 		}
 		else {
 			auto engine = this->GetEntity()->GetEngine();

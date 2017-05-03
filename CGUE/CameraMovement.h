@@ -43,7 +43,10 @@ namespace Game {
 
 		PxController* controller;
 		Engine::Camera *camera;
+		Engine::SpotLight* spotLight;
 	public:
+		explicit CameraMovement(Engine::SpotLight *spotLight);
+
 		void Init() override;
 		void Wire() override;
 	};

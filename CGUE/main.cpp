@@ -67,13 +67,14 @@ int main(int argc, char **argv)
 	player->Add(camera);
 
 	auto light = player->CreateChild();
-	light->Add(new SpotLight(1024 * 2, 1, 3000));
+	auto spotLight = new SpotLight(1024, 1, 500);
+	light->Add(spotLight);
 
 
 	engine->SetMainCamera(camera);
 	camera->GetTransformation()->Translate(vec3(30.0, 60.0, 30.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
-	player->Add(new Game::CameraMovement);
+	player->Add(new Game::CameraMovement(spotLight));
 
 	for (auto i = 0; i < 20; i++) {
 		PlaceHeli(engine->GetRootEntity(), heliResource, i);

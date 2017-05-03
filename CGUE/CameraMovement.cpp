@@ -48,10 +48,10 @@ namespace Game {
 		auto cameraFront = cam->GetLookAtVector() - cam->GetTransformation()->GetAbsolutePosition();
 
 		auto physicsPos = component->controller->getPosition();
-		auto pos = vec3(physicsPos.x, physicsPos.y, physicsPos.z);
+		auto pos = vec3(physicsPos.x, physicsPos.y, physicsPos.z) ;
 		component->GetTransformation()->SetRelativeMatrix(translate(mat4(), pos));
 		cam->SetLookAtVector(pos + cameraFront);
-
+		component->spotLight->GetCamera()->SetLookAtVector(pos + cameraFront);
 
 		auto keyDown = component->GetEngine()->KeyDown(SDL_SCANCODE_S);
 		auto keyUp = component->GetEngine()->KeyDown(SDL_SCANCODE_W);
@@ -90,7 +90,7 @@ namespace Game {
 		auto pos = GetTransformation()->GetAbsolutePosition();
 
 		PxCapsuleControllerDesc desc;
-		desc.height = 2.0;
+		desc.height = 8.0;
 		desc.radius = 1.0;
 		desc.userData = GetEntity();
 		desc.position = PxExtendedVec3(pos.x, pos.y, pos.z);
@@ -101,6 +101,11 @@ namespace Game {
 
 		GetEngine()->GetUpdatePass()->AddOperation(new CameraMovementMouseOperation(this));
 		GetEngine()->GetUpdatePass()->AddOperation(new CameraMovementKeyOperation(this));
+	}
+
+	CameraMovement::CameraMovement(Engine::SpotLight* spotLight) : Component()
+	{
+		this->spotLight = spotLight;
 	}
 
 	void CameraMovement::Wire()
