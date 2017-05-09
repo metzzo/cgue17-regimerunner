@@ -24,9 +24,9 @@ using namespace Engine;
 void PlacePalms(Entity *child, ModelResource *palmResource, HeightMapResource *map)
 {
 	auto mapSize = map->GetSize();
-	for (auto x = 64; x < mapSize.x/4; x += 64)
+	for (auto x = 32; x < mapSize.x; x += 64)
 	{
-		for (auto z = 64; z < mapSize.z/4; z+= 64)
+		for (auto z = 32; z < mapSize.z; z+= 64)
 		{
 			auto palm = child->CreateChild();
 			palm->Add(new Model(palmResource));
@@ -53,10 +53,11 @@ void PlaceHeli(Entity *child, ModelResource *heliResource, int num)
 int main(int argc, char **argv)
 {
 	auto engine = new GameEngine(1440, 800, string("CGUE"));
-	auto mapTexResource = new TextureResource("textures/heightmap_tex.jpg");
-	auto mapSize = vec3(2048, 512, 2048);
-	auto mapResource = new HeightMapResource("textures/heightmap.png", mapSize);
-	mapResource->AddTexture(mapTexResource);
+	auto mapSize = vec3(512, 128, 512);
+	auto mapResource = new HeightMapResource("textures/heightmap.png", mapSize, 1024, 1024);
+	mapResource->AddTexture(new TextureResource("textures/sandtext.jpg"), 0, 0.15);
+	mapResource->AddTexture(new TextureResource("textures/grasstext.jpg"), 0.15, 0.3);
+	mapResource->AddTexture(new TextureResource("textures/stonetext.jpg"), 0.3, 1.0);
 
 	auto palmResource = new ModelResource("objects/palm/palmtree.obj");
 	auto heliResource = new ModelResource("objects/heli2/Heli.obj");
@@ -70,7 +71,7 @@ int main(int argc, char **argv)
 	light->GetTransformation()->Translate(vec3(0, -10, 0));
 
 	auto ratio = float(engine->GetScreenWidth()) / float(engine->GetScreenHeight());
-	auto spotLight = new SpotLight(glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 500.0f), 512, 40.0f, 50.0f); //perspective(radians(45.0f), 1.0f, 0.1f, 1000.0f)
+	auto spotLight = new SpotLight(perspective(radians(180.0f), 1.0f, 0.1f, 25.0f), 1024, 5.0f, 25.0f); //perspective(radians(45.0f), 1.0f, 0.1f, 1000.0f)
 	light->Add(spotLight); //glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 500.0f)
 	//spotLight->GetCamera()->SetLookAtVector(vec3(30, 0, 30));
 

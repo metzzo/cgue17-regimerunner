@@ -338,7 +338,7 @@ namespace Engine {
 
 		// init physics
 		this->physicsAccumulator = 0.0f;
-		this->physicsStepSize = 1.0f / 60.0f;
+		this->physicsStepSize = 1.0f / 30.0f;
 
 		this->foundation = PxCreateFoundation(PX_FOUNDATION_VERSION, this->allocator, this->errorCallback);
 

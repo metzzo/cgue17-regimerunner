@@ -67,7 +67,7 @@ void main()
 	vec3 normal = normalize(fs_in.Normal);
 	vec3 lightColor = vec3(0.8);
 	// Ambient
-	vec3 ambient = 0.5 * color;
+	vec3 ambient = 0.2 * color;
 	float diff = max(dot(lightDir, normal), 0.0);
 	vec3 diffuse = diff * lightColor;
 	// Specular

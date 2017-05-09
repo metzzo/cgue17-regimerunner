@@ -9,6 +9,12 @@ namespace Engine {
 		this->textureId = 0;
 	}
 
+	TextureResource::TextureResource(GLubyte* pixels, int width, int height) : BaseResource("undefined")
+	{
+		this->sdlImage = SDL_CreateRGBSurfaceFrom(pixels, width, height, 24, 3 * width, 0x000000ff, 0x0000ff00, 0x00ff0000, 0);
+		this->textureId = 0;
+	}
+
 
 	TextureResource::~TextureResource()
 	{
@@ -17,10 +23,12 @@ namespace Engine {
 
 	void TextureResource::Load()
 	{
-		this->sdlImage = IMG_Load(filename.c_str());
-		if (!this->sdlImage)
-		{
-			RaiseEngineError("Could not load image");
+		if (this->sdlImage == nullptr) {
+			this->sdlImage = IMG_Load(filename.c_str());
+			if (!this->sdlImage)
+			{
+				RaiseEngineError("Could not load image");
+			}
 		}
 
 		glGenTextures(1, &this->textureId);

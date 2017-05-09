@@ -22,10 +22,10 @@ namespace Engine {
 	void DepthPass::BeforePass()
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
-		glCullFace(GL_FRONT);
+		//glCullFace(GL_FRONT);
 
-		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(4.f, 0.f);
+		//glEnable(GL_POLYGON_OFFSET_FILL);
+		//glPolygonOffset(4.f, 0.f);
 
 		DEBUG_OGL(glUseProgram(this->shader->GetProgramId()));
 
@@ -36,9 +36,9 @@ namespace Engine {
 	{
 		DEBUG_OGL(glUseProgram(0));
 
-		glCullFace(GL_BACK);
+		//glCullFace(GL_BACK);
 
-		glDisable(GL_POLYGON_OFFSET_FILL);
+		//glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 
 	void DepthPass::Init()

@@ -13,6 +13,7 @@ namespace Engine {
 		GLuint textureId;
 	public:
 		explicit TextureResource(string filename);
+		explicit TextureResource(GLubyte *pixels, int width, int height);
 		~TextureResource();
 
 		void Load() override;

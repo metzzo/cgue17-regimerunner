@@ -4,11 +4,14 @@
 
 
 namespace Engine {
-	HeightMapResource::HeightMapResource(string filename, vec3 size) : RenderableResource(filename)
+	HeightMapResource::HeightMapResource(string filename, vec3 size, int texWidth, int texHeight) : RenderableResource(filename)
 	{
 		this->heightMap = new TextureResource(filename);
 		this->mesh = nullptr;
 		this->size = size;
+		this->pixels = nullptr;
+		this->texWidth = texWidth;
+		this->texHeight = texHeight;
 	}
 
 	HeightMapResource::~HeightMapResource()
@@ -23,8 +26,6 @@ namespace Engine {
 		vector< vector< glm::vec3> > vertexData(heightMap->GetHeight(), vector<glm::vec3>(heightMap->GetWidth()));
 		vector< vector< glm::vec2> > coordsData(heightMap->GetHeight(), vector<glm::vec2>(heightMap->GetWidth()));
 
-		auto texU = float(heightMap->GetWidth()) * 0.1f;
-		auto texV = float(heightMap->GetHeight()) * 0.1f;
 		for (auto y = 0; y < heightMap->GetHeight(); y++)
 		{
 			for (auto x = 0; x < heightMap->GetWidth(); x++)
@@ -37,7 +38,7 @@ namespace Engine {
 				auto height = float(pixel) / 255.0f;
 
 				vertexData[y][x] = vec3(scaleC, height, scaleR);
-				coordsData[y][x] = vec2(texU*scaleC, texV*scaleR);
+				coordsData[y][x] = vec2(scaleC, scaleR);
 			}
 		}
 
@@ -139,18 +140,80 @@ namespace Engine {
 			}
 			mesh->indices.push_back(mesh->restartIndex);
 		}
+
+
+		// generate texture
 		for (auto& tex : this->textures)
 		{
-			tex->Init();
-			mesh->diffuseTexture.push_back(tex);
+			tex.texture->Init();
 		}
+		auto texturePixels = new GLubyte[3 * texWidth * texHeight];
+		for (auto x = 0; x < texWidth; x++)
+		{
+			for (auto y = 0;  y < texHeight; y++)
+			{
+				auto hX = int(float(x) / texWidth*heightMap->GetWidth());
+				auto hY = int(float(y) / texHeight*heightMap->GetHeight());
+
+				auto pixel = float(pixels[heightMap->GetBytesPerPixel()*(hX*heightMap->GetHeight() + hY)]) / 255.0f;
+
+				for (auto& tex : this->textures)
+				{
+					if (tex.min <= pixel && tex.max >= pixel)
+					{
+						auto origTexX = x % tex.texture->GetWidth();
+						auto origTexY = y % tex.texture->GetHeight();
+						for (auto i = 0; i < 3; i++)
+						{
+							texturePixels[3*(x*texHeight + y) + i] = static_cast<GLubyte*>(tex.texture->GetPixels())[3*(origTexX*tex.texture->GetHeight() + origTexY) + i];
+						}
+					}
+				}
+			}
+		}
+
+		/*for (auto y = 0; y < heightMap->GetHeight(); y++)
+		{
+			for (auto x = 0; x < heightMap->GetWidth(); x++)
+			{
+				auto pixel = float(pixels[heightMap->GetBytesPerPixel()*(x*heightMap->GetHeight() + y)])/255.0f;
+				for (auto texX = int(float(x) / heightMap->GetWidth() * texWidth); texX < int(float(x + 1) / heightMap->GetWidth() * texWidth); texX++)
+				{
+					for (auto texY = int(float(y) / heightMap->GetHeight() * texHeight); texY < int(float(y + 1) / heightMap->GetHeight() * texHeight); texY++)
+					{
+						for (auto& tex : this->textures)
+						{
+							if (tex.min <= pixel && tex.max >= pixel)
+							{
+								auto origTexX = texX % tex.texture->GetWidth();
+								auto origTexY = texY % tex.texture->GetHeight();
+								for (auto i = 0; i < 3; i++)
+								{
+									texturePixels[texX*heightMap->GetHeight() + texY + i] = static_cast<GLubyte*>(tex.texture->GetPixels())[origTexX*tex.texture->GetWidth() + origTexY + i];
+								}
+							}
+						}
+					}
+				}
+			}
+		}*/
+
+		auto terrainTex = new TextureResource(texturePixels, texWidth, texHeight);
+		terrainTex->Init();
+		mesh->diffuseTexture.push_back(terrainTex);
 		mesh->Init();
 		this->meshes.push_back(mesh);
+
+		// now build texture
 	}
 
-	void HeightMapResource::AddTexture(TextureResource* tex)
+	void HeightMapResource::AddTexture(TextureResource* tex, float min, float max)
 	{
-		this->textures.push_back(tex);
+		HeightMapTexture hTex;
+		hTex.texture = tex;
+		hTex.min = min;
+		hTex.max = max;
+		this->textures.push_back(hTex);
 	}
 
 	vec3 HeightMapResource::GetSize() const
