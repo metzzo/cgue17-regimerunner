@@ -29,14 +29,16 @@ namespace Engine {
 
 		DEBUG_OGL(glUseProgram(this->shader->GetProgramId()));
 
-		glCullFace(GL_BACK);
-
-		glDisable(GL_POLYGON_OFFSET_FILL);
+		
 	}
 
 	void DepthPass::AfterPass()
 	{
 		DEBUG_OGL(glUseProgram(0));
+
+		glCullFace(GL_BACK);
+
+		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 
 	void DepthPass::Init()

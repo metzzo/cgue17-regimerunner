@@ -18,6 +18,8 @@ namespace Engine {
 		this->shaderLightSpaceMatrixId = -2;
 		this->shaderDiffuseTexture = -2;
 		this->shaderShadowMap = -2;
+		this->lightSpotCutoff = -2;
+		this->lightSpotdir = -2;
 	}
 
 
@@ -42,11 +44,17 @@ namespace Engine {
 		auto cam = gameEngine->GetMainCamera();
 		for (auto light : gameEngine->GetLights())
 		{
-			auto lightSpaceMatrix = light->GetCamera()->GetProjectionViewMatrix();
+			auto lightCam = light->GetCamera();
+			auto lightSpaceMatrix = lightCam->GetProjectionViewMatrix();
 			auto lightPos = light->GetTransformation()->GetAbsolutePosition();
+			auto dir = lightCam->GetLookAtVector() - lightPos;
 
 			DEBUG_OGL(glUniform3fv(this->shaderLightPosId, 1, &lightPos[0]));
 			DEBUG_OGL(glUniformMatrix4fv(this->shaderLightSpaceMatrixId, 1, GL_FALSE, &lightSpaceMatrix[0][0]));
+			DEBUG_OGL(glUniform3fv(lightSpotdir, 1, &dir[0]));
+			DEBUG_OGL(glUniform1f(lightSpotCutoff, glm::cos(glm::radians(light->GetCutOff()))));
+			DEBUG_OGL(glUniform1f(lightSpotOuterCutoff, glm::cos(glm::radians(light->GetOuterCutOff()))));
+
 
 			DEBUG_OGL(glActiveTexture(GL_TEXTURE1));
 			DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, light->GetCamera()->GetTexture()));
@@ -84,6 +92,10 @@ namespace Engine {
 		this->shaderLightSpaceMatrixId = glGetUniformLocation(programId, "lightSpaceMatrix");
 		this->shaderDiffuseTexture = glGetUniformLocation(programId, "diffuseTexture");
 		this->shaderShadowMap = glGetUniformLocation(programId, "shadowMap");
+		this->lightSpotdir = glGetUniformLocation(programId, "lightDirection");
+		this->lightSpotCutoff = glGetUniformLocation(programId, "lightCutOff");
+		this->lightSpotOuterCutoff = glGetUniformLocation(programId, "lightOuterCutOff");
+
 
 	}
 

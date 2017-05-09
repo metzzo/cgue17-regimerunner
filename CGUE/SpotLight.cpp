@@ -4,11 +4,13 @@
 #include "DepthPass.h"
 
 namespace Engine {
-	SpotLight::SpotLight(mat4 projectionMatrix, int shadowMapSize)
+	SpotLight::SpotLight(mat4 projectionMatrix, int shadowMapSize, float cutOff, float outerCutOff)
 	{
 		this->shadowMapSize = shadowMapSize;
 		this->camera = nullptr;
 		this->projectionMatrix = projectionMatrix;
+		this->cutOff = cutOff;
+		this->outerCutOff = outerCutOff;
 	}
 
 
@@ -19,6 +21,16 @@ namespace Engine {
 	Camera* SpotLight::GetCamera() const
 	{
 		return this->camera;
+	}
+
+	float SpotLight::GetCutOff() const
+	{
+		return this->cutOff;
+	}
+
+	float SpotLight::GetOuterCutOff() const
+	{
+		return this->outerCutOff;
 	}
 
 	void SpotLight::Init()

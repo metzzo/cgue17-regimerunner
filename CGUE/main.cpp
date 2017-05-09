@@ -67,9 +67,12 @@ int main(int argc, char **argv)
 	player->Add(camera);
 
 	auto light = player->CreateChild();
-	//light->GetTransformation()->Translate(vec3(0, -2, 0));
-	auto spotLight = new SpotLight(glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 1.0f, 500.0f)/*perspective(radians(25.0f), 1.0f, 1.0f, 500.0f)*/, 1024);
-	light->Add(spotLight);
+	light->GetTransformation()->Translate(vec3(0, -10, 0));
+
+	auto ratio = float(engine->GetScreenWidth()) / float(engine->GetScreenHeight());
+	auto spotLight = new SpotLight(glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 500.0f), 512, 40.0f, 50.0f); //perspective(radians(45.0f), 1.0f, 0.1f, 1000.0f)
+	light->Add(spotLight); //glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 500.0f)
+	//spotLight->GetCamera()->SetLookAtVector(vec3(30, 0, 30));
 
 
 	engine->SetMainCamera(camera);

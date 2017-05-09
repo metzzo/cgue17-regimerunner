@@ -174,8 +174,6 @@ namespace Engine {
 		}
 
 		GetEngine()->GetCameraPass()->AddOperation(new CameraRenderOperation(this));
-
-		TransformationUpdated(); // update view matrix
 	}
 
 	vec3 Camera::GetUpVector() const

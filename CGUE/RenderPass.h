@@ -15,6 +15,9 @@ namespace Engine {
 		GLint shaderLightSpaceMatrixId;
 		GLint shaderDiffuseTexture;
 		GLint shaderShadowMap;
+		GLint lightSpotdir;
+		GLint lightSpotCutoff;
+		GLint lightSpotOuterCutoff;
 	public:
 		explicit RenderPass(GameEngine *gameEngine);
 		~RenderPass();
