@@ -7,6 +7,7 @@ namespace Engine {
 	class DirectionalLight;
 	class SpotLight;
 	class RenderPass;
+	class BaseLight;
 
 	class LightInfo
 	{
@@ -25,7 +26,7 @@ namespace Engine {
 
 		GLint shadowMapUniform;
 	public:
-		void AssignUniforms(GLuint programId, string name, int lightId);
+		void AssignUniforms(GLuint programId, string name, int lightId, BaseLight *light);
 	};
 
 	class RenderPass : public Pass
@@ -47,11 +48,7 @@ namespace Engine {
 		GLint materialShininessUniform;
 		GLint viewPosUniform;
 
-		GLint shaderLightPosId;
 		GLint shaderViewPosId;
-
-		
-		GLint shaderShadowMap;
 
 		bool lightsDirty;
 	public:

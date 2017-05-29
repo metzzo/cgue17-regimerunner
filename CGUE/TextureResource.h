@@ -24,5 +24,6 @@ namespace Engine {
 		void* GetPixels() const;
 		int GetMode() const;
 		int GetBytesPerPixel() const;
+		void Save(string filename) const;
 	};
 }

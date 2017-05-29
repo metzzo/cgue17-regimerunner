@@ -88,4 +88,9 @@ namespace Engine {
 	{
 		return this->sdlImage->format->BytesPerPixel;
 	}
+
+	void TextureResource::Save(string filename) const
+	{
+		SDL_SaveBMP(this->sdlImage, filename.c_str());
+	}
 }
