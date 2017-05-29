@@ -18,6 +18,7 @@
 #include <random>
 #include "HelicopterBehaviour.h"
 #include "HeightMapResource.h"
+#include "DirectionalLight.h"
 
 using namespace Engine;
 
@@ -62,6 +63,8 @@ int main(int argc, char **argv)
 	auto palmResource = new ModelResource("objects/palm/palmtree.obj");
 	auto heliResource = new ModelResource("objects/heli2/Heli.obj");
 	
+	//auto dirLight = new DirectionalLight(glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 500.0f), 1024);
+	//engine->GetRootEntity()->CreateChild()->Add(dirLight);
 
 	auto camera = new Camera(80.0f, 0.1f, 500.0f, 1440, 800);
 	auto player = engine->GetRootEntity()->CreateChild();
@@ -71,7 +74,7 @@ int main(int argc, char **argv)
 	light->GetTransformation()->Translate(vec3(0, 10, 0));
 
 	auto ratio = float(engine->GetScreenWidth()) / float(engine->GetScreenHeight());
-	auto spotLight = new SpotLight(perspective(radians(180.0f), 1.0f, 0.1f, 25.0f), 1024, 5.0f, 25.0f); //perspective(radians(45.0f), 1.0f, 0.1f, 1000.0f)
+	auto spotLight = new SpotLight( 5.0f, 25.0f); //perspective(radians(45.0f), 1.0f, 0.1f, 1000.0f) perspective(radians(180.0f), 1.0f, 0.1f, 25.0f), 1024,
 	spotLight->SetAmbient(vec3(0.3f, 0.3f, 0.3f));
 	spotLight->SetSpecular(vec3(1, 1, 1));
 	spotLight->SetDiffuse(vec3(1, 1, 1));

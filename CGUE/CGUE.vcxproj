@@ -130,6 +130,7 @@
     <ClCompile Include="ConvexShape.cpp" />
     <ClCompile Include="CameraMovement.cpp" />
     <ClCompile Include="DepthPass.cpp" />
+    <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="GameEngine.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="ConvexShape.h" />
     <ClInclude Include="CameraMovement.h" />
     <ClInclude Include="DepthPass.h" />
+    <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="GameEngine.h" />

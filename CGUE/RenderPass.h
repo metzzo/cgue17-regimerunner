@@ -3,10 +3,15 @@
 #include "glew/glew.h"
 
 namespace Engine {
+	class Shader;
+	class DirectionalLight;
 	class SpotLight;
+	class RenderPass;
 
-	struct SpotLightInfo
+	class LightInfo
 	{
+		friend RenderPass;
+
 		GLint directionUniform;
 		GLint positionUniform;
 		GLint ambientUniform;
@@ -18,16 +23,18 @@ namespace Engine {
 		GLint linearUniform;
 		GLint quadraticUniform;
 
-		GLint isShadowUniform;
 		GLint shadowMapUniform;
-		GLint lightPosUniform;
+	public:
+		void AssignUniforms(GLuint programId, string name, int lightId);
 	};
 
-	class Shader;
 	class RenderPass : public Pass
 	{
-		vector<SpotLightInfo> spotLightInfos;
+		vector<LightInfo> spotLightInfos;
 		vector<SpotLight*> spotLights;
+
+		DirectionalLight *directionalLight;
+		LightInfo directionalLightInfo;
 
 		Shader* shader;
 		GLint shaderViewId;
@@ -63,5 +70,6 @@ namespace Engine {
 		GLint GetSpecularUniform(int number) const;
 
 		void AddSpotLight(SpotLight *spotLight);
+		void SetDirectionalLight(DirectionalLight *directionalLight);
 	};
 }

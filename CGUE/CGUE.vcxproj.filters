@@ -141,6 +141,9 @@
     <ClCompile Include="SpotLight.cpp">
       <Filter>Source Files\Engine\Component\Light</Filter>
     </ClCompile>
+    <ClCompile Include="DirectionalLight.cpp">
+      <Filter>Source Files\Engine\Component\Light</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -225,6 +228,9 @@
       <Filter>Header Files\Engine\Component\Light</Filter>
     </ClInclude>
     <ClInclude Include="SpotLight.h">
+      <Filter>Header Files\Engine\Component\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLight.h">
       <Filter>Header Files\Engine\Component\Light</Filter>
     </ClInclude>
   </ItemGroup>

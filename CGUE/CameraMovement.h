@@ -2,6 +2,7 @@
 #include "Operation.h"
 #include "PxPhysicsAPI.h"
 #include "SpotLight.h"
+#include "Camera.h"
 
 using namespace physx;
 

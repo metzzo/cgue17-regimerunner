@@ -7,10 +7,27 @@
 #include <sstream>
 
 namespace Engine {
+	void LightInfo::AssignUniforms(GLuint programId, string name, int lightId)
+	{
+		DEBUG_OGL(this->ambientUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].ambient").c_str()));
+		DEBUG_OGL(this->diffuseUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].diffuse").c_str()));
+		DEBUG_OGL(this->specularUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].specular").c_str()));
+		DEBUG_OGL(this->constantUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].constant").c_str()));
+		DEBUG_OGL(this->linearUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].linear").c_str()));
+		DEBUG_OGL(this->quadraticUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].quadratic").c_str()));
+		DEBUG_OGL(this->cutOffUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].cutOff").c_str()));
+		DEBUG_OGL(this->outerCutOffUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].outerCutOff").c_str()));
+		DEBUG_OGL(this->directionUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].direction").c_str()));
+		DEBUG_OGL(this->positionUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].position").c_str()));
+
+	}
+
 	RenderPass::RenderPass(GameEngine *gameEngine) : Pass(gameEngine)
 	{
 		this->lightsDirty = false;
 		this->shader = nullptr;
+		this->directionalLight = nullptr;
+
 		this->shaderViewId = -2;
 		this->shaderProjectionId = -2;
 		this->shaderModelId = -2;
@@ -42,22 +59,11 @@ namespace Engine {
 
 		auto programId = this->shader->GetProgramId();
 
-		// TODO
 		auto lightId = 0;
 		for (auto light : spotLights)
 		{
-			SpotLightInfo info;
-			DEBUG_OGL(info.ambientUniform		= glGetUniformLocation(programId, ("spotLights[" + to_string(lightId) + "].ambient").c_str()));
-			DEBUG_OGL(info.diffuseUniform		= glGetUniformLocation(programId, ("spotLights[" + to_string(lightId) + "].diffuse").c_str()));
-			DEBUG_OGL(info.specularUniform		= glGetUniformLocation(programId, ("spotLights[" + to_string(lightId) + "].specular").c_str()));
-			DEBUG_OGL(info.constantUniform		= glGetUniformLocation(programId, ("spotLights[" + to_string(lightId) + "].constant").c_str()));
-			DEBUG_OGL(info.linearUniform		= glGetUniformLocation(programId, ("spotLights[" + to_string(lightId) + "].linear").c_str()));
-			DEBUG_OGL(info.quadraticUniform		= glGetUniformLocation(programId, ("spotLights[" + to_string(lightId) + "].quadratic").c_str()));
-			DEBUG_OGL(info.cutOffUniform		= glGetUniformLocation(programId, ("spotLights[" + to_string(lightId) + "].cutOff").c_str()));
-			DEBUG_OGL(info.outerCutOffUniform	= glGetUniformLocation(programId, ("spotLights[" + to_string(lightId) + "].outerCutOff").c_str()));
-			DEBUG_OGL(info.directionUniform		= glGetUniformLocation(programId, ("spotLights[" + to_string(lightId) + "].direction").c_str()));
-			DEBUG_OGL(info.positionUniform		= glGetUniformLocation(programId, ("spotLights[" + to_string(lightId) + "].position").c_str()));
-
+			LightInfo info;
+			info.AssignUniforms(programId, "spotLights", lightId);
 
 			DEBUG_OGL(glUniform1f(info.cutOffUniform, glm::cos(glm::radians(light->GetCutOff()))));
 			DEBUG_OGL(glUniform1f(info.outerCutOffUniform, glm::cos(glm::radians(light->GetOuterCutOff()))));
@@ -74,6 +80,12 @@ namespace Engine {
 		}
 
 		DEBUG_OGL(glUniform1i(glGetUniformLocation(programId, "numSpotLights"), lightId));
+
+		if (this->directionalLight != nullptr)
+		{
+			this->directionalLightInfo.AssignUniforms(programId, "dirLights", 0);
+		}
+		DEBUG_OGL(glUniform1i(glGetUniformLocation(programId, "numDirLights"), this->directionalLight != nullptr ? 1 : 0));
 	}
 
 	void RenderPass::BeforePass()
@@ -105,10 +117,9 @@ namespace Engine {
 		auto lightId = 0;
 		for (auto light : spotLights)
 		{
-			auto lightCam = light->GetCamera();
 			//auto lightSpaceMatrix = lightCam->GetProjectionViewMatrix();
 			auto lightPos = light->GetTransformation()->GetAbsolutePosition();
-			auto dir = lightCam->GetLookAtVector() - lightPos;
+			auto dir = light->GetLookAtVector() - lightPos;
 
 			//DEBUG_OGL(glUniformMatrix4fv(this->shaderLightSpaceMatrixId, 1, GL_FALSE, &lightSpaceMatrix[0][0]));
 			DEBUG_OGL(glUniform3fv(spotLightInfos[lightId].positionUniform, 1, &lightPos[0]));
@@ -181,5 +192,12 @@ namespace Engine {
 	void RenderPass::AddSpotLight(SpotLight* spotLight)
 	{
 		this->spotLights.push_back(spotLight);
+		this->DirtyLights();
+	}
+
+	void RenderPass::SetDirectionalLight(DirectionalLight* directionalLight)
+	{
+		this->directionalLight = directionalLight;
+		this->DirtyLights();
 	}
 }

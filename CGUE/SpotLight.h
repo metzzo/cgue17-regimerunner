@@ -1,29 +1,24 @@
 #pragma once
-#include "Camera.h"
 #include "BaseLight.h"
 
 namespace Engine {
 	class SpotLight :
 		public BaseLight
 	{
-		int shadowMapSize;
-		Camera *camera;
-		mat4 projectionMatrix;
 		float cutOff;
 		float outerCutOff;
-		bool shadowCasting;
+		vec3 lookAtVector;
 	public:
-		explicit SpotLight(mat4 projectionMatrix, int shadowMapSize = 1024, float cutOff = 0.0f, float outerCutoff = 0.05f);
+		explicit SpotLight(float cutOff, float outerCutoff);
 		~SpotLight();
 
-		Camera *GetCamera() const;
+		void SetLookAtVector(vec3 lookAt);
+
 		float GetCutOff() const;
 		float GetOuterCutOff() const;
-		bool IsShadowCasting() const;
 
 		void Init() override;
-		void Wire() override;
-		void AttachedToEntity() override;
+		vec3 GetLookAtVector() const;
 	};
 }
 
