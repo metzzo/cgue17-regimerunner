@@ -14,7 +14,6 @@ namespace Engine {
 	class Entity;
 	class GameState;
 	class Camera;
-	class SpotLight;
 	class Pass;
 	class RenderPass;
 	class DepthPass;
@@ -45,8 +44,6 @@ namespace Engine {
 		int mouseYRel;
 		bool keyStates[322];
 
-
-		vector<SpotLight*> lights;
 		vector<Component*> initComponents;
 
 		Pass *updatePass;
@@ -79,10 +76,6 @@ namespace Engine {
 		virtual ~GameEngine();
 
 		void Run();
-
-		void AddLight(SpotLight* spotLight);
-		// TODO: add RemoveLight
-		vector<SpotLight*>& GetLights();
 
 		bool IsStarted() const;
 

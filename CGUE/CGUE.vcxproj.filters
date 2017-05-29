@@ -49,6 +49,12 @@
     <Filter Include="Source Files\Engine\Component\Shape">
       <UniqueIdentifier>{c531926f-c584-4df0-8fde-640f13919e90}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine\Component\Light">
+      <UniqueIdentifier>{dd3a069a-85f6-4ee6-9903-cec83d7a26f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Component\Light">
+      <UniqueIdentifier>{96aa4f1f-173d-47d1-87f8-9108e4a216ee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -71,9 +77,6 @@
     </ClCompile>
     <ClCompile Include="Operation.cpp">
       <Filter>Source Files\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="SpotLight.cpp">
-      <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files\Engine</Filter>
@@ -132,6 +135,12 @@
     <ClCompile Include="RenderableResource.cpp">
       <Filter>Source Files\Engine\Resource</Filter>
     </ClCompile>
+    <ClCompile Include="BaseLight.cpp">
+      <Filter>Source Files\Engine\Component\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="SpotLight.cpp">
+      <Filter>Source Files\Engine\Component\Light</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -154,9 +163,6 @@
     </ClInclude>
     <ClInclude Include="Operation.h">
       <Filter>Header Files\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="SpotLight.h">
-      <Filter>Header Files\Engine\Component</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Header Files\Engine</Filter>
@@ -214,6 +220,12 @@
     </ClInclude>
     <ClInclude Include="RenderableResource.h">
       <Filter>Header Files\Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseLight.h">
+      <Filter>Header Files\Engine\Component\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="SpotLight.h">
+      <Filter>Header Files\Engine\Component\Light</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 #include "SpotLight.h"
 #include "Entity.h"
 #include "GameEngine.h"
+#include "RenderPass.h"
 #include "DepthPass.h"
 
 namespace Engine {
@@ -33,9 +34,15 @@ namespace Engine {
 		return this->outerCutOff;
 	}
 
+	bool SpotLight::IsShadowCasting() const
+	{
+		return this->shadowCasting;
+	}
+
 	void SpotLight::Init()
 	{
-		this->GetEngine()->AddLight(this);
+		this->GetEngine()->GetRenderPass()->AddSpotLight(this);
+		this->GetEngine()->GetRenderPass()->DirtyLights(); // render pass needs to set up light stuff again
 	}
 
 	void SpotLight::Wire()
@@ -44,6 +51,8 @@ namespace Engine {
 
 	void SpotLight::AttachedToEntity()
 	{
+		BaseLight::AttachedToEntity();
+
 		// SpotLight needs a camera => create it, and wire it up
 		this->camera = new Camera(projectionMatrix);
 		this->GetEntity()->Add(camera);

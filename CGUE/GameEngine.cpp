@@ -225,16 +225,6 @@ namespace Engine {
 		this->initComponents.push_back(component);
 	}
 
-	void GameEngine::AddLight(SpotLight* spotLight)
-	{
-		this->lights.push_back(spotLight);
-	}
-
-	vector<SpotLight*>& GameEngine::GetLights()
-	{
-		return this->lights;
-	}
-
 	bool GameEngine::IsStarted() const
 	{
 		return started;
