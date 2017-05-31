@@ -41,6 +41,8 @@ namespace Engine {
 
 		GLuint depthMapFbo;
 		GLuint depthMap;
+		GLuint reflectionFbo;
+		GLuint reflection;
 		bool r2t;
 		Pass* cameraPass;
 		bool projectionMatrixSet;
@@ -62,6 +64,7 @@ namespace Engine {
 		mat4x4 GetProjectionMatrix() const;
 		mat4x4 GetProjectionViewMatrix() const;
 		GLuint GetTexture() const;
+		GLuint GetReflection() const;
 
 		vec3 GetUpVector() const;
 

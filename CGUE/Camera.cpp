@@ -19,15 +19,25 @@ namespace Engine {
 		component->GetEngine()->SetMainCamera(component);
 
 		glViewport(0, 0, component->width, component->height);
+
 		if (component->depthMapFbo)
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, component->depthMapFbo);
 		}
+
+		if (component->reflectionFbo) {
+			glBindFramebuffer(GL_FRAMEBUFFER, component->reflectionFbo);
+		}
+
 		// TODO: only draw objects that could potentially visible for the camera
 		component->cameraPass->DoPass();
 
 		if (component->depthMapFbo)
 		{
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+
+		if (component->reflectionFbo) {
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 		
@@ -56,6 +66,8 @@ namespace Engine {
 		this->projectionMatrixSet = false;
 		this->depthMapFbo = 0;
 		this->depthMap = 0;
+		this->reflectionFbo = 0;
+		this->reflection = 0;
 		this->cameraPass = nullptr;
 		this->upVector = vec3(0.0, 1.0, 0.0);
 		this->r2t = false;		
@@ -129,6 +141,10 @@ namespace Engine {
 		return this->depthMap;
 	}
 
+	GLuint Camera::GetReflection() const {
+		return this->reflection;
+	}
+
 	void Camera::Wire()
 	{
 	}
@@ -170,6 +186,20 @@ namespace Engine {
 
 			glBindFramebuffer(GL_FRAMEBUFFER, this->depthMapFbo);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+			glDrawBuffer(GL_NONE);
+			glReadBuffer(GL_NONE);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+			// create reflection fbo (for water)
+			glGenFramebuffers(1, &this->reflectionFbo);
+			glGenTextures(1, &this->reflection);
+			glBindTexture(GL_TEXTURE_2D, reflection);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+				this->width, this->height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glBindFramebuffer(GL_FRAMEBUFFER, this->reflectionFbo);
+			glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, reflection, 0);
 			glDrawBuffer(GL_NONE);
 			glReadBuffer(GL_NONE);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);

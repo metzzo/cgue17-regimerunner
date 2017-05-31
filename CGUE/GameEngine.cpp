@@ -9,6 +9,7 @@
 #include "Pass.h"
 #include "RenderPass.h"
 #include "DepthPass.h"
+#include "WaterPass.h"
 #include "RigidBody.h"
 #include "glm/glm.hpp"
 #include "Component.h"
@@ -81,6 +82,7 @@ namespace Engine {
 		this->updatePass = new Pass(this);
 		this->depthPass = new DepthPass(this);
 		this->cameraPass = new Pass(this);
+		this->waterPass = new WaterPass(this);
 
 		this->mouseXRel = 0;
 		this->mouseYRel = 0;
@@ -94,6 +96,7 @@ namespace Engine {
 		delete updatePass;
 		delete renderPass;
 		delete depthPass;
+		delete waterPass;
 
 		delete this->rootEntity;
 
@@ -250,6 +253,11 @@ namespace Engine {
 		return depthPass;
 	}
 
+	WaterPass * GameEngine::GetWaterPass() const
+	{
+		return waterPass;
+	}
+
 	Pass* GameEngine::GetUpdatePass() const
 	{
 		return updatePass;
@@ -359,6 +367,7 @@ namespace Engine {
 		this->updatePass->Init();
 		this->depthPass->Init();
 		this->cameraPass->Init();
+		this->waterPass->Init();
 	}
 
 	void GameEngine::DeInit()

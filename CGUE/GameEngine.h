@@ -18,6 +18,7 @@ namespace Engine {
 	class RenderPass;
 	class DepthPass;
 	class Component;
+	class WaterPass;
 
 	void RaiseEngineError(const string error);
 	
@@ -50,6 +51,7 @@ namespace Engine {
 		Pass *cameraPass;
 		DepthPass *depthPass;
 		RenderPass *renderPass;
+		WaterPass *waterPass;
 
 		PxDefaultAllocator		allocator;
 		PxDefaultErrorCallback	errorCallback;
@@ -83,6 +85,7 @@ namespace Engine {
 
 		RenderPass *GetRenderPass() const;
 		DepthPass *GetDepthPass() const;
+		WaterPass *GetWaterPass() const;
 		Pass *GetUpdatePass() const;
 		Pass *GetCameraPass() const;
 

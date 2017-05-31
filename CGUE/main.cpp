@@ -19,6 +19,7 @@
 #include "HelicopterBehaviour.h"
 #include "HeightMapResource.h"
 #include "DirectionalLight.h"
+#include "WaterSurface.h"
 
 using namespace Engine;
 
@@ -111,6 +112,9 @@ int main(int argc, char **argv)
 
 	auto map = engine->GetRootEntity()->CreateChild();
 	map->Add(new Model(mapResource));
+
+	auto water = engine->GetRootEntity()->CreateChild();
+	water->Add(new WaterSurface());
 
 	auto rigidBody = new RigidBody();
 	rigidBody->SetStaticness(true);
