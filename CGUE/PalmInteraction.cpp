@@ -20,9 +20,9 @@ namespace Game {
 		if (!positioned)
 		{
 			positioned = true;
-			auto size = component->map->GetSize();
 			auto y = component->map->GetHeightAt(component->x, component->z) - 4;
 			component->GetTransformation()->Translate(vec3(component->x, y, component->z));
+			component->rigidBody->Refresh();
 		}
 
 		if (spaceBar) {
@@ -30,16 +30,10 @@ namespace Game {
 			auto posCamera = component->GetEngine()->GetMainCamera()->GetTransformation()->GetAbsolutePosition();
 			auto dist = glm::distance(posPalm, posCamera);
 
-			if (dist < 50.0) {
+			if (dist < 50.0 && component->rigidBody->IsStatic()) {
 				std::cout << dist << std::endl;
-				auto shape = new Engine::CapsuleShape(1, 20);
-				component->GetEntity()->Add(shape);
-
-				auto rigidBody = new Engine::RigidBody();
-				rigidBody->SetStaticness(false);
-				rigidBody->SetDensity(10);
-				rigidBody->SetMaterial(0.5, 0.5, 0.5);
-				component->GetEntity()->Add(rigidBody);
+				component->rigidBody->SetStaticness(false);
+				component->rigidBody->Refresh();
 			}									
 		}
 	}
@@ -49,10 +43,16 @@ namespace Game {
 		this->map = map;
 		this->x = x;
 		this->z = z;
+		this->rigidBody = nullptr;
 	}
 
 	void PalmInteraction::Init() {
 		
 		GetEngine()->GetUpdatePass()->AddOperation(new PalmInteractionOperation(this));
+	}
+
+	void PalmInteraction::Wire()
+	{
+		WIRE_COMPONENT(this->rigidBody, Engine::RigidBodyClass);
 	}
 }

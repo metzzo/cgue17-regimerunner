@@ -5,6 +5,7 @@
 namespace Engine {
 	BaseShape::BaseShape()
 	{
+		this->rigidBody = nullptr;
 	}
 
 

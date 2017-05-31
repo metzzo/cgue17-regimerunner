@@ -1,6 +1,7 @@
 #pragma once
 #include "Operation.h"
 #include "HeightMapResource.h"
+#include "RigidBody.h"
 
 namespace Game {
 
@@ -21,8 +22,10 @@ namespace Game {
 		Engine::HeightMapResource *map;
 		int x;
 		int z;
+		Engine::RigidBody *rigidBody;
 	public:
 		void Init() override;
+		void Wire() override;
 		explicit PalmInteraction(int x, int z, Engine::HeightMapResource *map);
 	};
 

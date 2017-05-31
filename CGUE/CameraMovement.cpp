@@ -106,6 +106,8 @@ namespace Game {
 	CameraMovement::CameraMovement(Engine::SpotLight* spotLight) : Component()
 	{
 		this->spotLight = spotLight;
+		this->controller = nullptr;
+		this->camera = nullptr;
 	}
 
 	void CameraMovement::Wire()

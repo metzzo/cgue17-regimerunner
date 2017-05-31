@@ -339,7 +339,7 @@ namespace Engine {
 
 		auto pvd = PxCreatePvd(*foundation);
 		auto transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-		//pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
+		pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
 
 		this->physics = PxCreatePhysics(PX_PHYSICS_VERSION, *this->foundation, PxTolerancesScale(), true, pvd);
 		this->cooking = PxCreateCooking(PX_PHYSICS_VERSION, *this->foundation, PxCookingParams(PxTolerancesScale()));
@@ -387,7 +387,7 @@ namespace Engine {
 		{
 			return;
 		}
-		scene->simulate(deltaTime*physicsStepSize);
+		scene->simulate(deltaTime*physicsStepSize*0.1f);
 		scene->fetchResults(true);
 
 		PxU32 nbActiveActors;
@@ -404,7 +404,7 @@ namespace Engine {
 			RigidBody* rigidBody = static_cast<RigidBody*>(activeActors[i]->userData);
 			auto shape = rigidBody->GetShape();
 			auto actor = rigidBody->GetActor();
-			rigidBody->GetTransformation()->UpdatePhysicsMatrix(PxShapeExt::getGlobalPose(*shape, *actor));
+			rigidBody->GetTransformation()->UpdatePhysicsMatrix(actor->getGlobalPose());
 		}
 	}
 }

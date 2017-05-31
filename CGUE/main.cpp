@@ -32,6 +32,19 @@ void PlacePalms(Entity *child, ModelResource *palmResource, HeightMapResource *m
 			auto palm = child->CreateChild();
 			palm->Add(new Model(palmResource));
 			palm->Add(new Game::PalmInteraction(x + (rand() % 40 - 20), z + (rand() % 40 - 20), map));
+
+			auto shape = new Engine::CapsuleShape(4, 30);
+			palm->Add(shape);
+
+			auto rigidBody = new Engine::RigidBody();
+			auto transform = PxTransform();
+			transform.q = PxQuat(PxHalfPi, PxVec3(0, 0, 1));
+			transform.p = PxVec3(0, 30, 0);
+			rigidBody->SetLocalPose(transform);
+			rigidBody->SetStaticness(true);
+			rigidBody->SetDensity(100);
+			rigidBody->SetMaterial(0.5, 0.5, 0.5);
+			palm->Add(rigidBody);
 		}
 	}
 }
