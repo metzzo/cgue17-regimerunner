@@ -24,7 +24,6 @@ namespace Engine {
 		GLint linearUniform;
 		GLint quadraticUniform;
 
-		GLint shadowMapUniform;
 	public:
 		void AssignUniforms(GLuint programId, string name, int lightId, BaseLight *light);
 	};
@@ -47,6 +46,7 @@ namespace Engine {
 		GLint materialSpecularUniform;
 		GLint materialShininessUniform;
 		GLint viewPosUniform;
+		GLint shadowMapUniform;
 
 		GLint shaderViewPosId;
 

@@ -4,6 +4,13 @@
 #include "RenderPass.h"
 
 namespace Engine {
+	const SpotLight SpotLightClass;
+
+	SpotLight::SpotLight()
+	{
+		
+	}
+
 	SpotLight::SpotLight(float cutOff, float outerCutOff)
 	{
 		this->cutOff = cutOff;

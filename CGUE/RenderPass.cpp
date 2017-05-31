@@ -21,7 +21,6 @@ namespace Engine {
 		DEBUG_OGL(this->outerCutOffUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].outerCutOff").c_str()));
 		DEBUG_OGL(this->directionUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].direction").c_str()));
 		DEBUG_OGL(this->positionUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].position").c_str()));
-		DEBUG_OGL(this->shadowMapUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].shadowMap").c_str()));
 
 		DEBUG_OGL(glUniform3fv(this->ambientUniform, 1, &light->GetAmbient()[0]));
 		DEBUG_OGL(glUniform3fv(this->diffuseUniform, 1, &light->GetDiffuse()[0]));
@@ -49,6 +48,7 @@ namespace Engine {
 		this->materialSpecularUniform = -2;
 		this->materialShininessUniform = -2;
 		this->viewPosUniform = -2;
+		this->shadowMapUniform = -2;
 	}
 
 
@@ -134,7 +134,7 @@ namespace Engine {
 			DEBUG_OGL(glUniform3fv(directionalLightInfo.positionUniform, 1, &lightPos[0]));
 			DEBUG_OGL(glUniform3fv(directionalLightInfo.directionUniform, 1, &dir[0]));
 
-			DEBUG_OGL(glUniform1i(directionalLightInfo.shadowMapUniform, 1));
+			DEBUG_OGL(glUniform1i(shadowMapUniform, 1));
 
 			DEBUG_OGL(glActiveTexture(GL_TEXTURE1));
 			DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, directionalLight->GetCamera()->GetTexture()));
@@ -173,6 +173,7 @@ namespace Engine {
 		this->materialDiffuseUniform = glGetUniformLocation(programId, "material.diffuse");
 		this->materialSpecularUniform = glGetUniformLocation(programId, "material.specular");
 		this->materialShininessUniform = glGetUniformLocation(programId, "material.shininess");
+		this->shadowMapUniform = glGetUniformLocation(programId, "shadowMap");
 	
 	
 		this->shaderViewPosId = glGetUniformLocation(programId, "viewPos");

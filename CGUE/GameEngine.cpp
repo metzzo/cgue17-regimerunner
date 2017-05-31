@@ -200,6 +200,11 @@ namespace Engine {
 		return this->height;
 	}
 
+	float GameEngine::GetDeltaTime() const
+	{
+		return this->deltaTime;
+	}
+
 	PxCooking* GameEngine::GetCooking() const
 	{
 		return this->cooking;

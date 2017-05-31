@@ -95,6 +95,7 @@ namespace Engine {
 		Entity *GetRootEntity() const;
 		int GetScreenWidth() const;
 		int GetScreenHeight() const;
+		float GetDeltaTime() const;
 	
 		PxCooking *GetCooking() const;
 		PxPhysics *GetPhysics() const;

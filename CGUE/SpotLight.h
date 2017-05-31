@@ -9,6 +9,8 @@ namespace Engine {
 		float outerCutOff;
 		vec3 lookAtVector;
 	public:
+		SpotLight(); // do not use this constructor
+
 		explicit SpotLight(float cutOff, float outerCutoff);
 		~SpotLight();
 
@@ -20,5 +22,7 @@ namespace Engine {
 		void Init() override;
 		vec3 GetLookAtVector() const;
 	};
+
+	extern const SpotLight SpotLightClass;
 }
 

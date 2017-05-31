@@ -22,12 +22,12 @@ struct DirLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-	
-	sampler2D shadowMap;
 };
 #define MAX_NR_DIR_LIGHTS 1
 uniform DirLight dirLights[MAX_NR_DIR_LIGHTS];
 uniform int numDirLights;
+
+uniform sampler2D shadowMap;
 
 
 struct SpotLight {
@@ -44,7 +44,7 @@ struct SpotLight {
     vec3 diffuse;
     vec3 specular; 
 };  
-#define MAX_NR_SPOT_LIGHTS 1
+#define MAX_NR_SPOT_LIGHTS 50
 
 uniform SpotLight spotLights[MAX_NR_SPOT_LIGHTS];
 uniform int numSpotLights;
@@ -58,7 +58,7 @@ float ShadowCalculation(DirLight light, vec4 fragPosLightSpace)
     // Transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
     // Get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(light.shadowMap, projCoords.xy).r; 
+    float closestDepth = texture(shadowMap, projCoords.xy).r; 
     // Get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     // Calculate bias (based on depth map resolution and slope)
@@ -69,12 +69,12 @@ float ShadowCalculation(DirLight light, vec4 fragPosLightSpace)
     // float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
     // PCF
     float shadow = 0.0;
-    vec2 texelSize = 1.0 / textureSize(light.shadowMap, 0);
+    vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
     for(int x = -1; x <= 1; ++x)
     {
         for(int y = -1; y <= 1; ++y)
         {
-            float pcfDepth = texture(light.shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+            float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
             shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
         }    
     }
