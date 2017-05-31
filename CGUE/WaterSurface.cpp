@@ -14,6 +14,21 @@ namespace Engine {
 		auto pass = static_cast<WaterPass*>(this->GetPass());
 
 		pass->SetDrawingTransform(component->GetTransformation());
+
+		if (mesh->restartIndex != -1)
+		{
+			DEBUG_OGL(glEnable(GL_PRIMITIVE_RESTART));
+			DEBUG_OGL(glPrimitiveRestartIndex(mesh->restartIndex));
+		}
+
+		DEBUG_OGL(glBindVertexArray(mesh->VAO));
+		DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
+		DEBUG_OGL(glBindVertexArray(0));
+
+		if (mesh->restartIndex != -1)
+		{
+			DEBUG_OGL(glDisable(GL_PRIMITIVE_RESTART));
+		}
 	
 	}
 
@@ -30,14 +45,12 @@ namespace Engine {
 		for (auto &mesh : this->resource->GetMeshes())
 		{
 			GetEngine()->GetRenderPass()->AddOperation(new WaterRenderOperation(mesh, this));
-
 		}
 	}
 
 	WaterSurface::WaterSurface() {
-		auto mapSize = vec3(512, 150, 512);
+		auto mapSize = vec3(1024, 40, 1024);
 		this->resource = new HeightMapResource("textures/water.png", mapSize, 1024, 1024);
-		this->resource->AddTexture(new TextureResource("textures/stonetext.jpg"), 0.0, 1.0);
 	}
 
 	WaterSurface::WaterSurface(int size) {
