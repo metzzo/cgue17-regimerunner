@@ -3,6 +3,12 @@
 #include "GameEngine.h"
 
 namespace Engine {
+	inline bool ends_with(std::string const & value, std::string const & ending)
+	{
+		if (ending.size() > value.size()) return false;
+		return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+	}
+
 	TextureResource::TextureResource(string filename) : BaseResource(filename)
 	{
 		this->sdlImage = nullptr;
@@ -34,17 +40,30 @@ namespace Engine {
 		glGenTextures(1, &this->textureId);
 		glBindTexture(GL_TEXTURE_2D, this->textureId);
 
-		glTexImage2D(
+		int mode, internalMode;
+		if (this->sdlImage->format->BytesPerPixel == 4) {
+			internalMode = mode = GL_RGBA;
+		}
+		else
+		{
+			internalMode = mode = GL_RGB;
+			if (ends_with(filename, ".bmp"))
+			{
+				mode = GL_BGR;
+			}
+		}
+
+		DEBUG_OGL(glTexImage2D(
 			GL_TEXTURE_2D, 
 			0, 
-			GetMode(), 
+			internalMode, 
 			this->sdlImage->w,
 			this->sdlImage->h,
 			0, 
-			GetMode(),
+			mode,
 			GL_UNSIGNED_BYTE, 
 			this->sdlImage->pixels
-		);
+		));
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -72,16 +91,6 @@ namespace Engine {
 	void *TextureResource::GetPixels() const
 	{
 		return this->sdlImage->pixels;
-	}
-
-	int TextureResource::GetMode() const
-	{
-		if (this->sdlImage->format->BytesPerPixel == 4) {
-			return  GL_RGBA;
-		} else
-		{
-			return GL_RGB;
-		}
 	}
 
 	int TextureResource::GetBytesPerPixel() const

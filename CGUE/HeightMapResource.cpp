@@ -40,7 +40,7 @@ namespace Engine {
 				auto height = float(pixel) / 255.0f;
 
 				vertexData[y][x] = vec3(scaleC, height, scaleR);
-				coordsData[y][x] = vec2(scaleC, scaleR);
+				coordsData[y][x] = vec2(1 - scaleC, 1 - scaleR);
 			}
 		}
 
@@ -152,6 +152,7 @@ namespace Engine {
 			{
 				tex.texture->Init();
 			}
+
 			auto texturePixels = new GLubyte[3 * texWidth * texHeight];
 			for (auto x = 0; x < texWidth; x++)
 			{
@@ -162,15 +163,42 @@ namespace Engine {
 
 					auto pixel = float(pixels[heightMap->GetBytesPerPixel()*(hX*heightMap->GetHeight() + hY)]) / 255.0f;
 
-					for (auto& tex : this->textures)
+					for (auto texIndex = 0; texIndex < this->textures.size(); texIndex++)
 					{
+
+						auto& tex = this->textures[texIndex];
+						auto& texAbove = this->textures[(texIndex + 1) % this->textures.size()];
 						if (tex.min <= pixel && tex.max >= pixel)
 						{
 							auto origTexX = x % tex.texture->GetWidth();
 							auto origTexY = y % tex.texture->GetHeight();
-							for (auto i = 0; i < 3; i++)
+
+							if (texIndex < this->textures.size() - 1 && texAbove.min <= pixel)
 							{
-								texturePixels[3*(x*texHeight + y) + i] = static_cast<GLubyte*>(tex.texture->GetPixels())[3*(origTexX*tex.texture->GetHeight() + origTexY) + i];
+								auto delta = tex.max - texAbove.min;
+								auto rel = pixel - texAbove.min;
+								auto scale = rel / delta;
+								assert(scale >= 0 && scale <= 1);
+
+								auto scaleTex = 1 - scale;
+								auto scaleAboveTex = scale;
+
+								for (auto i = 0; i < 3; i++)
+								{
+									auto origTexAboveX = x % texAbove.texture->GetWidth();
+									auto origTexAboveY = y % texAbove.texture->GetHeight();
+									auto sourceTex = static_cast<GLubyte*>(tex.texture->GetPixels())[3 * (origTexX*tex.texture->GetHeight() + origTexY) + i];
+									auto sourceTexAbove = static_cast<GLubyte*>(texAbove.texture->GetPixels())[3 * (origTexAboveX*texAbove.texture->GetHeight() + origTexAboveY) + i];
+									auto targetPosition = 3 * (x*texHeight + y) + i;
+									texturePixels[targetPosition] = sourceTex * scaleTex + sourceTexAbove*scaleAboveTex;
+								}
+								break;
+							} else
+							{
+								for (auto i = 0; i < 3; i++)
+								{
+									texturePixels[3 * (x*texHeight + y) + i] = static_cast<GLubyte*>(tex.texture->GetPixels())[3 * (origTexX*tex.texture->GetHeight() + origTexY) + i];
+								}
 							}
 						}
 					}

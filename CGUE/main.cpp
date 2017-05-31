@@ -63,9 +63,9 @@ int main(int argc, char **argv)
 {
 	auto engine = new GameEngine(1440, 800, string("CGUE"));
 	auto mapSize = vec3(512, 128, 512);
-	auto mapResource = new HeightMapResource("textures/heightmap.png", mapSize, 1024, 1024);
-	mapResource->AddTexture(new TextureResource("textures/sandtext.jpg"), 0, 0.15);
-	mapResource->AddTexture(new TextureResource("textures/grasstext.jpg"), 0.15, 0.3);
+	auto mapResource = new HeightMapResource("textures/heightmap.png", mapSize, 2048, 2048);
+	mapResource->AddTexture(new TextureResource("textures/sandtext.jpg"), 0, 0.3);
+	mapResource->AddTexture(new TextureResource("textures/grasstext.jpg"), 0.15, 0.5);
 	mapResource->AddTexture(new TextureResource("textures/stonetext.jpg"), 0.3, 1.0);
 
 	auto palmResource = new ModelResource("objects/palm/palmtree.obj");

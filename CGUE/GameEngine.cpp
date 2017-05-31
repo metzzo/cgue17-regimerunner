@@ -339,7 +339,7 @@ namespace Engine {
 
 		auto pvd = PxCreatePvd(*foundation);
 		auto transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-		pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
+		//pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
 
 		this->physics = PxCreatePhysics(PX_PHYSICS_VERSION, *this->foundation, PxTolerancesScale(), true, pvd);
 		this->cooking = PxCreateCooking(PX_PHYSICS_VERSION, *this->foundation, PxCookingParams(PxTolerancesScale()));
