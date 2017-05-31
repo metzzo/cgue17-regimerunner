@@ -42,7 +42,7 @@ void PlacePalms(Entity *child, ModelResource *palmResource, HeightMapResource *m
 			transform.p = PxVec3(0, 30, 0);
 			rigidBody->SetLocalPose(transform);
 			rigidBody->SetStaticness(true);
-			rigidBody->SetDensity(100);
+			rigidBody->SetDensity(50);
 			rigidBody->SetMaterial(0.5, 0.5, 0.5);
 			palm->Add(rigidBody);
 		}
