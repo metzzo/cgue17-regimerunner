@@ -3,6 +3,7 @@
 #include "GameEngine.h"
 #include "Camera.h"
 #include <string>
+#include <iostream>
 
 namespace Engine {
 
@@ -24,8 +25,7 @@ namespace Engine {
 	void Engine::WaterPass::BeforePass()
 	{
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-		auto programId = shader->GetProgramId();
-		DEBUG_OGL(glUseProgram(programId));
+		DEBUG_OGL(glUseProgram(this->shader->GetProgramId()));
 
 		auto cam = gameEngine->GetMainCamera();
 
@@ -37,20 +37,23 @@ namespace Engine {
 		DEBUG_OGL(glUniformMatrix4fv(this->shaderViewId, 1, GL_FALSE, &view[0][0]));
 		DEBUG_OGL(glUniform3fv(this->shaderViewPosId, 1, &viewPos[0]));
 
+
 	}
 
 	void Engine::WaterPass::AfterPass()
 	{
+		DEBUG_OGL(glUseProgram(0));
 	}
 
 	void Engine::WaterPass::Init()
 	{
-		this->shader = new Shader("materials/water.vert", "materials/water.frag");
+		this->shader = new Shader("materials/default_material.vert", "materials/water.frag");
 		this->shader->Init();
 		auto programId = this->shader->GetProgramId();
 		this->shaderViewId = glGetUniformLocation(programId, "view");
 		this->shaderProjectionId = glGetUniformLocation(programId, "projection");
 		this->shaderModelId = glGetUniformLocation(programId, "model");
+		this->shaderLightSpaceMatrixId = glGetUniformLocation(programId, "lightSpaceMatrix");
 
 		this->shaderViewPosId = glGetUniformLocation(programId, "viewPos");
 	}
