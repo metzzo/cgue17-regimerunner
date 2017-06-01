@@ -44,7 +44,7 @@ namespace Engine {
 
 		for (auto &mesh : this->resource->GetMeshes())
 		{
-			GetEngine()->GetRenderPass()->AddOperation(new WaterRenderOperation(mesh, this));
+			GetEngine()->GetWaterPass()->AddOperation(new WaterRenderOperation(mesh, this));
 		}
 	}
 

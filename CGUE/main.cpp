@@ -82,6 +82,10 @@ int main(int argc, char **argv)
 	dirLight->SetDiffuse(vec3(0.2f, 0.2f, 0.2f));
 
 	auto camera = new Camera(80.0f, 0.1f, 500.0f, 1440, 800);
+
+	auto watercamera = new Camera(80.0f, 0.1f, 500.0f, 1440, 800);
+	watercamera->SetCameraPass(engine->GetRenderPass());
+
 	auto player = engine->GetRootEntity()->CreateChild();
 	player->Add(camera);
 
