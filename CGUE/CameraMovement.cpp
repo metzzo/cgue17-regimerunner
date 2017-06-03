@@ -51,7 +51,7 @@ namespace Game {
 		auto pos = vec3(physicsPos.x, physicsPos.y, physicsPos.z) ;
 		component->GetTransformation()->SetRelativeMatrix(translate(mat4(), pos));
 		cam->SetLookAtVector(pos + cameraFront);
-		component->spotLight->SetLookAtVector(component->spotLight->GetTransformation()->GetAbsolutePosition() + cameraFront);
+		component->spotLight->GetCamera()->SetLookAtVector(component->spotLight->GetTransformation()->GetAbsolutePosition() + cameraFront);
 
 		auto keyDown = component->GetEngine()->KeyDown(SDL_SCANCODE_S);
 		auto keyUp = component->GetEngine()->KeyDown(SDL_SCANCODE_W);

@@ -51,6 +51,9 @@ void PlacePalms(Entity *child, ModelResource *palmResource, HeightMapResource *m
 
 void PlaceHeli(Entity *child, ModelResource *heliResource, int num)
 {
+	auto engine = child->GetEngine();
+	auto ratio = float(engine->GetScreenWidth()) / float(engine->GetScreenHeight());
+
 	std::random_device rd;
 	std::mt19937 eng(rd());
 	uniform_int_distribution<> distr(1, 600);
@@ -59,12 +62,12 @@ void PlaceHeli(Entity *child, ModelResource *heliResource, int num)
 	auto z = distr(eng)*1.0f;
 
 	auto heli = child->CreateChild();
-	heli->Add(new Model(heliResource));
-	heli->GetTransformation()->Translate(vec3(x, 100.0f + num*10, z));
+	//heli->Add(new Model(heliResource));
+	heli->GetTransformation()->Translate(vec3(256, 130.0f + num*10, 256));
 	heli->Add(new Game::HelicopterBehaviour);
 
-	auto spotLight = new SpotLight(5.0f, 10.0f);
-	spotLight->SetAmbient(vec3(0.8f, 0.8f, 0.8f));
+	auto spotLight = new SpotLight(perspective(radians(50.0f), 1.0f, 0.1f, 500.0f), 1024, 45.0f, 50.0f); //new SpotLight(glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 500.0f), 1024, 5.0f, 10.0f); // new SpotLight(5.0, 30.0); //
+	spotLight->SetAmbient(vec3(0, 0, 0));
 	spotLight->SetSpecular(vec3(1, 1, 1));
 	spotLight->SetDiffuse(vec3(0.9f, 0.9f, 0.9f));
 	spotLight->SetLinear(0.0014f);
@@ -84,14 +87,14 @@ int main(int argc, char **argv)
 	auto palmResource = new ModelResource("objects/palm/palmtree.obj");
 	auto heliResource = new ModelResource("objects/heli2/Heli.obj");
 	
-	auto dirLight = new DirectionalLight(glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 1000.0f), 1024);
+	auto dirLight = new DirectionalLight();
 	auto dirLightEntity = engine->GetRootEntity()->CreateChild();
 	dirLightEntity->Add(dirLight);
 	dirLightEntity->GetTransformation()->Translate(vec3(256, 256, 512));
-	dirLight->GetCamera()->SetLookAtVector(vec3(0, 0, 0));
 	dirLight->SetAmbient(vec3(0, 0, 0));
 	dirLight->SetSpecular(vec3(0.2f, 0.2f, 0.2f));
 	dirLight->SetDiffuse(vec3(0.2f, 0.2f, 0.2f));
+	dirLight->SetLookAtVector(vec3(0, 0, 0));
 
 	auto camera = new Camera(80.0f, 0.1f, 500.0f, 1440, 800);
 	auto player = engine->GetRootEntity()->CreateChild();
@@ -100,7 +103,6 @@ int main(int argc, char **argv)
 	auto light = player->CreateChild();
 	light->GetTransformation()->Translate(vec3(0, 2.5, 0));
 
-	auto ratio = float(engine->GetScreenWidth()) / float(engine->GetScreenHeight());
 	auto spotLight = new SpotLight( 5.0f, 35.0f); //perspective(radians(45.0f), 1.0f, 0.1f, 1000.0f) perspective(radians(180.0f), 1.0f, 0.1f, 25.0f), 1024,
 	spotLight->SetAmbient(vec3(0.8f, 0.8f, 0.8f));
 	spotLight->SetSpecular(vec3(1, 1, 1));
@@ -116,7 +118,7 @@ int main(int argc, char **argv)
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 	player->Add(new Game::CameraMovement(spotLight));
 
-	for (auto i = 0; i < 20; i++) {
+	for (auto i = 0; i < 1; i++) {
 		PlaceHeli(engine->GetRootEntity(), heliResource, i);
 	}
 

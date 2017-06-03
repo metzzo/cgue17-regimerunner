@@ -24,9 +24,14 @@ namespace Engine {
 		GLint linearUniform;
 		GLint quadraticUniform;
 
+		GLint shadowCastingUniform;
+		GLint shadowMapIndexUniform;
+		GLint spaceMatrixUniform;
 	public:
 		void AssignUniforms(GLuint programId, string name, int lightId, BaseLight *light);
 	};
+
+#define NUM_SHADOW_MAPS 16
 
 	class RenderPass : public Pass
 	{
@@ -40,17 +45,17 @@ namespace Engine {
 		GLint shaderViewId;
 		GLint shaderProjectionId;
 		GLint shaderModelId;
-		GLint shaderLightSpaceMatrixId;
 
 		GLint materialDiffuseUniform;
 		GLint materialSpecularUniform;
 		GLint materialShininessUniform;
 		GLint viewPosUniform;
-		GLint shadowMapUniform;
+		GLint shadowMapUniform[NUM_SHADOW_MAPS];
 
 		GLint shaderViewPosId;
 
 		bool lightsDirty;
+		int numShadowMaps;
 	public:
 		explicit RenderPass(GameEngine *gameEngine);
 		~RenderPass();
@@ -65,6 +70,7 @@ namespace Engine {
 		void SetDrawingTransform(Transformation* transformation) const;
 		GLint GetDiffuseUniform(int number) const;
 		GLint GetSpecularUniform(int number) const;
+		int GetNumShadowMaps() const;
 
 		void AddSpotLight(SpotLight *spotLight);
 		void SetDirectionalLight(DirectionalLight *directionalLight);

@@ -58,17 +58,24 @@ namespace Engine {
 		this->depthMap = 0;
 		this->cameraPass = nullptr;
 		this->upVector = vec3(0.0, 1.0, 0.0);
-		this->r2t = false;		
+		this->r2t = false;
+		this->renderingEnabled = true;
 	}
 
 	Camera::Camera(mat4x4 projectionMatrix) : Camera()
 	{
 		this->projectionMatrix = projectionMatrix;
 		this->projectionMatrixSet = true;
+		this->renderingEnabled = true;
 	}
 
 	Camera::~Camera()
 	{
+	}
+
+	void Camera::RenderingEnabled(bool enabled)
+	{
+		this->renderingEnabled = enabled;
 	}
 
 	float Camera::GetFov() const
@@ -104,6 +111,11 @@ namespace Engine {
 		this->TransformationUpdated();
 	}
 
+	void Camera::SetUpVector(vec3 upVector)
+	{
+		this->upVector = upVector;
+	}
+
 	vec3 Camera::GetLookAtVector() const
 	{
 		return this->lookAtVector;
@@ -135,6 +147,11 @@ namespace Engine {
 
 	void Camera::Init()
 	{
+		if (!renderingEnabled)
+		{
+			return;
+		}
+
 		if (!projectionMatrixSet) {
 			projectionMatrixSet = true;
 			if (ortho)
@@ -152,6 +169,7 @@ namespace Engine {
 		{
 			this->cameraPass = GetEngine()->GetRenderPass();
 		}
+		DEBUG_OGL();
 
 		if (this->r2t)
 		{
@@ -174,6 +192,7 @@ namespace Engine {
 			glReadBuffer(GL_NONE);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
+		DEBUG_OGL();
 
 		GetEngine()->GetCameraPass()->AddOperation(new CameraRenderOperation(this));
 	}

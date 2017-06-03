@@ -33,6 +33,8 @@ namespace Engine {
 		int width;
 		int height;
 
+		bool renderingEnabled;
+
 		mat4x4 projectionMatrix;
 		mat4x4 viewMatrix;
 		vec3 lookAtVector;
@@ -50,6 +52,8 @@ namespace Engine {
 		explicit Camera(mat4x4 projectionMatrix);
 		~Camera();
 
+		void RenderingEnabled(bool enabled);
+
 		float GetFov() const;
 		float GetFar() const;
 		float GetNear() const; 
@@ -57,6 +61,7 @@ namespace Engine {
 		void SetCameraPass(Pass *pass);
 
 		void SetLookAtVector(vec3 lookAt);
+		void SetUpVector(vec3 upVector);
 		vec3 GetLookAtVector() const;
 		mat4x4 GetViewMatrix() const;
 		mat4x4 GetProjectionMatrix() const;

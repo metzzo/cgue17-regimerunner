@@ -2,15 +2,10 @@
 #include "Entity.h"
 #include "GameEngine.h"
 #include "RenderPass.h"
-#include "DepthPass.h"
 
 namespace Engine {
-	DirectionalLight::DirectionalLight(mat4 projectionMatrix, int shadowMapSize)
+	DirectionalLight::DirectionalLight()
 	{
-
-		this->shadowMapSize = shadowMapSize;
-		this->camera = nullptr;
-		this->projectionMatrix = projectionMatrix;
 	}
 
 
@@ -18,26 +13,19 @@ namespace Engine {
 	{
 	}
 
-	Camera* DirectionalLight::GetCamera() const
-	{
-		return this->camera;
-	}
-
 	void DirectionalLight::Init()
 	{
 		this->GetEngine()->GetRenderPass()->SetDirectionalLight(this);
 	}
 
-	void DirectionalLight::AttachedToEntity()
+
+	void DirectionalLight::SetLookAtVector(vec3 lookAt)
 	{
+		this->lookAtVector = lookAt;
+	}
 
-		BaseLight::AttachedToEntity();
-
-		// SpotLight needs a camera => create it, and wire it up
-		this->camera = new Camera(projectionMatrix);
-		this->GetEntity()->Add(camera);
-
-		camera->EnableRender2Texture(this->shadowMapSize, this->shadowMapSize);
-		camera->SetCameraPass(GetEngine()->GetDepthPass());
+	vec3 DirectionalLight::GetLookAtVector() const
+	{
+		return this->lookAtVector;
 	}
 }

@@ -37,8 +37,8 @@ namespace Engine {
 			}
 		}
 
-		glGenTextures(1, &this->textureId);
-		glBindTexture(GL_TEXTURE_2D, this->textureId);
+		DEBUG_OGL(glGenTextures(1, &this->textureId));
+		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, this->textureId));
 
 		int mode, internalMode;
 		if (this->sdlImage->format->BytesPerPixel == 4) {

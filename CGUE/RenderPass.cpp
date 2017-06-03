@@ -21,6 +21,9 @@ namespace Engine {
 		DEBUG_OGL(this->outerCutOffUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].outerCutOff").c_str()));
 		DEBUG_OGL(this->directionUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].direction").c_str()));
 		DEBUG_OGL(this->positionUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].position").c_str()));
+		DEBUG_OGL(this->shadowCastingUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].shadowCasting").c_str()));
+		DEBUG_OGL(this->shadowMapIndexUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].shadowMapIndex").c_str()));
+		DEBUG_OGL(this->spaceMatrixUniform = glGetUniformLocation(programId, (name + "[" + to_string(lightId) + "].spaceMatrix").c_str()));
 
 		DEBUG_OGL(glUniform3fv(this->ambientUniform, 1, &light->GetAmbient()[0]));
 		DEBUG_OGL(glUniform3fv(this->diffuseUniform, 1, &light->GetDiffuse()[0]));
@@ -41,14 +44,14 @@ namespace Engine {
 		this->shaderProjectionId = -2;
 		this->shaderModelId = -2;
 		this->shaderViewPosId = -2;
-		this->shaderLightSpaceMatrixId = -2;
 
 
 		this->materialDiffuseUniform = -2;
 		this->materialSpecularUniform = -2;
 		this->materialShininessUniform = -2;
 		this->viewPosUniform = -2;
-		this->shadowMapUniform = -2;
+
+		this->numShadowMaps = 0;
 	}
 
 
@@ -68,6 +71,7 @@ namespace Engine {
 		auto programId = this->shader->GetProgramId();
 
 		auto lightId = 0;
+		auto shadowMapIndex = 0;
 		for (auto light : spotLights)
 		{
 			LightInfo info;
@@ -75,9 +79,16 @@ namespace Engine {
 
 			DEBUG_OGL(glUniform1f(info.cutOffUniform, glm::cos(glm::radians(light->GetCutOff()))));
 			DEBUG_OGL(glUniform1f(info.outerCutOffUniform, glm::cos(glm::radians(light->GetOuterCutOff()))));
+			DEBUG_OGL(glUniform1i(info.shadowCastingUniform, light->IsShadowCasting()));
+			if (light->IsShadowCasting())
+			{
+				DEBUG_OGL(glUniform1i(info.shadowMapIndexUniform, shadowMapIndex));
+				shadowMapIndex++;
+			}
 
 			spotLightInfos.push_back(info);
 			lightId++;
+			
 		}
 
 		DEBUG_OGL(glUniform1i(glGetUniformLocation(programId, "numSpotLights"), lightId));
@@ -113,31 +124,39 @@ namespace Engine {
 		// TODO: handle multiple lights properly
 		auto cam = gameEngine->GetMainCamera();
 		auto lightId = 0;
+		auto shadowMapIndex = 0;
 		for (auto light : spotLights)
 		{
 			auto lightPos = light->GetTransformation()->GetAbsolutePosition();
-			auto dir = light->GetLookAtVector() - lightPos;
+			auto dir = light->GetCamera()->GetLookAtVector() - lightPos;
 
 			DEBUG_OGL(glUniform3fv(spotLightInfos[lightId].positionUniform, 1, &lightPos[0]));
 			DEBUG_OGL(glUniform3fv(spotLightInfos[lightId].directionUniform, 1, &dir[0]));
 
+			if (light->IsShadowCasting())
+			{
+				auto lightSpaceMatrix = light->GetCamera()->GetProjectionViewMatrix();
+
+				DEBUG_OGL(glUniformMatrix4fv(spotLightInfos[lightId].spaceMatrixUniform, 1, GL_FALSE, &lightSpaceMatrix[0][0]));
+
+				DEBUG_OGL(glUniform1i(shadowMapUniform[shadowMapIndex],  shadowMapIndex));
+
+				DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + shadowMapIndex));
+				DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, light->GetCamera()->GetTexture()));
+
+				shadowMapIndex++;
+			}
+
 			lightId++;
 		}
+		this->numShadowMaps = shadowMapIndex;
 
 		if (directionalLight != nullptr)
 		{
-			auto lightSpaceMatrix = directionalLight->GetCamera()->GetProjectionViewMatrix();
 			auto lightPos = directionalLight->GetTransformation()->GetAbsolutePosition();
-			auto dir = directionalLight->GetCamera()->GetLookAtVector() - lightPos;
+			auto dir = directionalLight->GetLookAtVector() - lightPos;
 
-			DEBUG_OGL(glUniformMatrix4fv(this->shaderLightSpaceMatrixId, 1, GL_FALSE, &lightSpaceMatrix[0][0]));
-			DEBUG_OGL(glUniform3fv(directionalLightInfo.positionUniform, 1, &lightPos[0]));
 			DEBUG_OGL(glUniform3fv(directionalLightInfo.directionUniform, 1, &dir[0]));
-
-			DEBUG_OGL(glUniform1i(shadowMapUniform, 1));
-
-			DEBUG_OGL(glActiveTexture(GL_TEXTURE1));
-			DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, directionalLight->GetCamera()->GetTexture()));
 		}
 
 		auto projection = cam->GetProjectionMatrix();
@@ -167,16 +186,17 @@ namespace Engine {
 		this->shaderViewId = glGetUniformLocation(programId, "view");
 		this->shaderProjectionId = glGetUniformLocation(programId, "projection");
 		this->shaderModelId = glGetUniformLocation(programId, "model");
-		this->shaderLightSpaceMatrixId = glGetUniformLocation(programId, "lightSpaceMatrix");
 
 		this->viewPosUniform = glGetUniformLocation(programId, "viewPos");
 		this->materialDiffuseUniform = glGetUniformLocation(programId, "material.diffuse");
 		this->materialSpecularUniform = glGetUniformLocation(programId, "material.specular");
 		this->materialShininessUniform = glGetUniformLocation(programId, "material.shininess");
-		this->shadowMapUniform = glGetUniformLocation(programId, "shadowMap");
+		for (auto i = 0; i < NUM_SHADOW_MAPS; i++) {
+			DEBUG_OGL(this->shadowMapUniform[i] = glGetUniformLocation(programId, ("shadowMap" + to_string(i)).c_str()));
+		}
 	
 	
-		this->shaderViewPosId = glGetUniformLocation(programId, "viewPos");
+		DEBUG_OGL(this->shaderViewPosId = glGetUniformLocation(programId, "viewPos"));
 	}
 
 	void RenderPass::SetDrawingTransform(Transformation* transformation) const
@@ -194,6 +214,11 @@ namespace Engine {
 	{
 		assert(number == 0);
 		return materialSpecularUniform;
+	}
+
+	int RenderPass::GetNumShadowMaps() const
+	{
+		return this->numShadowMaps;
 	}
 
 	void RenderPass::AddSpotLight(SpotLight* spotLight)

@@ -13,27 +13,29 @@ namespace Engine {
 
 	void MeshRenderOperation::Execute()
 	{
+		assert(mesh->diffuseTexture.size() == 1);
+		assert(mesh->specularTexture.size() <= 1);
+
 		auto component = static_cast<Model*>(this->GetComponent());
 		auto pass = static_cast<RenderPass*>(this->GetPass());
 
 		pass->SetDrawingTransform(component->GetTransformation());
 		
-		auto currentTexture = 0;
-		for (auto i = 0; i < mesh->diffuseTexture.size(); i++)
+		auto currentTexture = pass->GetNumShadowMaps();
+		glActiveTexture(GL_TEXTURE0 + currentTexture);
+		glUniform1i(pass->GetDiffuseUniform(0), currentTexture);
+		glBindTexture(GL_TEXTURE_2D, mesh->diffuseTexture[0]->GetTextureId());
+
+		if (mesh->specularTexture.size() == 1)
 		{
-			glActiveTexture(GL_TEXTURE0 + currentTexture);
-			glUniform1i(pass->GetDiffuseUniform(i), currentTexture);
-			glBindTexture(GL_TEXTURE_2D, mesh->diffuseTexture[i]->GetTextureId());
 			currentTexture++;
-		}
-		for (auto i = 0; i < mesh->specularTexture.size(); i++)
+			glActiveTexture(GL_TEXTURE0 + currentTexture);
+			glUniform1i(pass->GetSpecularUniform(0), currentTexture);
+			glBindTexture(GL_TEXTURE_2D, mesh->specularTexture[0]->GetTextureId());
+		} else
 		{
-			glActiveTexture(GL_TEXTURE0 + currentTexture);
-			glUniform1i(pass->GetSpecularUniform(i), currentTexture);
-			glBindTexture(GL_TEXTURE_2D, mesh->specularTexture[i]->GetTextureId());
-			currentTexture++;
+			glUniform1i(pass->GetSpecularUniform(0), currentTexture);
 		}
-		glActiveTexture(GL_TEXTURE0);
 
 		if (mesh->restartIndex != -1)
 		{
@@ -49,21 +51,6 @@ namespace Engine {
 		{
 			DEBUG_OGL(glDisable(GL_PRIMITIVE_RESTART));
 		}
-
-		currentTexture = 0;
-		for (auto i = 0; i < mesh->diffuseTexture.size(); i++)
-		{
-			glActiveTexture(GL_TEXTURE0 + currentTexture);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			currentTexture++;
-		}
-		for (auto i = 0; i < mesh->specularTexture.size(); i++)
-		{
-			glActiveTexture(GL_TEXTURE0 + currentTexture);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			currentTexture++;
-		}
-		glActiveTexture(GL_TEXTURE0);
 	}
 
 
