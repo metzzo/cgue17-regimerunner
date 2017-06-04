@@ -27,7 +27,7 @@ namespace Engine {
 	SpotLight::SpotLight(mat4 projectionMatrix, int shadowMapSize, float cutOff, float outerCutoff)
 	{
 		this->cutOff = cutOff;
-		this->outerCutOff = outerCutOff;
+		this->outerCutOff = outerCutoff;
 		this->shadowCasting = true;
 		this->projectionMatrix = projectionMatrix;
 		this->shadowMapSize = shadowMapSize;

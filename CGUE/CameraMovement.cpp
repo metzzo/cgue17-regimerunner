@@ -48,7 +48,8 @@ namespace Game {
 		auto cameraFront = cam->GetLookAtVector() - cam->GetTransformation()->GetAbsolutePosition();
 
 		auto physicsPos = component->controller->getPosition();
-		auto pos = vec3(physicsPos.x, physicsPos.y, physicsPos.z) ;
+		auto pos = vec3(physicsPos.x, physicsPos.y, physicsPos.z);
+		cout << pos.x << " " << pos.y << " " << pos.z << endl;
 		component->GetTransformation()->SetRelativeMatrix(translate(mat4(), pos));
 		cam->SetLookAtVector(pos + cameraFront);
 		component->spotLight->GetCamera()->SetLookAtVector(component->spotLight->GetTransformation()->GetAbsolutePosition() + cameraFront);
