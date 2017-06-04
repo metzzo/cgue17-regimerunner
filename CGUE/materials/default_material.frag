@@ -1,6 +1,11 @@
 #version 330 core
 out vec4 FragColor;
 
+#define RT_MESH 0
+#define RT_HUD 1
+#define RT_WATER 2
+uniform int renderType;
+
 in VS_OUT {
     vec3 FragPos;
     vec3 Normal;
@@ -188,13 +193,11 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     return (ambient + diffuse + specular);
 }
 
-void main()
-{    
-    // properties
-    vec3 norm = normalize(fs_in.Normal);
-    vec3 viewDir = normalize(viewPos - fs_in.FragPos);
-    
+vec3 renderMesh() {
     vec3 result = vec3(0,0,0);
+	
+	vec3 norm = normalize(fs_in.Normal);
+    vec3 viewDir = normalize(viewPos - fs_in.FragPos);
 	
 	for (int i = 0; i < numDirLights; i++) 
 	{
@@ -204,8 +207,37 @@ void main()
     for(int i = 0; i < numSpotLights; i++) 
 	{
         result += CalcSpotLight(spotLights[i], norm, fs_in.FragPos, viewDir); 
-	} 
+	}
+	
+	return result;
+}
 
+vec3 renderHud() {
+	return vec3(texture(material.diffuse, fs_in.TexCoords));
+}
+
+vec3 renderWater() {
+	return vec3(1,0,0);
+}
+
+void main()
+{    
+    // properties    
+    vec3 result;
+	
+	switch(renderType) {
+		case RT_MESH:
+			result = renderMesh();
+			break;
+		case RT_HUD:
+			result = renderHud();
+			break;
+		case RT_WATER:
+			result = renderWater();
+			break;
+		default:
+			result = vec3(0,1,0);
+	}
     
     FragColor = vec4(result, 1.0);
 }

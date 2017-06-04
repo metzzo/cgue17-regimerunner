@@ -42,9 +42,11 @@ namespace Engine {
 		LightInfo directionalLightInfo;
 
 		Shader* shader;
-		GLint shaderViewId;
-		GLint shaderProjectionId;
-		GLint shaderModelId;
+		GLint viewUniform;
+		GLint projectionUniform;
+		GLint hudProjectionUniform;
+		GLint modelUniform;
+		GLint renderTypeUniform;
 
 		GLint materialDiffuseUniform;
 		GLint materialSpecularUniform;
@@ -74,5 +76,6 @@ namespace Engine {
 
 		void AddSpotLight(SpotLight *spotLight);
 		void SetDirectionalLight(DirectionalLight *directionalLight);
+		GLint GetRenderTypeUniform() const;
 	};
 }

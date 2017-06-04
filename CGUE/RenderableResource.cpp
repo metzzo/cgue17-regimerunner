@@ -12,6 +12,7 @@ namespace Engine {
 
 		this->restartIndex = -1;
 		this->mode = GL_TRIANGLES;
+		this->renderType = RT_MODEL;
 	}
 
 	Mesh::~Mesh()
@@ -24,6 +25,16 @@ namespace Engine {
 	vector<Mesh*>& RenderableResource::GetMeshes()
 	{
 		return this->meshes;
+	}
+
+	bool RenderableResource::IsShadowCasting() const
+	{
+		return shadowCasting;
+	}
+
+	void RenderableResource::SetShadowCasting(bool shadowCasting)
+	{
+		this->shadowCasting = shadowCasting;
 	}
 
 	void Mesh::Init()

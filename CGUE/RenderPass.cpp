@@ -40,9 +40,10 @@ namespace Engine {
 		this->shader = nullptr;
 		this->directionalLight = nullptr;
 
-		this->shaderViewId = -2;
-		this->shaderProjectionId = -2;
-		this->shaderModelId = -2;
+		this->viewUniform = -2;
+		this->projectionUniform = -2;
+		this->hudProjectionUniform = -2;
+		this->modelUniform = -2;
 		this->shaderViewPosId = -2;
 
 
@@ -120,6 +121,7 @@ namespace Engine {
 		DEBUG_OGL(glUniform1i(this->materialDiffuseUniform, 0));
 		DEBUG_OGL(glUniform1i(this->materialSpecularUniform, 0));
 		DEBUG_OGL(glUniform1f(this->materialShininessUniform, 64.0f)); // TODO: Get Shininess from model
+		DEBUG_OGL(glUniform1i(this->renderTypeUniform, 0));
 
 		// TODO: handle multiple lights properly
 		auto cam = gameEngine->GetMainCamera();
@@ -135,7 +137,7 @@ namespace Engine {
 
 			if (light->IsShadowCasting())
 			{
-				auto lightSpaceMatrix = light->GetCamera()->GetProjectionViewMatrix();
+				auto lightSpaceMatrix = light->GetCamera()->GetProjectionMatrix() * light->GetCamera()->GetViewMatrix();
 
 				DEBUG_OGL(glUniformMatrix4fv(spotLightInfos[lightId].spaceMatrixUniform, 1, GL_FALSE, &lightSpaceMatrix[0][0]));
 
@@ -160,11 +162,13 @@ namespace Engine {
 		}
 
 		auto projection = cam->GetProjectionMatrix();
+		auto hudProjection = cam->GetHudProjectionMatrix();
 		auto view = cam->GetViewMatrix();
 		auto viewPos = cam->GetTransformation()->GetAbsolutePosition();
 
-		DEBUG_OGL(glUniformMatrix4fv(this->shaderProjectionId, 1, GL_FALSE, &projection[0][0]));
-		DEBUG_OGL(glUniformMatrix4fv(this->shaderViewId, 1, GL_FALSE, &view[0][0]));
+		DEBUG_OGL(glUniformMatrix4fv(this->projectionUniform, 1, GL_FALSE, &projection[0][0]));
+		DEBUG_OGL(glUniformMatrix4fv(this->hudProjectionUniform, 1, GL_FALSE, &hudProjection[0][0]));
+		DEBUG_OGL(glUniformMatrix4fv(this->viewUniform, 1, GL_FALSE, &view[0][0]));
 
 		DEBUG_OGL(glUniform3fv(this->shaderViewPosId, 1, &viewPos[0]));
 
@@ -183,9 +187,11 @@ namespace Engine {
 		this->shader->Init();
 
 		auto programId = this->shader->GetProgramId();
-		this->shaderViewId = glGetUniformLocation(programId, "view");
-		this->shaderProjectionId = glGetUniformLocation(programId, "projection");
-		this->shaderModelId = glGetUniformLocation(programId, "model");
+		this->viewUniform = glGetUniformLocation(programId, "view");
+		this->projectionUniform = glGetUniformLocation(programId, "projection");
+		this->hudProjectionUniform = glGetUniformLocation(programId, "hudProjection");
+		this->modelUniform = glGetUniformLocation(programId, "model");
+		this->renderTypeUniform = glGetUniformLocation(programId, "renderType");
 
 		this->viewPosUniform = glGetUniformLocation(programId, "viewPos");
 		this->materialDiffuseUniform = glGetUniformLocation(programId, "material.diffuse");
@@ -201,7 +207,7 @@ namespace Engine {
 
 	void RenderPass::SetDrawingTransform(Transformation* transformation) const
 	{
-		DEBUG_OGL(glUniformMatrix4fv(this->shaderModelId, 1, GL_FALSE, &transformation->GetAbsoluteMatrix()[0][0]));
+		DEBUG_OGL(glUniformMatrix4fv(this->modelUniform, 1, GL_FALSE, &transformation->GetAbsoluteMatrix()[0][0]));
 	}
 
 	GLint RenderPass::GetDiffuseUniform(int number) const
@@ -231,5 +237,10 @@ namespace Engine {
 	{
 		this->directionalLight = directionalLight;
 		this->DirtyLights();
+	}
+
+	GLint RenderPass::GetRenderTypeUniform() const
+	{
+		return renderTypeUniform;
 	}
 }

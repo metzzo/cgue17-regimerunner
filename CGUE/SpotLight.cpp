@@ -62,11 +62,11 @@ namespace Engine {
 		BaseLight::AttachedToEntity();
 
 		// SpotLight needs a camera => create it, and wire it up
-		this->camera = new Camera(projectionMatrix);
+		this->camera = new Camera(projectionMatrix, this->shadowMapSize, this->shadowMapSize);
 		this->GetEntity()->Add(camera);
 
 		if (this->shadowCasting) {
-			camera->EnableRender2Texture(this->shadowMapSize, this->shadowMapSize);
+			camera->EnableRender2Texture();
 			camera->SetCameraPass(GetEngine()->GetDepthPass());
 		} else
 		{

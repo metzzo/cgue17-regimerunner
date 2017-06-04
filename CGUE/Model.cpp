@@ -43,6 +43,8 @@ namespace Engine {
 			DEBUG_OGL(glPrimitiveRestartIndex(mesh->restartIndex));
 		}
 
+		DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), mesh->renderType));
+
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));
 		DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
 		DEBUG_OGL(glBindVertexArray(0));
@@ -94,7 +96,9 @@ namespace Engine {
 		for (auto &mesh : this->resource->GetMeshes())
 		{
 			GetEngine()->GetRenderPass()->AddOperation(new MeshRenderOperation(mesh, this));
-			GetEngine()->GetDepthPass()->AddOperation(new DepthRenderOperation(mesh, this));
+			if (this->resource->IsShadowCasting()) {
+				GetEngine()->GetDepthPass()->AddOperation(new DepthRenderOperation(mesh, this));
+			}
 		}
 	}
 

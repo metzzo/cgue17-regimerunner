@@ -45,27 +45,21 @@ namespace Engine {
 		return Operation::GetPriority();
 	}
 
-	Camera::Camera(float fov, float near, float far, int width, int height, bool ortho)
+	Camera::Camera()
 	{
-		this->fov = fov;
-		this->near = near;
-		this->far = far;
+		// dont use this constructor
+	}
+
+	Camera::Camera(mat4x4 projectionMatrix, int width, int height)
+	{
 		this->width = width;
 		this->height = height;
-		this->ortho = ortho;
-		this->projectionMatrixSet = false;
 		this->depthMapFbo = 0;
 		this->depthMap = 0;
 		this->cameraPass = nullptr;
 		this->upVector = vec3(0.0, 1.0, 0.0);
 		this->r2t = false;
-		this->renderingEnabled = true;
-	}
-
-	Camera::Camera(mat4x4 projectionMatrix) : Camera()
-	{
 		this->projectionMatrix = projectionMatrix;
-		this->projectionMatrixSet = true;
 		this->renderingEnabled = true;
 	}
 
@@ -78,25 +72,8 @@ namespace Engine {
 		this->renderingEnabled = enabled;
 	}
 
-	float Camera::GetFov() const
+	void Camera::EnableRender2Texture()
 	{
-		return this->fov;
-	}
-
-	float Camera::GetFar() const
-	{
-		return this->far;
-	}
-
-	float Camera::GetNear() const
-	{
-		return this->near;
-	}
-
-	void Camera::EnableRender2Texture(int textureWidth, int textureHeight)
-	{
-		this->width = textureWidth;
-		this->height = textureHeight;
 		this->r2t = true;
 	}
 
@@ -131,9 +108,9 @@ namespace Engine {
 		return this->projectionMatrix;
 	}
 
-	mat4x4 Camera::GetProjectionViewMatrix() const
+	mat4x4 Camera::GetHudProjectionMatrix() const
 	{
-		return GetProjectionMatrix() * GetViewMatrix();
+		return this->hudProjectionMatrix;
 	}
 
 	GLuint Camera::GetTexture() const
@@ -150,19 +127,6 @@ namespace Engine {
 		if (!renderingEnabled)
 		{
 			return;
-		}
-
-		if (!projectionMatrixSet) {
-			projectionMatrixSet = true;
-			if (ortho)
-			{
-				projectionMatrix = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, this->near, this->far);
-			}
-			else {
-				auto engine = this->GetEntity()->GetEngine();
-				auto ratio = float(engine->GetScreenWidth()) / float(engine->GetScreenHeight());
-				projectionMatrix = perspective(radians(fov), ratio, near, far);
-			}
 		}
 
 		if (this->cameraPass == nullptr)
@@ -207,5 +171,10 @@ namespace Engine {
 	{
 		auto pos = GetTransformation()->GetAbsolutePosition();
 		this->viewMatrix = lookAt(pos, lookAtVector, upVector);
+	}
+
+	void Camera::SetHudProjectionMatrix(mat4x4 hudMatrix)
+	{
+		this->hudProjectionMatrix = hudMatrix;
 	}
 }

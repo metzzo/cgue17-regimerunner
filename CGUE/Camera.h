@@ -26,46 +26,41 @@ namespace Engine {
 		friend CameraRenderOperation;
 
 	protected:
-		float fov;
-		float far;
-		float near;
-
 		int width;
 		int height;
 
 		bool renderingEnabled;
 
 		mat4x4 projectionMatrix;
+		mat4x4 hudProjectionMatrix;
 		mat4x4 viewMatrix;
 		vec3 lookAtVector;
 		vec3 upVector;
-		bool ortho;
 
 		GLuint depthMapFbo;
 		GLuint depthMap;
 		bool r2t;
 		Pass* cameraPass;
-		bool projectionMatrixSet;
 	public:
 
-		explicit Camera(float fov = 45.0f, float near = 0.1f, float far=100.0f, int width=640, int height=480, bool ortho = false);
-		explicit Camera(mat4x4 projectionMatrix);
+		//explicit Camera(float fov = 45.0f, float near = 0.1f, float far=100.0f, int width=640, int height=480, bool ortho = false);
+		explicit Camera();
+		explicit Camera(mat4x4 projectionMatrix, int width, int height);
 		~Camera();
 
 		void RenderingEnabled(bool enabled);
 
-		float GetFov() const;
-		float GetFar() const;
-		float GetNear() const; 
-		virtual void EnableRender2Texture(int textureWidth, int textureHeight);
+		virtual void EnableRender2Texture();
 		void SetCameraPass(Pass *pass);
 
 		void SetLookAtVector(vec3 lookAt);
 		void SetUpVector(vec3 upVector);
+		void SetHudProjectionMatrix(mat4x4 hudMatrix);
+
 		vec3 GetLookAtVector() const;
 		mat4x4 GetViewMatrix() const;
 		mat4x4 GetProjectionMatrix() const;
-		mat4x4 GetProjectionViewMatrix() const;
+		mat4x4 GetHudProjectionMatrix() const;
 		GLuint GetTexture() const;
 
 		vec3 GetUpVector() const;

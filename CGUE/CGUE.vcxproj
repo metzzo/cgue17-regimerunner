@@ -141,6 +141,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelResource.cpp" />
     <ClCompile Include="Pass.cpp" />
+    <ClCompile Include="SpriteResource.cpp" />
     <ClCompile Include="RenderableResource.cpp" />
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="RigidBody.cpp" />
@@ -174,6 +175,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelResource.h" />
     <ClInclude Include="Pass.h" />
+    <ClInclude Include="SpriteResource.h" />
     <ClInclude Include="RenderableResource.h" />
     <ClInclude Include="RenderPass.h" />
     <ClInclude Include="RigidBody.h" />

@@ -19,6 +19,7 @@
 #include "HelicopterBehaviour.h"
 #include "HeightMapResource.h"
 #include "DirectionalLight.h"
+#include "SpriteResource.h"
 
 using namespace Engine;
 
@@ -66,7 +67,7 @@ void PlaceHeli(Entity *child, ModelResource *heliResource, int num)
 	heli->GetTransformation()->Translate(vec3(256, 130.0f + num*10, 256));
 	heli->Add(new Game::HelicopterBehaviour);
 
-	auto spotLight = new SpotLight(perspective(radians(50.0f), 1.0f, 0.1f, 500.0f), 1024, 45.0f, 50.0f); //new SpotLight(glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 500.0f), 1024, 5.0f, 10.0f); // new SpotLight(5.0, 30.0); //
+	auto spotLight = new SpotLight(perspective(radians(50.0f), 1.0f, 0.1f, 500.0f), 2048, 45.0f, 50.0f); //new SpotLight(glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 500.0f), 1024, 5.0f, 10.0f); // new SpotLight(5.0, 30.0); //
 	spotLight->SetAmbient(vec3(0, 0, 0));
 	spotLight->SetSpecular(vec3(1, 1, 1));
 	spotLight->SetDiffuse(vec3(0.9f, 0.9f, 0.9f));
@@ -96,9 +97,18 @@ int main(int argc, char **argv)
 	dirLight->SetDiffuse(vec3(0.2f, 0.2f, 0.2f));
 	dirLight->SetLookAtVector(vec3(0, 0, 0));
 
-	auto camera = new Camera(80.0f, 0.1f, 500.0f, 1440, 800);
+	auto ratio = float(engine->GetScreenWidth()) / float(engine->GetScreenHeight());
+	auto projectionMatrix = perspective(radians(80.0f), ratio, 0.1f, 500.0f);
+
+	auto camera = new Camera(projectionMatrix, 1440, 800);
+	camera->SetHudProjectionMatrix(glm::ortho(0.0f, GLfloat(engine->GetScreenWidth()), GLfloat(engine->GetScreenHeight()), 0.0f, -1.0f, 1.0f));
 	auto player = engine->GetRootEntity()->CreateChild();
 	player->Add(camera);
+
+
+	auto hudTest = engine->GetRootEntity()->CreateChild();
+	auto spriteResource = new SpriteResource(new TextureResource("textures/sandtext.jpg"));
+	hudTest->Add(new Model(spriteResource));
 
 	auto light = player->CreateChild();
 	light->GetTransformation()->Translate(vec3(0, 2.5, 0));

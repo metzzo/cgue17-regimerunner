@@ -20,6 +20,13 @@ namespace Engine {
 		vec3 Bitangent;
 	};
 
+	enum MeshType
+	{
+		RT_MODEL = 0,
+		RT_SPRITE = 1,
+		RT_WATER = 2
+	};
+
 	class Mesh
 	{
 	public:
@@ -30,6 +37,7 @@ namespace Engine {
 		GLuint VAO, VBO, EBO;
 		GLuint restartIndex;
 		GLuint mode;
+		GLuint renderType;
 
 		vector<Vertex> vertices;
 		vector<GLuint> indices;
@@ -45,12 +53,16 @@ namespace Engine {
 	{
 	protected:
 		vector<Mesh*> meshes;
+		bool shadowCasting;
 	public:
 		vector<Mesh*>& GetMeshes();
+		bool IsShadowCasting() const;
 
 		explicit RenderableResource(std::string filename) : BaseResource(filename)
 		{
-			
+			this->shadowCasting = true;
 		}
+
+		void SetShadowCasting(bool shadowCasting);
 	};
 }
