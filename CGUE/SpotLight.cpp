@@ -3,6 +3,9 @@
 #include "GameEngine.h"
 #include "RenderPass.h"
 #include "DepthPass.h"
+#include "Model.h"
+#include "TextureResource.h"
+#include "SpriteResource.h"
 
 namespace Engine {
 	const SpotLight SpotLightClass;
@@ -68,6 +71,12 @@ namespace Engine {
 		if (this->shadowCasting) {
 			camera->EnableRender2Texture();
 			camera->SetCameraPass(GetEngine()->GetDepthPass());
+
+
+			auto hudTest = GetEngine()->GetRootEntity()->CreateChild();
+			hudTest->GetTransformation()->Scale(vec3(0.25, 0.25, 1));
+			auto spriteResource = new SpriteResource(camera);
+			hudTest->Add(new Model(spriteResource));
 		} else
 		{
 			this->camera->RenderingEnabled(false);

@@ -73,19 +73,24 @@ namespace Engine {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	GLuint TextureResource::GetTextureId() const
+	GLuint TextureResource::GetTextureId()
 	{
 		return this->textureId;
 	}
 
-	int TextureResource::GetWidth() const
+	int TextureResource::GetWidth()
 	{
 		return this->sdlImage->w;
 	}
 
-	int TextureResource::GetHeight() const
+	int TextureResource::GetHeight()
 	{
 		return this->sdlImage->h;
+	}
+
+	void TextureResource::Prepare()
+	{
+		this->Load();
 	}
 
 	void *TextureResource::GetPixels() const

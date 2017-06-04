@@ -1,16 +1,16 @@
 #pragma once
 #include "RenderableResource.h"
-#include "Camera.h"
+#include "TextureRenderable.h"
 
 namespace Engine {
+	class Camera;
+
 	class SpriteResource :
 		public RenderableResource
 	{
-		TextureResource *textureResource;
-		Camera *camera;
+		TextureRenderable *textureRenderable;
 	public:
-		explicit SpriteResource(TextureResource *res);
-		explicit SpriteResource(Camera *cam);
+		explicit SpriteResource(TextureRenderable *res);
 		~SpriteResource();
 
 		void Load() override;

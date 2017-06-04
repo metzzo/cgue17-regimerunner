@@ -239,5 +239,8 @@
     <ClInclude Include="SpriteResource.h">
       <Filter>Header Files\Engine\Resource</Filter>
     </ClInclude>
+    <ClInclude Include="TextureRenderable.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -144,7 +144,7 @@ namespace Engine {
 				DEBUG_OGL(glUniform1i(shadowMapUniform[shadowMapIndex],  shadowMapIndex));
 
 				DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + shadowMapIndex));
-				DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, light->GetCamera()->GetTexture()));
+				DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, light->GetCamera()->GetTextureId()));
 
 				shadowMapIndex++;
 			}

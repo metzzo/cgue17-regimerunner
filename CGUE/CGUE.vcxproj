@@ -183,6 +183,7 @@
     <ClInclude Include="Operation.h" />
     <ClInclude Include="Rotating.h" />
     <ClInclude Include="SpotLight.h" />
+    <ClInclude Include="TextureRenderable.h" />
     <ClInclude Include="TextureResource.h" />
     <ClInclude Include="Transformation.h" />
     <ClInclude Include="PalmInteraction.h" />

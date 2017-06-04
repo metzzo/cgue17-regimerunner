@@ -5,6 +5,7 @@
 #include "glm/vec3.hpp"
 #include <vector>
 #include "glew/glew.h"
+#include "TextureRenderable.h"
 
 using namespace glm;
 using namespace std;
@@ -41,10 +42,10 @@ namespace Engine {
 
 		vector<Vertex> vertices;
 		vector<GLuint> indices;
-		vector<TextureResource*> diffuseTexture;
-		vector<TextureResource*> specularTexture;
-		vector<TextureResource*> normalTexture;
-		vector<TextureResource*> heightTexture;
+		vector<TextureRenderable*> diffuseTexture;
+		vector<TextureRenderable*> specularTexture;
+		vector<TextureRenderable*> normalTexture;
+		vector<TextureRenderable*> heightTexture;
 	};
 
 

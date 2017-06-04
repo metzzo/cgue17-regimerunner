@@ -2,6 +2,7 @@
 #include "Transformation.h"
 #include "glew/glew.h"
 #include "Operation.h"
+#include "TextureRenderable.h"
 
 namespace Engine {
 	const int MAIN_CAMERA_PRIORITY = 1000;
@@ -21,7 +22,7 @@ namespace Engine {
 	class Pass;
 
 	class Camera :
-		public Component
+		public Component, public TextureRenderable
 	{
 		friend CameraRenderOperation;
 
@@ -61,9 +62,11 @@ namespace Engine {
 		mat4x4 GetViewMatrix() const;
 		mat4x4 GetProjectionMatrix() const;
 		mat4x4 GetHudProjectionMatrix() const;
-		GLuint GetTexture() const;
-
 		vec3 GetUpVector() const;
+
+		GLuint GetTextureId() override;
+		int GetWidth() override;
+		int GetHeight() override;
 
 		void Wire() override;
 		void Init() override;

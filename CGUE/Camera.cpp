@@ -113,9 +113,19 @@ namespace Engine {
 		return this->hudProjectionMatrix;
 	}
 
-	GLuint Camera::GetTexture() const
+	GLuint Camera::GetTextureId()
 	{
 		return this->depthMap;
+	}
+
+	int Camera::GetWidth()
+	{
+		return this->width;
+	}
+
+	int Camera::GetHeight()
+	{
+		return this->height;
 	}
 
 	void Camera::Wire()

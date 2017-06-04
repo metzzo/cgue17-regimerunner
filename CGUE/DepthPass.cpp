@@ -47,8 +47,7 @@ namespace Engine {
 
 	void DepthPass::SetDrawingTransform(Transformation* transformation) const
 	{
-		auto projectionViewMatrix = gameEngine->GetMainCamera()->GetProjectionMatrix() * gameEngine->GetMainCamera()->GetViewMatrix();
-		auto mvp = projectionViewMatrix * transformation->GetAbsoluteMatrix();
+		auto mvp = gameEngine->GetMainCamera()->GetProjectionMatrix() * gameEngine->GetMainCamera()->GetViewMatrix() * transformation->GetAbsoluteMatrix();
 
 		DEBUG_OGL(glUniformMatrix4fv(glGetUniformLocation(this->shader->GetProgramId(), "MVP"), 1, GL_FALSE, &mvp[0][0]));
 	}
