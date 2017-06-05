@@ -4,9 +4,9 @@
 namespace Engine {
 	class BaseResource
 	{
-		bool initialized;
 	protected:
 		std::string filename;
+		bool initialized;
 	public:
 		explicit BaseResource(std::string filename);
 		virtual ~BaseResource();

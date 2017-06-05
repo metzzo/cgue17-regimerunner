@@ -50,10 +50,9 @@ void PlacePalms(Entity *child, ModelResource *palmResource, HeightMapResource *m
 	}
 }
 
-void PlaceHeli(Entity *child, ModelResource *heliResource, int num)
+void PlaceHeli(Entity *child, ModelResource *heliResource, ModelResource *heliMainRotorResource, ModelResource *heliSideRotorResource, vec3 pos, bool broken)
 {
 	auto engine = child->GetEngine();
-	auto ratio = float(engine->GetScreenWidth()) / float(engine->GetScreenHeight());
 
 	std::random_device rd;
 	std::mt19937 eng(rd());
@@ -65,17 +64,35 @@ void PlaceHeli(Entity *child, ModelResource *heliResource, int num)
 	auto heli = child->CreateChild();
 	auto heliModel = heli->CreateChild();
 	heliModel->Add(new Model(heliResource));
-	heliModel->GetTransformation()->Translate(vec3(0, 10, 0));
-	heli->GetTransformation()->Translate(vec3(256, 200.0f + num * 10, 256));
-	heli->Add(new Game::HelicopterBehaviour);
-	
-	auto spotLight = new SpotLight(40.0f,1.0f, 1000.0f, 1024, 15.0f, 20.0f); //new SpotLight(glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 500.0f), 1024, 5.0f, 10.0f); // new SpotLight(5.0, 30.0); //
+	heliModel->GetTransformation()->Translate(vec3(0, 2.5, 0));
+
+
+	auto heliMainRotor = heliModel->CreateChild();
+	heliMainRotor->GetTransformation()->Translate(vec3(-2.5, 9.67598, 9.34674));
+	heliMainRotor = heliMainRotor->CreateChild();
+	heliMainRotor->Add(new Model(heliMainRotorResource));
+
+	auto heliSideRotor = heliModel->CreateChild();
+	heliSideRotor->GetTransformation()->Translate(vec3(-0.1404, 5.2074, -34.8371));
+	heliSideRotor = heliSideRotor->CreateChild();
+	heliSideRotor->Add(new Model(heliSideRotorResource));
+
+	heli->GetTransformation()->Translate(pos);
+	heli->Add(new Game::HelicopterBehaviour(heliMainRotor->GetTransformation(), heliSideRotor->GetTransformation(), broken));
+
+	auto spotLight = broken ? new SpotLight(15.0f, 20.0f) : new SpotLight(40.0f, 1.0f, 1000.0f, 1024, 15.0f, 20.0f);
 	spotLight->SetAmbient(vec3(0, 0, 0));
 	spotLight->SetSpecular(vec3(1, 1, 1));
 	spotLight->SetDiffuse(vec3(0.9f, 0.9f, 0.9f));
 	spotLight->SetLinear(0.0014f);
 	spotLight->SetQuadratic(0.00007f);
 	heli->Add(spotLight);
+
+	if (broken)
+	{
+		spotLight->GetCamera()->SetLookAtVector(heli->GetTransformation()->GetAbsolutePosition() + vec3(0, -1, 2.5));
+		heli->GetTransformation()->Rotate(30, vec3(0, 0, 1));
+	}
 }
 
 int main(int argc, char **argv)
@@ -88,7 +105,10 @@ int main(int argc, char **argv)
 	mapResource->AddTexture(new TextureResource("textures/stonetext.jpg"), 0.3, 1.0);
 
 	auto palmResource = new ModelResource("objects/palm/palmtree.obj");
-	auto heliResource = new ModelResource("objects/heli2/Heli.obj");
+	auto heliResource = new ModelResource("objects/heli2/body.obj");
+	auto heliMainRotorResource = new ModelResource("objects/heli2/main_rotor.obj");
+	auto heliSideRotorResource = new ModelResource("objects/heli2/side_rotor.obj");
+
 	
 	auto dirLight = new DirectionalLight();
 	auto dirLightEntity = engine->GetRootEntity()->CreateChild();
@@ -107,7 +127,7 @@ int main(int argc, char **argv)
 	auto light = player->CreateChild();
 	light->GetTransformation()->Translate(vec3(0, 2.5, 0));
 
-	auto spotLight = new SpotLight(10.0f, 35.0f); // perspective(radians(40.0f), 1.0f, 1.0f, 1000.0f), 1024,
+	auto spotLight = new SpotLight(10.0f, 35.0f);
 	spotLight->SetAmbient(vec3(0, 0, 0));
 	spotLight->SetSpecular(vec3(1, 1, 1));
 	spotLight->SetDiffuse(vec3(0.9f, 0.9f, 0.9f));
@@ -116,24 +136,15 @@ int main(int argc, char **argv)
 	light->Add(spotLight);
 	player->Add(new Game::CameraMovement(spotLight));
 
-	/*auto spotLightTest = engine->GetRootEntity()->CreateChild();
-	spotLightTest->GetTransformation()->Translate(vec3(90, 25, 90));
-	spotLight = new SpotLight(perspective(radians(100.0f), 1.0f, 1.0f, 1000.0f), 1024, 40.0f, 40.0f);
-	spotLight->SetAmbient(vec3(0, 0, 0));
-	spotLight->SetSpecular(vec3(1, 0, 0));
-	spotLight->SetDiffuse(vec3(0.9f, 0, 0));
-	spotLight->SetLinear(0.007f);
-	spotLight->SetQuadratic(0.002f);
-	spotLightTest->Add(spotLight);
-	spotLight->GetCamera()->SetLookAtVector(vec3(256, 20, 256));*/
 
 	engine->SetMainCamera(camera);
 	camera->GetTransformation()->Translate(vec3(30.0, 60.0, 30.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 
 	for (auto i = 0; i < 1; i++) {
-		PlaceHeli(engine->GetRootEntity(), heliResource, i);
+		PlaceHeli(engine->GetRootEntity(),  heliResource, heliMainRotorResource, heliSideRotorResource, vec3(256, 200, 256), false);
 	}
+	PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(60, 26, 60), true);
 
 	PlacePalms(engine->GetRootEntity(), palmResource, mapResource);
 

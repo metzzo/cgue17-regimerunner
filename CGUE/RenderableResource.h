@@ -33,6 +33,7 @@ namespace Engine {
 	{
 	public:
 		void Init();
+
 		Mesh();
 		~Mesh();
 
@@ -42,6 +43,8 @@ namespace Engine {
 		GLuint renderType;
 
 		AABox box;
+
+		string name;
 
 		vector<Vertex> vertices;
 		vector<GLuint> indices;
