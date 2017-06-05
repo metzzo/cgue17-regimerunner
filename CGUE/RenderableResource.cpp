@@ -39,6 +39,45 @@ namespace Engine {
 
 	void Mesh::Init()
 	{
+		// find out box
+		if (this->vertices.size() > 0) {
+			auto min = this->vertices[0].Position;
+			auto max = this->vertices[0].Position;
+
+			for (auto& vertex : this->vertices)
+			{
+				auto pos = vertex.Position;
+
+				if (min.x > pos.x)
+				{
+					min.x = pos.x;
+				}
+				if (min.y > pos.y)
+				{
+					min.y = pos.y;
+				}
+				if (min.z > pos.z)
+				{
+					min.z = pos.z;
+				}
+				if (max.x < pos.x)
+				{
+					max.x = pos.x;
+				}
+				if (max.y < pos.y)
+				{
+					max.y = pos.y;
+				}
+				if (max.z < pos.z)
+				{
+					max.z = pos.z;
+				}
+			}
+			auto size = max - min;
+			auto zero = vec3(0);
+			box.setBox(zero, size.x, size.y, size.z);
+		}
+
 		glGenVertexArrays(1, &this->VAO);
 		glGenBuffers(1, &this->VBO);
 		glGenBuffers(1, &this->EBO);

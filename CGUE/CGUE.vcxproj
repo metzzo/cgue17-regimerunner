@@ -168,6 +168,7 @@
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="HeightFieldShape.h" />
     <ClInclude Include="HeightMapResource.h" />

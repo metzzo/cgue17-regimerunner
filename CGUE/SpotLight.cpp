@@ -22,16 +22,22 @@ namespace Engine {
 		this->shadowCasting = false;
 		this->camera = nullptr;
 		this->shadowMapSize = -1;
+		this->fov = 0;
+		this->near = 0;
+		this->far = 0;
 	}
 
-	SpotLight::SpotLight(mat4 projectionMatrix, int shadowMapSize, float cutOff, float outerCutoff)
+	SpotLight::SpotLight(float fov, float near, float far, int shadowMapSize, float cutOff, float outerCutoff)
 	{
+
 		this->cutOff = cutOff;
 		this->outerCutOff = outerCutoff;
 		this->shadowCasting = true;
-		this->projectionMatrix = projectionMatrix;
 		this->shadowMapSize = shadowMapSize;
 		this->camera = nullptr;
+		this->fov = fov;
+		this->near = near;
+		this->far = far;
 	}
 
 	SpotLight::~SpotLight()
@@ -65,7 +71,7 @@ namespace Engine {
 		BaseLight::AttachedToEntity();
 
 		// SpotLight needs a camera => create it, and wire it up
-		this->camera = new Camera(projectionMatrix, this->shadowMapSize, this->shadowMapSize);
+		this->camera = new Camera(fov, near, far, this->shadowMapSize, this->shadowMapSize);
 		this->GetEntity()->Add(camera);
 
 		if (this->shadowCasting) {

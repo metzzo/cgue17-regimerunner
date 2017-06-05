@@ -6,6 +6,7 @@
 #include <vector>
 #include "glew/glew.h"
 #include "TextureRenderable.h"
+#include "Frustum.h"
 
 using namespace glm;
 using namespace std;
@@ -39,6 +40,8 @@ namespace Engine {
 		GLuint restartIndex;
 		GLuint mode;
 		GLuint renderType;
+
+		AABox box;
 
 		vector<Vertex> vertices;
 		vector<GLuint> indices;

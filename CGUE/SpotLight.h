@@ -14,12 +14,14 @@ namespace Engine {
 
 		int shadowMapSize;
 		Camera *camera;
-		mat4 projectionMatrix;
+		float fov;
+		float near;
+		float far;
 	public:
 		SpotLight(); // do not use this constructor
 
 		explicit SpotLight(float cutOff, float outerCutoff);
-		explicit SpotLight(mat4 projectionMatrix, int shadowMapSize, float cutOff, float outerCutoff);
+		explicit SpotLight(float fov, float near, float far, int shadowMapSize, float cutOff, float outerCutoff);
 		~SpotLight();
 
 		float GetCutOff() const;

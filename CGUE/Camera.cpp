@@ -7,6 +7,7 @@
 #include "Pass.h"
 #include "RenderPass.h"
 #include <SDL.h>
+#include <ratio>
 
 namespace Engine {
 	const Camera CameraClass;
@@ -17,6 +18,11 @@ namespace Engine {
 
 		auto oldMainCamera = component->GetEngine()->GetMainCamera();
 		component->GetEngine()->SetMainCamera(component);
+
+		if (component->frustumChanged)
+		{
+			component->RefreshFrustum();
+		}
 
 		glViewport(0, 0, component->width, component->height);
 		if (component->depthMapFbo)
@@ -50,7 +56,7 @@ namespace Engine {
 		// dont use this constructor
 	}
 
-	Camera::Camera(mat4x4 projectionMatrix, int width, int height)
+	Camera::Camera(float fov, float near, float far, int width, int height)
 	{
 		this->width = width;
 		this->height = height;
@@ -59,8 +65,14 @@ namespace Engine {
 		this->cameraPass = nullptr;
 		this->upVector = vec3(0.0, 1.0, 0.0);
 		this->r2t = false;
-		this->projectionMatrix = projectionMatrix;
 		this->renderingEnabled = true;
+		this->fov = fov;
+		this->near = near;
+		this->far = far;
+		this->ratio = float(width) / float(height);
+		this->frustumChanged = true;
+		this->projectionMatrix = perspective(radians(fov), ratio, near, far);
+		
 	}
 
 	Camera::~Camera()
@@ -85,12 +97,14 @@ namespace Engine {
 	void Camera::SetLookAtVector(vec3 lookAt)
 	{
 		this->lookAtVector = lookAt;
+		this->frustumChanged = true;
 		this->TransformationUpdated();
 	}
 
 	void Camera::SetUpVector(vec3 upVector)
 	{
 		this->upVector = upVector;
+		this->frustumChanged = true;
 	}
 
 	vec3 Camera::GetLookAtVector() const
@@ -181,10 +195,104 @@ namespace Engine {
 	{
 		auto pos = GetTransformation()->GetAbsolutePosition();
 		this->viewMatrix = lookAt(pos, lookAtVector, upVector);
+		this->frustumChanged = true;
+	}
+
+	void Camera::RefreshFrustum()
+	{
+		auto tang = float(tan(0.5*radians(fov)));
+		auto nh = near*tang;
+		auto nw = nh*ratio;
+		auto fh = far*tang;
+		auto fw = fh*ratio;
+
+		auto p = GetTransformation()->GetAbsolutePosition();
+		auto Z = normalize (p - lookAtVector);
+		auto X = normalize (upVector*Z);
+		auto Y = Z*X;
+		
+		auto nc = p - Z*near;
+		auto fc = p - Z*far;
+
+		auto ntl = nc + Y*nh - X*nw;
+		auto ntr = nc + Y*nh + X*nw;
+		auto nbl = nc - Y*nh - X*nw;
+		auto nbr = nc - Y*nh + X*nw;
+
+		auto ftl = fc + Y * fh - X * fw;
+		auto ftr = fc + Y * fh + X * fw;
+		auto fbl = fc - Y * fh - X * fw;
+		auto fbr = fc - Y * fh + X * fw;
+
+		frustumPlanes[VFC_TOP].set3Points(ntr, ntl, ftl);
+		frustumPlanes[VFC_BOTTOM].set3Points(nbl, nbr, fbr);
+		frustumPlanes[VFC_LEFT].set3Points(ntl, nbl, fbl);
+		frustumPlanes[VFC_RIGHT].set3Points(nbr, ntr, fbr);
+		frustumPlanes[VFC_NEARP].set3Points(ntl, ntr, nbr);
+		frustumPlanes[VFC_FARP].set3Points(ftr, ftl, fbl);
+
+
+		frustumChanged = false;
 	}
 
 	void Camera::SetHudProjectionMatrix(mat4x4 hudMatrix)
 	{
 		this->hudProjectionMatrix = hudMatrix;
 	}
+
+
+	FRUSTUM_COLLISION Camera::PointInFrustum(vec3 &p) const
+	{
+
+		auto result = F_INSIDE;
+		for (auto i = 0; i < 6; i++) {
+
+			if (frustumPlanes[i].distance(p) < 0) 
+			{
+				return F_OUTSIDE;
+			}
+		}
+		return result;
+
+	}
+
+
+	FRUSTUM_COLLISION Camera::SphereInFrustum(vec3 &p, float raio) const
+	{
+		auto result = F_INSIDE;
+		float distance;
+
+		for (int i = 0; i < 6; i++) {
+			distance = frustumPlanes[i].distance(p);
+			if (distance < -raio) 
+			{
+				return F_OUTSIDE;
+			}
+			else if (distance < raio) 
+			{
+				result = F_INTERSECT;
+			}
+		}
+		return(result);
+
+	}
+
+
+	FRUSTUM_COLLISION Camera::BoxInFrustum(AABox &b) {
+		auto result = F_INSIDE;
+		for (auto i = 0; i < 6; i++) {
+
+			if (frustumPlanes[i].distance(b.getVertexP(frustumPlanes[i].normal)) < 0)
+			{
+				return F_OUTSIDE;
+			}
+			else if (frustumPlanes[i].distance(b.getVertexN(frustumPlanes[i].normal)) < 0)
+			{
+				result = F_INTERSECT;
+			}
+		}
+		return result;
+
+	}
+
 }

@@ -3,8 +3,27 @@
 #include "glew/glew.h"
 #include "Operation.h"
 #include "TextureRenderable.h"
+#include "Frustum.h"
 
 namespace Engine {
+	enum {
+		VFC_TOP = 0,
+		VFC_BOTTOM,
+		VFC_LEFT,
+		VFC_RIGHT,
+		VFC_NEARP,
+		VFC_FARP
+	};
+
+
+	enum FRUSTUM_COLLISION
+	{
+		F_OUTSIDE, 
+		F_INTERSECT, 
+		F_INSIDE
+	};
+
+
 	const int MAIN_CAMERA_PRIORITY = 1000;
 
 	class CameraRenderOperation : public Operation
@@ -29,6 +48,7 @@ namespace Engine {
 	protected:
 		int width;
 		int height;
+		bool frustumChanged;
 
 		bool renderingEnabled;
 
@@ -42,11 +62,16 @@ namespace Engine {
 		GLuint depthMap;
 		bool r2t;
 		Pass* cameraPass;
+		float fov;
+		float near;
+		float far;
+		float ratio;
+		Plane frustumPlanes[6];
 	public:
 
 		//explicit Camera(float fov = 45.0f, float near = 0.1f, float far=100.0f, int width=640, int height=480, bool ortho = false);
 		explicit Camera();
-		explicit Camera(mat4x4 projectionMatrix, int width, int height);
+		explicit Camera(float fov, float near, float far, int width, int height);
 		~Camera();
 
 		void RenderingEnabled(bool enabled);
@@ -71,6 +96,11 @@ namespace Engine {
 		void Wire() override;
 		void Init() override;
 		void TransformationUpdated() override;
+		void RefreshFrustum();
+
+		FRUSTUM_COLLISION PointInFrustum(vec3 &p) const;
+		FRUSTUM_COLLISION SphereInFrustum(vec3 &p, float raio) const;
+		FRUSTUM_COLLISION Camera::BoxInFrustum(AABox &b);
 	};
 
 	extern const Camera CameraClass;
