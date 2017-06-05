@@ -43,9 +43,9 @@ namespace Engine {
 		mesh->indices.push_back(2);
 		mesh->indices.push_back(2);
 		mesh->indices.push_back(3);
-		mesh->indices.push_back(0);
+		mesh->indices.push_back(1);
 
-		mesh->diffuseTexture.push_back(this->textureRenderable); // TODO: also for camera support
+		mesh->diffuseTexture.push_back(this->textureRenderable);
 		mesh->renderType = RT_SPRITE;
 
 		mesh->Init();

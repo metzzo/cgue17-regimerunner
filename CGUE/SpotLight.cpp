@@ -69,12 +69,14 @@ namespace Engine {
 		this->GetEntity()->Add(camera);
 
 		if (this->shadowCasting) {
+			camera->SetUpVector(vec3(0, -1, 0));
 			camera->EnableRender2Texture();
 			camera->SetCameraPass(GetEngine()->GetDepthPass());
 
 
 			auto hudTest = GetEngine()->GetRootEntity()->CreateChild();
 			hudTest->GetTransformation()->Scale(vec3(0.25, 0.25, 1));
+			hudTest->GetTransformation()->Translate(vec3(300,300,0));
 			auto spriteResource = new SpriteResource(camera);
 			hudTest->Add(new Model(spriteResource));
 		} else

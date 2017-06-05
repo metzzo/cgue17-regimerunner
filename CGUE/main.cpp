@@ -63,11 +63,13 @@ void PlaceHeli(Entity *child, ModelResource *heliResource, int num)
 	auto z = distr(eng)*1.0f;
 
 	auto heli = child->CreateChild();
-	//heli->Add(new Model(heliResource));
-	heli->GetTransformation()->Translate(vec3(256, 150.0f + num*10, 256));
+	auto heliModel = heli->CreateChild();
+	heliModel->Add(new Model(heliResource));
+	heliModel->GetTransformation()->Translate(vec3(0, 10, 0));
+	heli->GetTransformation()->Translate(vec3(256, 200.0f + num * 10, 256));
 	heli->Add(new Game::HelicopterBehaviour);
-	// 
-	auto spotLight = new SpotLight(perspective(radians(25.0f), 1.0f, 0.1f, 2000.0f), 1024, 15.0f, 25.0f); //new SpotLight(glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 500.0f), 1024, 5.0f, 10.0f); // new SpotLight(5.0, 30.0); //
+	
+	auto spotLight = new SpotLight(perspective(radians(40.0f), 1.0f, 1.0f, 1000.0f), 1024, 15.0f, 20.0f); //new SpotLight(glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, 0.1f, 500.0f), 1024, 5.0f, 10.0f); // new SpotLight(5.0, 30.0); //
 	spotLight->SetAmbient(vec3(0, 0, 0));
 	spotLight->SetSpecular(vec3(1, 1, 1));
 	spotLight->SetDiffuse(vec3(0.9f, 0.9f, 0.9f));
@@ -88,14 +90,14 @@ int main(int argc, char **argv)
 	auto palmResource = new ModelResource("objects/palm/palmtree.obj");
 	auto heliResource = new ModelResource("objects/heli2/Heli.obj");
 	
-	/*auto dirLight = new DirectionalLight();
+	auto dirLight = new DirectionalLight();
 	auto dirLightEntity = engine->GetRootEntity()->CreateChild();
 	dirLightEntity->Add(dirLight);
 	dirLightEntity->GetTransformation()->Translate(vec3(256, 256, 512));
 	dirLight->SetAmbient(vec3(0, 0, 0));
 	dirLight->SetSpecular(vec3(0.2f, 0.2f, 0.2f));
 	dirLight->SetDiffuse(vec3(0.2f, 0.2f, 0.2f));
-	dirLight->SetLookAtVector(vec3(0, 0, 0));*/
+	dirLight->SetLookAtVector(vec3(0, 0, 0));
 
 	auto ratio = float(engine->GetScreenWidth()) / float(engine->GetScreenHeight());
 	auto projectionMatrix = perspective(radians(80.0f), ratio, 0.1f, 500.0f);
@@ -108,7 +110,7 @@ int main(int argc, char **argv)
 	auto light = player->CreateChild();
 	light->GetTransformation()->Translate(vec3(0, 2.5, 0));
 
-	auto spotLight = new SpotLight( 10.0f, 35.0f); //perspective(radians(45.0f), 1.0f, 0.1f, 1000.0f) perspective(radians(180.0f), 1.0f, 0.1f, 25.0f), 1024,
+	auto spotLight = new SpotLight(10.0f, 35.0f); // perspective(radians(40.0f), 1.0f, 1.0f, 1000.0f), 1024,
 	spotLight->SetAmbient(vec3(0, 0, 0));
 	spotLight->SetSpecular(vec3(1, 1, 1));
 	spotLight->SetDiffuse(vec3(0.9f, 0.9f, 0.9f));
@@ -119,7 +121,7 @@ int main(int argc, char **argv)
 
 	/*auto spotLightTest = engine->GetRootEntity()->CreateChild();
 	spotLightTest->GetTransformation()->Translate(vec3(90, 25, 90));
-	spotLight = new SpotLight(perspective(radians(40.0f), 1.0f, 1.0f, 1000.0f), 1024, 40.0f, 40.0f);
+	spotLight = new SpotLight(perspective(radians(100.0f), 1.0f, 1.0f, 1000.0f), 1024, 40.0f, 40.0f);
 	spotLight->SetAmbient(vec3(0, 0, 0));
 	spotLight->SetSpecular(vec3(1, 0, 0));
 	spotLight->SetDiffuse(vec3(0.9f, 0, 0));
