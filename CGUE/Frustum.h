@@ -34,8 +34,7 @@ namespace Engine
 			aux1 = v1 - v2;
 			aux2 = v3 - v2;
 
-			normal = aux2 * aux1;
-			normal = normalize(normal);
+			normal = normalize(cross(aux2, aux1));
 			point = v2;
 
 			d = -dot(normal, point);

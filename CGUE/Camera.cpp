@@ -8,6 +8,7 @@
 #include "RenderPass.h"
 #include <SDL.h>
 #include <ratio>
+#include <iostream>
 
 namespace Engine {
 	const Camera CameraClass;
@@ -72,6 +73,13 @@ namespace Engine {
 		this->ratio = float(width) / float(height);
 		this->frustumChanged = true;
 		this->projectionMatrix = perspective(radians(fov), ratio, near, far);
+
+
+		auto tang = float(tan(0.5*radians(fov)));
+		nh = near*tang;
+		nw = nh*ratio;
+		fh = far*tang;
+		fw = fh*ratio;
 		
 	}
 
@@ -200,16 +208,10 @@ namespace Engine {
 
 	void Camera::RefreshFrustum()
 	{
-		auto tang = float(tan(0.5*radians(fov)));
-		auto nh = near*tang;
-		auto nw = nh*ratio;
-		auto fh = far*tang;
-		auto fw = fh*ratio;
-
 		auto p = GetTransformation()->GetAbsolutePosition();
 		auto Z = normalize (p - lookAtVector);
-		auto X = normalize (upVector*Z);
-		auto Y = Z*X;
+		auto X = normalize (cross(upVector, Z));
+		auto Y = cross(Z, X);
 		
 		auto nc = p - Z*near;
 		auto fc = p - Z*far;

@@ -15,21 +15,27 @@ namespace Game {
 
 	void CameraMovementMouseOperation::Execute()
 	{
-		auto component = static_cast<CameraMovement*>(GetComponent());
 		auto engine = this->GetComponent()->GetEngine();
-
-		auto cam = engine->GetMainCamera();
 		auto xspeed = engine->GetMouseXRel();
 		auto yspeed = engine->GetMouseYRel();
-		auto camerapos = cam->GetTransformation()->GetAbsolutePosition();
+		if (xspeed == 0 && yspeed == 0) 
+		{
+			return;
+		}
+		auto component = static_cast<CameraMovement*>(GetComponent());
+		auto camerapos = component->camera->GetTransformation()->GetAbsolutePosition();
 
 		yaw += xspeed;
 		pitch -= yspeed;
 
-		if (pitch > 89.0f)
+		if (pitch > 89.0f) 
+		{
 			pitch = 89.0f;
-		if (pitch < -89.0f)
+		}
+		if (pitch < -89.0f) 
+		{
 			pitch = -89.0f;
+		}
 
 		glm::vec3 front;
 		front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
@@ -37,28 +43,32 @@ namespace Game {
 		front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
 		auto cameraFront = glm::normalize(front);
 
-		cam->SetLookAtVector(camerapos + cameraFront);
 		component->camera->SetLookAtVector(camerapos + cameraFront);
+		component->spotLight->GetCamera()->SetLookAtVector(component->spotLight->GetTransformation()->GetAbsolutePosition() + cameraFront);
 	}
 
 	void CameraMovementKeyOperation::Execute() {
 		auto component = static_cast<CameraMovement*>(this->GetComponent());
 		auto cam = component->GetEngine()->GetMainCamera();
-
-		auto cameraFront = cam->GetLookAtVector() - cam->GetTransformation()->GetAbsolutePosition();
-
-		auto physicsPos = component->controller->getPosition();
-		auto pos = vec3(physicsPos.x, physicsPos.y, physicsPos.z);
-		//cout << pos.x << " " << pos.y << " " << pos.z << endl;
-		component->GetTransformation()->SetRelativeMatrix(translate(mat4(), pos));
-		cam->SetLookAtVector(pos + cameraFront);
-		component->spotLight->GetCamera()->SetLookAtVector(component->spotLight->GetTransformation()->GetAbsolutePosition() + cameraFront);
-
 		auto keyDown = component->GetEngine()->KeyDown(SDL_SCANCODE_S);
 		auto keyUp = component->GetEngine()->KeyDown(SDL_SCANCODE_W);
 		auto keyLeft = component->GetEngine()->KeyDown(SDL_SCANCODE_A);
 		auto keyRight = component->GetEngine()->KeyDown(SDL_SCANCODE_D);
 		auto keySpace = component->GetEngine()->KeyDown(SDL_SCANCODE_Q);
+
+		auto cameraFront = cam->GetLookAtVector() - cam->GetTransformation()->GetAbsolutePosition();
+		auto camerapos = cam->GetTransformation()->GetAbsolutePosition();
+
+		auto physicsPos = component->controller->getPosition();
+		auto pos = vec3(physicsPos.x, physicsPos.y, physicsPos.z);
+
+		if (pos != camerapos) {
+			cout << pos.x << " " << pos.y << " " << pos.z << endl;
+			component->GetTransformation()->SetRelativeMatrix(translate(mat4(), pos));
+			cam->SetLookAtVector(pos + cameraFront);
+			component->spotLight->GetCamera()->SetLookAtVector(component->spotLight->GetTransformation()->GetAbsolutePosition() + cameraFront);
+		}
+
 
 		auto direction = vec3(0.0f, -9.81f, 0.0f) + jump;
 		if (keyDown || keyUp || keyLeft || keyRight) {
