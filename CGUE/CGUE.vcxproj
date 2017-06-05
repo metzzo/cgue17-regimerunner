@@ -141,6 +141,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelResource.cpp" />
     <ClCompile Include="Pass.cpp" />
+    <ClCompile Include="SpriteResource.cpp" />
     <ClCompile Include="RenderableResource.cpp" />
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="RigidBody.cpp" />
@@ -167,6 +168,7 @@
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="HeightFieldShape.h" />
     <ClInclude Include="HeightMapResource.h" />
@@ -174,6 +176,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelResource.h" />
     <ClInclude Include="Pass.h" />
+    <ClInclude Include="SpriteResource.h" />
     <ClInclude Include="RenderableResource.h" />
     <ClInclude Include="RenderPass.h" />
     <ClInclude Include="RigidBody.h" />
@@ -181,6 +184,7 @@
     <ClInclude Include="Operation.h" />
     <ClInclude Include="Rotating.h" />
     <ClInclude Include="SpotLight.h" />
+    <ClInclude Include="TextureRenderable.h" />
     <ClInclude Include="TextureResource.h" />
     <ClInclude Include="Transformation.h" />
     <ClInclude Include="PalmInteraction.h" />

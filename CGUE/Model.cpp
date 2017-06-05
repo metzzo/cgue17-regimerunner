@@ -13,33 +13,42 @@ namespace Engine {
 
 	void MeshRenderOperation::Execute()
 	{
+		assert(mesh->diffuseTexture.size() == 1);
+		assert(mesh->specularTexture.size() <= 1);
+
 		auto component = static_cast<Model*>(this->GetComponent());
+		if (component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE)
+		{
+			return;
+		}
+
 		auto pass = static_cast<RenderPass*>(this->GetPass());
 
 		pass->SetDrawingTransform(component->GetTransformation());
 		
-		auto currentTexture = 0;
-		for (auto i = 0; i < mesh->diffuseTexture.size(); i++)
+		auto currentTexture = pass->GetNumShadowMaps();
+		glActiveTexture(GL_TEXTURE0 + currentTexture);
+		glUniform1i(pass->GetDiffuseUniform(0), currentTexture);
+		glBindTexture(GL_TEXTURE_2D, mesh->diffuseTexture[0]->GetTextureId());
+
+		if (mesh->specularTexture.size() == 1)
 		{
-			glActiveTexture(GL_TEXTURE0 + currentTexture);
-			glUniform1i(pass->GetDiffuseUniform(i), currentTexture);
-			glBindTexture(GL_TEXTURE_2D, mesh->diffuseTexture[i]->GetTextureId());
 			currentTexture++;
-		}
-		for (auto i = 0; i < mesh->specularTexture.size(); i++)
+			glActiveTexture(GL_TEXTURE0 + currentTexture);
+			glUniform1i(pass->GetSpecularUniform(0), currentTexture);
+			glBindTexture(GL_TEXTURE_2D, mesh->specularTexture[0]->GetTextureId());
+		} else
 		{
-			glActiveTexture(GL_TEXTURE0 + currentTexture);
-			glUniform1i(pass->GetSpecularUniform(i), currentTexture);
-			glBindTexture(GL_TEXTURE_2D, mesh->specularTexture[i]->GetTextureId());
-			currentTexture++;
+			glUniform1i(pass->GetSpecularUniform(0), currentTexture);
 		}
-		glActiveTexture(GL_TEXTURE0);
 
 		if (mesh->restartIndex != -1)
 		{
 			DEBUG_OGL(glEnable(GL_PRIMITIVE_RESTART));
 			DEBUG_OGL(glPrimitiveRestartIndex(mesh->restartIndex));
 		}
+
+		DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), mesh->renderType));
 
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));
 		DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
@@ -49,21 +58,6 @@ namespace Engine {
 		{
 			DEBUG_OGL(glDisable(GL_PRIMITIVE_RESTART));
 		}
-
-		currentTexture = 0;
-		for (auto i = 0; i < mesh->diffuseTexture.size(); i++)
-		{
-			glActiveTexture(GL_TEXTURE0 + currentTexture);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			currentTexture++;
-		}
-		for (auto i = 0; i < mesh->specularTexture.size(); i++)
-		{
-			glActiveTexture(GL_TEXTURE0 + currentTexture);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			currentTexture++;
-		}
-		glActiveTexture(GL_TEXTURE0);
 	}
 
 
@@ -71,6 +65,12 @@ namespace Engine {
 	void DepthRenderOperation::Execute()
 	{
 		auto component = static_cast<Model*>(this->GetComponent());
+
+		if (component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE)
+		{
+			return;
+		}
+
 		auto pass = static_cast<DepthPass*>(this->GetPass());
 
 		pass->SetDrawingTransform(component->GetTransformation());
@@ -97,6 +97,18 @@ namespace Engine {
 
 	}
 
+	void Model::TransformationUpdated()
+	{
+		auto i = 0;
+		auto pos = GetTransformation()->GetAbsolutePosition();
+		for (auto &mesh : this->resource->GetMeshes())
+		{
+			this->boxes[i].setBox(pos, pos.x + mesh->box.x, pos.y + mesh->box.y, pos.z + mesh->box.z);
+
+			i++;
+		}
+	}
+
 	void Model::Init()
 	{
 		if (this->resource != nullptr) 
@@ -104,11 +116,20 @@ namespace Engine {
 			this->resource->Init();
 		}
 
+		auto id = 0;
 		for (auto &mesh : this->resource->GetMeshes())
 		{
-			GetEngine()->GetRenderPass()->AddOperation(new MeshRenderOperation(mesh, this));
-			GetEngine()->GetDepthPass()->AddOperation(new DepthRenderOperation(mesh, this));
+			this->boxes.push_back(mesh->box);
+
+			GetEngine()->GetRenderPass()->AddOperation(new MeshRenderOperation(id, mesh, this));
+			if (this->resource->IsShadowCasting()) {
+				GetEngine()->GetDepthPass()->AddOperation(new DepthRenderOperation(id, mesh, this));
+			}
+
+			id++;
 		}
+
+		TransformationUpdated();
 	}
 
 	Model::Model()

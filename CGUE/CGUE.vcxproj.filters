@@ -144,6 +144,9 @@
     <ClCompile Include="DirectionalLight.cpp">
       <Filter>Source Files\Engine\Component\Light</Filter>
     </ClCompile>
+    <ClCompile Include="SpriteResource.cpp">
+      <Filter>Source Files\Engine\Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -232,6 +235,15 @@
     </ClInclude>
     <ClInclude Include="DirectionalLight.h">
       <Filter>Header Files\Engine\Component\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteResource.h">
+      <Filter>Header Files\Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureRenderable.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>Header Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

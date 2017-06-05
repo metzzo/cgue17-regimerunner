@@ -3,9 +3,9 @@
 #include "Operation.h"
 #include <cstdlib>
 #include "SpotLight.h"
-#include "RenderPass.h"
 
 namespace Game {
+
 	class HelicopterBehaviourOperation : public Engine::Operation
 	{
 		float duration;
@@ -28,7 +28,12 @@ namespace Game {
 		friend HelicopterBehaviourOperation;
 
 		Engine::SpotLight *spotLight;
+		bool broken;
+		Engine::Transformation *mainRotor;
+		Engine::Transformation *sideRotor;
 	public:
+		explicit HelicopterBehaviour(Engine::Transformation *mainRotor, Engine::Transformation *sideRotor, bool broken);
+		
 		void Init() override;
 		void Wire() override;
 	};

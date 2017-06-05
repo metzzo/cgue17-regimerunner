@@ -10,9 +10,7 @@ namespace Engine {
 
 	ModelResource::ModelResource(string filename) : RenderableResource(filename)
 	{
-		this->initialized = false;
 	}
-
 
 	ModelResource::~ModelResource()
 	{
@@ -42,7 +40,7 @@ namespace Engine {
 			mesh->Init();
 		}
 	}
-	
+
 	void ModelResource::ProcessNode(aiNode* node, const aiScene* scene)
 	{
 		for (auto i = 0; i < node->mNumMeshes; i++)
@@ -61,6 +59,7 @@ namespace Engine {
 	{
 		// Data to fill
 		auto engineMesh = new Mesh();
+		engineMesh->name = mesh->mName.C_Str();
 
 		// Walk through each of the mesh's vertices
 		for (GLuint i = 0; i < mesh->mNumVertices; i++)
@@ -91,15 +90,18 @@ namespace Engine {
 				vertex.TexCoords = glm::vec2(0.0f, 0.0f);
 			}
 			// Tangent
-			vector.x = mesh->mTangents[i].x;
-			vector.y = mesh->mTangents[i].y;
-			vector.z = mesh->mTangents[i].z;
-			vertex.Tangent = vector;
-			// Bitangent
-			vector.x = mesh->mBitangents[i].x;
-			vector.y = mesh->mBitangents[i].y;
-			vector.z = mesh->mBitangents[i].z;
-			vertex.Bitangent = vector;
+			if (mesh->HasTangentsAndBitangents()) {
+				vector.x = mesh->mTangents[i].x;
+				vector.y = mesh->mTangents[i].y;
+				vector.z = mesh->mTangents[i].z;
+				vertex.Tangent = vector;
+			
+				// Bitangent
+				vector.x = mesh->mBitangents[i].x;
+				vector.y = mesh->mBitangents[i].y;
+				vector.z = mesh->mBitangents[i].z;
+				vertex.Bitangent = vector;
+			}
 			engineMesh->vertices.push_back(vertex);
 		}
 		// Now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.

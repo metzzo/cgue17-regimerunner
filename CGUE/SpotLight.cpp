@@ -2,6 +2,10 @@
 #include "Entity.h"
 #include "GameEngine.h"
 #include "RenderPass.h"
+#include "DepthPass.h"
+#include "Model.h"
+#include "TextureResource.h"
+#include "SpriteResource.h"
 
 namespace Engine {
 	const SpotLight SpotLightClass;
@@ -15,15 +19,29 @@ namespace Engine {
 	{
 		this->cutOff = cutOff;
 		this->outerCutOff = outerCutOff;
-	}
-	
-	SpotLight::~SpotLight()
-	{
+		this->shadowCasting = false;
+		this->camera = nullptr;
+		this->shadowMapSize = -1;
+		this->fov = 0;
+		this->near = 0;
+		this->far = 0;
 	}
 
-	void SpotLight::SetLookAtVector(vec3 lookAt)
+	SpotLight::SpotLight(float fov, float near, float far, int shadowMapSize, float cutOff, float outerCutoff)
 	{
-		this->lookAtVector = lookAt;
+
+		this->cutOff = cutOff;
+		this->outerCutOff = outerCutoff;
+		this->shadowCasting = true;
+		this->shadowMapSize = shadowMapSize;
+		this->camera = nullptr;
+		this->fov = fov;
+		this->near = near;
+		this->far = far;
+	}
+
+	SpotLight::~SpotLight()
+	{
 	}
 
 
@@ -42,8 +60,39 @@ namespace Engine {
 		this->GetEngine()->GetRenderPass()->AddSpotLight(this);
 	}
 
-	vec3 SpotLight::GetLookAtVector() const
+	bool SpotLight::IsShadowCasting() const
 	{
-		return lookAtVector;
+		return shadowCasting;
+	}
+
+	void SpotLight::AttachedToEntity()
+	{
+
+		BaseLight::AttachedToEntity();
+
+		// SpotLight needs a camera => create it, and wire it up
+		this->camera = new Camera(fov, near, far, this->shadowMapSize, this->shadowMapSize);
+		this->GetEntity()->Add(camera);
+
+		if (this->shadowCasting) {
+			camera->SetUpVector(vec3(0, -1, 0));
+			camera->EnableRender2Texture();
+			camera->SetCameraPass(GetEngine()->GetDepthPass());
+
+
+			/*auto hudTest = GetEngine()->GetRootEntity()->CreateChild();
+			hudTest->GetTransformation()->Scale(vec3(0.25, 0.25, 1));
+			hudTest->GetTransformation()->Translate(vec3(300,300,0));
+			auto spriteResource = new SpriteResource(camera);
+			hudTest->Add(new Model(spriteResource));*/
+		} else
+		{
+			this->camera->RenderingEnabled(false);
+		}
+	}
+
+	Camera* SpotLight::GetCamera() const
+	{
+		return this->camera;
 	}
 }

@@ -22,21 +22,19 @@ namespace Engine {
 	void DepthPass::BeforePass()
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
-		//glCullFace(GL_FRONT);
+		glCullFace(GL_FRONT);
 
 		//glEnable(GL_POLYGON_OFFSET_FILL);
 		//glPolygonOffset(4.f, 0.f);
 
 		DEBUG_OGL(glUseProgram(this->shader->GetProgramId()));
-
-		
 	}
 
 	void DepthPass::AfterPass()
 	{
 		DEBUG_OGL(glUseProgram(0));
 
-		//glCullFace(GL_BACK);
+		glCullFace(GL_BACK);
 
 		//glDisable(GL_POLYGON_OFFSET_FILL);
 	}
@@ -49,8 +47,7 @@ namespace Engine {
 
 	void DepthPass::SetDrawingTransform(Transformation* transformation) const
 	{
-		auto projectionViewMatrix = gameEngine->GetMainCamera()->GetProjectionViewMatrix();
-		auto mvp = projectionViewMatrix * transformation->GetAbsoluteMatrix();
+		auto mvp = gameEngine->GetMainCamera()->GetProjectionMatrix() * gameEngine->GetMainCamera()->GetViewMatrix() * transformation->GetAbsoluteMatrix();
 
 		DEBUG_OGL(glUniformMatrix4fv(glGetUniformLocation(this->shader->GetProgramId(), "MVP"), 1, GL_FALSE, &mvp[0][0]));
 	}

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <fstream>
 #include <vector>
+#include "GameEngine.h"
 
 namespace Engine {
 
@@ -112,6 +113,8 @@ namespace Engine {
 		glDeleteShader(FragmentShaderID);
 
 		this->program = ProgramID;
+
+		DEBUG_OGL();
 	}
 
 	Shader::~Shader()

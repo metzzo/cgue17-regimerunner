@@ -9,7 +9,6 @@
 #include "Pass.h"
 #include "RenderPass.h"
 #include "DepthPass.h"
-#include "WaterPass.h"
 #include "RigidBody.h"
 #include "glm/glm.hpp"
 #include "Component.h"
@@ -82,7 +81,6 @@ namespace Engine {
 		this->updatePass = new Pass(this);
 		this->depthPass = new DepthPass(this);
 		this->cameraPass = new Pass(this);
-		this->waterPass = new WaterPass(this);
 
 		this->mouseXRel = 0;
 		this->mouseYRel = 0;
@@ -96,7 +94,6 @@ namespace Engine {
 		delete updatePass;
 		delete renderPass;
 		delete depthPass;
-		delete waterPass;
 
 		delete this->rootEntity;
 
@@ -253,11 +250,6 @@ namespace Engine {
 		return depthPass;
 	}
 
-	WaterPass * GameEngine::GetWaterPass() const
-	{
-		return waterPass;
-	}
-
 	Pass* GameEngine::GetUpdatePass() const
 	{
 		return updatePass;
@@ -367,7 +359,6 @@ namespace Engine {
 		this->updatePass->Init();
 		this->depthPass->Init();
 		this->cameraPass->Init();
-		this->waterPass->Init();
 	}
 
 	void GameEngine::DeInit()
@@ -396,7 +387,7 @@ namespace Engine {
 		{
 			return;
 		}
-		scene->simulate(deltaTime*physicsStepSize);
+		scene->simulate(deltaTime*physicsStepSize*0.1f);
 		scene->fetchResults(true);
 
 		PxU32 nbActiveActors;
@@ -413,7 +404,7 @@ namespace Engine {
 			RigidBody* rigidBody = static_cast<RigidBody*>(activeActors[i]->userData);
 			auto shape = rigidBody->GetShape();
 			auto actor = rigidBody->GetActor();
-			rigidBody->GetTransformation()->UpdatePhysicsMatrix(PxShapeExt::getGlobalPose(*shape, *actor));
+			rigidBody->GetTransformation()->UpdatePhysicsMatrix(actor->getGlobalPose());
 		}
 	}
 }

@@ -22,14 +22,15 @@ namespace Engine {
 		Mesh *ProcessMesh(aiMesh* mesh, const aiScene* scene);
 		vector<TextureResource*> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName);
 
-		bool initialized;
-
 		string GetDirectory() const;
 	public:
 		explicit ModelResource(string filename);
 		~ModelResource();
 
 		void Load() override;
+
+		Mesh *GetMeshByName(string name);
+		void RemoveMeshByName(string name);
 	};
 }
 

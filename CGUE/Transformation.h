@@ -12,7 +12,6 @@ namespace Engine {
 	{
 		mat4x4 relativeTransform;
 		mat4x4 absoluteTransform;
-		mat4x4 projectionViewTransform;
 
 	public:
 		Transformation();

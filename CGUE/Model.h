@@ -2,6 +2,8 @@
 #include "Component.h"
 #include "glew/glew.h"
 #include "Operation.h"
+#include "Frustum.h"
+#include <vector>
 
 
 namespace Engine {
@@ -13,11 +15,13 @@ namespace Engine {
 	class MeshRenderOperation : public Operation
 	{
 		Mesh *mesh;
+		int id;
 	public:
-		explicit MeshRenderOperation(Mesh *mesh, Component* component)
+		explicit MeshRenderOperation(int id, Mesh *mesh, Component* component)
 			: Operation(component)
 		{
 			this->mesh = mesh;
+			this->id = id;
 		}
 
 		void Execute() override;
@@ -26,11 +30,13 @@ namespace Engine {
 	class DepthRenderOperation : public Operation
 	{
 		Mesh *mesh;
+		int id;
 	public:
-		explicit DepthRenderOperation(Mesh *mesh, Component* component)
+		explicit DepthRenderOperation(int id, Mesh *mesh, Component* component)
 			: Operation(component)
 		{
 			this->mesh = mesh;
+			this->id = id;
 		}
 
 		void Execute() override;
@@ -39,8 +45,11 @@ namespace Engine {
 	class Model :
 		public Component
 	{
+		friend MeshRenderOperation;
+		friend DepthRenderOperation;
+
 		RenderableResource* resource;
-		
+		std::vector<AABox> boxes;
 	public:
 		Model();
 		explicit Model(RenderableResource *resource);
@@ -50,6 +59,7 @@ namespace Engine {
 
 		void Init() override;
 		void Wire() override;
+		void TransformationUpdated() override;
 	};
 
 	extern const Model ModelClass;

@@ -6,17 +6,14 @@ namespace Engine {
 	class DirectionalLight :
 		public BaseLight
 	{
-		int shadowMapSize;
-		Camera *camera;
-		mat4 projectionMatrix;
-
+		vec3 lookAtVector;
 	public:
-		explicit DirectionalLight(mat4 projectionMatrix, int shadowMapSize = 1024);
+		explicit DirectionalLight();
 		~DirectionalLight();
 
-		Camera *GetCamera() const;
-
 		void Init() override;
-		void AttachedToEntity() override;
+
+		void SetLookAtVector(vec3 lookAt);
+		vec3 GetLookAtVector() const;
 	};
 }

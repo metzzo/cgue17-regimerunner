@@ -3,11 +3,12 @@
 #include "packages/sdl2.v140.2.0.4/build/native/include/SDL_surface.h"
 #include "glew/glew.h"
 #include "BaseResource.h"
+#include "TextureRenderable.h"
 
 using namespace std;
 
 namespace Engine {
-	class TextureResource : public BaseResource
+	class TextureResource : public BaseResource, public TextureRenderable
 	{
 		SDL_Surface* sdlImage;
 		GLuint textureId;
@@ -17,12 +18,13 @@ namespace Engine {
 		~TextureResource();
 
 		void Load() override;
-		GLuint GetTextureId() const;
 
-		int GetWidth() const;
-		int GetHeight() const;
+		GLuint GetTextureId() override;
+		int GetWidth() override;
+		int GetHeight() override;
+		void Prepare() override;
+
 		void* GetPixels() const;
-		int GetMode() const;
 		int GetBytesPerPixel() const;
 		void Save(string filename) const;
 	};

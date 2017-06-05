@@ -34,7 +34,7 @@ namespace Engine {
 	void Transformation::UpdateAbsoluteMatrix()
 	{
 		if (this->GetEntity()->GetParent() != nullptr) {
-			this->absoluteTransform = relativeTransform * this->GetEntity()->GetParent()->GetTransformation()->absoluteTransform;
+			this->absoluteTransform = this->GetEntity()->GetParent()->GetTransformation()->absoluteTransform * relativeTransform;
 		} else
 		{
 			this->absoluteTransform = relativeTransform;
@@ -83,7 +83,7 @@ namespace Engine {
 	void Transformation::Rotate(float angle, vec3 axis)
 	{
 		if (angle != 0.0f) {
-			SetRelativeMatrix(rotate(relativeTransform, angle, axis));
+			SetRelativeMatrix(rotate(relativeTransform, radians(angle), axis));
 		}
 	}
 

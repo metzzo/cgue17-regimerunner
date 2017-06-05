@@ -7,6 +7,8 @@
 #include "Pass.h"
 #include "RenderPass.h"
 #include <SDL.h>
+#include <ratio>
+#include <iostream>
 
 namespace Engine {
 	const Camera CameraClass;
@@ -18,15 +20,19 @@ namespace Engine {
 		auto oldMainCamera = component->GetEngine()->GetMainCamera();
 		component->GetEngine()->SetMainCamera(component);
 
-		glViewport(0, 0, component->width, component->height);
+		if (component->frustumChanged)
+		{
+			component->RefreshFrustum();
+		}
 
+		glViewport(0, 0, component->width, component->height);
 		if (component->depthMapFbo)
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, component->depthMapFbo);
 		}
 
-		if (component->reflectionFbo) {
-			glBindFramebuffer(GL_FRAMEBUFFER, component->reflectionFbo);
+		if (component->renderFbo) {
+			glBindFramebuffer(GL_FRAMEBUFFER, component->renderFbo);
 		}
 
 		// TODO: only draw objects that could potentially visible for the camera
@@ -37,10 +43,10 @@ namespace Engine {
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
-		if (component->reflectionFbo) {
+		if (component->renderFbo) {
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
-		
+
 
 		component->GetEngine()->SetMainCamera(oldMainCamera);
 	}
@@ -55,54 +61,54 @@ namespace Engine {
 		return Operation::GetPriority();
 	}
 
-	Camera::Camera(float fov, float near, float far, int width, int height, bool ortho)
+	Camera::Camera()
 	{
+		// dont use this constructor
+	}
+
+	Camera::Camera(float fov, float near, float far, int width, int height)
+	{
+		this->width = width;
+		this->height = height;
+		this->depthMapFbo = 0;
+		this->depthMap = 0;
+		this->cameraPass = nullptr;
+		this->upVector = vec3(0.0, 1.0, 0.0);
+		this->r2t = false;
+		this->renderingEnabled = true;
 		this->fov = fov;
 		this->near = near;
 		this->far = far;
-		this->width = width;
-		this->height = height;
-		this->ortho = ortho;
-		this->projectionMatrixSet = false;
-		this->depthMapFbo = 0;
-		this->depthMap = 0;
-		this->reflectionFbo = 0;
-		this->reflection = 0;
-		this->cameraPass = nullptr;
-		this->upVector = vec3(0.0, 1.0, 0.0);
-		this->r2t = false;		
-	}
+		this->ratio = float(width) / float(height);
+		this->frustumChanged = true;
+		this->projectionMatrix = perspective(radians(fov), ratio, near, far);
 
-	Camera::Camera(mat4x4 projectionMatrix) : Camera()
-	{
-		this->projectionMatrix = projectionMatrix;
-		this->projectionMatrixSet = true;
+
+		auto tang = float(tan(0.5*radians(fov)));
+		nh = near*tang;
+		nw = nh*ratio;
+		fh = far*tang;
+		fw = fh*ratio;
+
 	}
 
 	Camera::~Camera()
 	{
 	}
 
-	float Camera::GetFov() const
+	void Camera::RenderingEnabled(bool enabled)
 	{
-		return this->fov;
+		this->renderingEnabled = enabled;
 	}
 
-	float Camera::GetFar() const
+	void Camera::EnableRender2Texture()
 	{
-		return this->far;
-	}
-
-	float Camera::GetNear() const
-	{
-		return this->near;
-	}
-
-	void Camera::EnableRender2Texture(int textureWidth, int textureHeight)
-	{
-		this->width = textureWidth;
-		this->height = textureHeight;
 		this->r2t = true;
+	}
+
+	void Camera::EnableRenderImage()
+	{
+		this->renderImage = true;
 	}
 
 	void Camera::SetCameraPass(Pass* pass)
@@ -113,7 +119,14 @@ namespace Engine {
 	void Camera::SetLookAtVector(vec3 lookAt)
 	{
 		this->lookAtVector = lookAt;
+		this->frustumChanged = true;
 		this->TransformationUpdated();
+	}
+
+	void Camera::SetUpVector(vec3 upVector)
+	{
+		this->upVector = upVector;
+		this->frustumChanged = true;
 	}
 
 	vec3 Camera::GetLookAtVector() const
@@ -131,18 +144,24 @@ namespace Engine {
 		return this->projectionMatrix;
 	}
 
-	mat4x4 Camera::GetProjectionViewMatrix() const
+	mat4x4 Camera::GetHudProjectionMatrix() const
 	{
-		return GetProjectionMatrix() * GetViewMatrix();
+		return this->hudProjectionMatrix;
 	}
 
-	GLuint Camera::GetTexture() const
+	GLuint Camera::GetTextureId()
 	{
-		return this->depthMap;
+		return this->texture;
 	}
 
-	GLuint Camera::GetReflection() const {
-		return this->reflection;
+	int Camera::GetWidth()
+	{
+		return this->width;
+	}
+
+	int Camera::GetHeight()
+	{
+		return this->height;
 	}
 
 	void Camera::Wire()
@@ -151,23 +170,16 @@ namespace Engine {
 
 	void Camera::Init()
 	{
-		if (!projectionMatrixSet) {
-			projectionMatrixSet = true;
-			if (ortho)
-			{
-				projectionMatrix = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, this->near, this->far);
-			}
-			else {
-				auto engine = this->GetEntity()->GetEngine();
-				auto ratio = float(engine->GetScreenWidth()) / float(engine->GetScreenHeight());
-				projectionMatrix = perspective(radians(fov), ratio, near, far);
-			}
+		if (!renderingEnabled)
+		{
+			return;
 		}
 
 		if (this->cameraPass == nullptr)
 		{
 			this->cameraPass = GetEngine()->GetRenderPass();
 		}
+		DEBUG_OGL();
 
 		if (this->r2t)
 		{
@@ -189,21 +201,43 @@ namespace Engine {
 			glDrawBuffer(GL_NONE);
 			glReadBuffer(GL_NONE);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
 
-			// create reflection fbo (for water)
-			glGenFramebuffers(1, &this->reflectionFbo);
-			glGenTextures(1, &this->reflection);
-			glBindTexture(GL_TEXTURE_2D, reflection);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-				this->width, this->height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+		if (this->renderImage) {
+			//Gen Buffer
+			glGenFramebuffers(1, &this->renderFbo);
+			glBindFramebuffer(GL_FRAMEBUFFER, this->renderFbo);
+			glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
+			//add ColorTextureAttachment
+			glGenTextures(1, &this->texture);
+			glBindTexture(GL_TEXTURE_2D, texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->width, this->height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
+
+			//add DepthbufferAttachment
+			glGenTextures(1, &this->depthMap);
+			glBindTexture(GL_TEXTURE_2D, depthMap);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, this->width, this->height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glBindFramebuffer(GL_FRAMEBUFFER, this->reflectionFbo);
-			glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, reflection, 0);
-			glDrawBuffer(GL_NONE);
-			glReadBuffer(GL_NONE);
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+			GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+
+			//RenderBuffer
+			glGenRenderbuffers(1, &this->renderbuffer);
+			glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, this->width, this->height);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbuffer);
 		}
+
+
+		DEBUG_OGL();
 
 		GetEngine()->GetCameraPass()->AddOperation(new CameraRenderOperation(this));
 	}
@@ -218,5 +252,98 @@ namespace Engine {
 	{
 		auto pos = GetTransformation()->GetAbsolutePosition();
 		this->viewMatrix = lookAt(pos, lookAtVector, upVector);
+		this->frustumChanged = true;
 	}
+
+	void Camera::RefreshFrustum()
+	{
+		auto p = GetTransformation()->GetAbsolutePosition();
+		auto Z = normalize(p - lookAtVector);
+		auto X = normalize(cross(upVector, Z));
+		auto Y = cross(Z, X);
+
+		auto nc = p - Z*near;
+		auto fc = p - Z*far;
+
+		auto ntl = nc + Y*nh - X*nw;
+		auto ntr = nc + Y*nh + X*nw;
+		auto nbl = nc - Y*nh - X*nw;
+		auto nbr = nc - Y*nh + X*nw;
+
+		auto ftl = fc + Y * fh - X * fw;
+		auto ftr = fc + Y * fh + X * fw;
+		auto fbl = fc - Y * fh - X * fw;
+		auto fbr = fc - Y * fh + X * fw;
+
+		frustumPlanes[VFC_TOP].set3Points(ntr, ntl, ftl);
+		frustumPlanes[VFC_BOTTOM].set3Points(nbl, nbr, fbr);
+		frustumPlanes[VFC_LEFT].set3Points(ntl, nbl, fbl);
+		frustumPlanes[VFC_RIGHT].set3Points(nbr, ntr, fbr);
+		frustumPlanes[VFC_NEARP].set3Points(ntl, ntr, nbr);
+		frustumPlanes[VFC_FARP].set3Points(ftr, ftl, fbl);
+
+
+		frustumChanged = false;
+	}
+
+	void Camera::SetHudProjectionMatrix(mat4x4 hudMatrix)
+	{
+		this->hudProjectionMatrix = hudMatrix;
+	}
+
+
+	FRUSTUM_COLLISION Camera::PointInFrustum(vec3 &p) const
+	{
+
+		auto result = F_INSIDE;
+		for (auto i = 0; i < 6; i++) {
+
+			if (frustumPlanes[i].distance(p) < 0)
+			{
+				return F_OUTSIDE;
+			}
+		}
+		return result;
+
+	}
+
+
+	FRUSTUM_COLLISION Camera::SphereInFrustum(vec3 &p, float raio) const
+	{
+		auto result = F_INSIDE;
+		float distance;
+
+		for (int i = 0; i < 6; i++) {
+			distance = frustumPlanes[i].distance(p);
+			if (distance < -raio)
+			{
+				return F_OUTSIDE;
+			}
+			else if (distance < raio)
+			{
+				result = F_INTERSECT;
+			}
+		}
+		return(result);
+
+	}
+
+
+	FRUSTUM_COLLISION Camera::BoxInFrustum(AABox &b) {
+		auto result = F_INSIDE;
+		for (auto i = 0; i < 6; i++) {
+
+			if (frustumPlanes[i].distance(b.getVertexP(frustumPlanes[i].normal)) < 0)
+			{
+				return F_OUTSIDE;
+			}
+			else if (frustumPlanes[i].distance(b.getVertexN(frustumPlanes[i].normal)) < 0)
+			{
+				result = F_INTERSECT;
+			}
+		}
+		return result;
+
+	}
+
 }
