@@ -31,9 +31,11 @@ namespace Engine {
 			glBindFramebuffer(GL_FRAMEBUFFER, component->depthMapFbo);
 		}
 
+		/*
 		if (component->renderFbo) {
 			glBindFramebuffer(GL_FRAMEBUFFER, component->renderFbo);
 		}
+		*/
 
 		// TODO: only draw objects that could potentially visible for the camera
 		component->cameraPass->DoPass();
@@ -43,9 +45,11 @@ namespace Engine {
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
+		/*
 		if (component->renderFbo) {
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
+		*/
 
 
 		component->GetEngine()->SetMainCamera(oldMainCamera);
@@ -180,7 +184,7 @@ namespace Engine {
 			this->cameraPass = GetEngine()->GetRenderPass();
 		}
 		DEBUG_OGL();
-
+		
 		if (this->r2t)
 		{
 			// create depth map FBO
@@ -195,14 +199,34 @@ namespace Engine {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 			GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
 			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-
+			
 			glBindFramebuffer(GL_FRAMEBUFFER, this->depthMapFbo);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-			glDrawBuffer(GL_NONE);
-			glReadBuffer(GL_NONE);
+			
+			if (this->renderImage) {
+
+				glGenTextures(1, &this->texture);
+				glBindTexture(GL_TEXTURE_2D, texture);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->width, this->height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
+
+				glGenRenderbuffers(1, &this->renderbuffer);
+				glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, this->width, this->height);
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbuffer);
+
+				glDrawBuffer(GL_COLOR_ATTACHMENT0);
+			}
+			else {
+				glDrawBuffer(GL_NONE);
+			}
+			//glReadBuffer(GL_NONE);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
+		/*
 		if (this->renderImage) {
 			//Gen Buffer
 			glGenFramebuffers(1, &this->renderFbo);
@@ -234,7 +258,7 @@ namespace Engine {
 			glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, this->width, this->height);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbuffer);
-		}
+		} */
 
 
 		DEBUG_OGL();

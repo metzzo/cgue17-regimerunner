@@ -125,6 +125,7 @@ int main(int argc, char **argv)
 	player->Add(camera);
 
 	auto secondcamera = new Camera(80.0f, 0.1f, 500.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
+	secondcamera->EnableRender2Texture();
 	secondcamera->EnableRenderImage();
 	auto attachedCamera = player->CreateChild();
 	attachedCamera->Add(secondcamera);
