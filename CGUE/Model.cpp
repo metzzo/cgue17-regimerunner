@@ -17,7 +17,7 @@ namespace Engine {
 		assert(mesh->specularTexture.size() <= 1);
 
 		auto component = static_cast<Model*>(this->GetComponent());
-		if (component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE)
+		if (mesh->mode != RT_SPRITE && component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE)
 		{
 			return;
 		}
