@@ -17,7 +17,7 @@ namespace Engine {
 		assert(mesh->specularTexture.size() <= 1);
 
 		auto component = static_cast<Model*>(this->GetComponent());
-		if (mesh->mode != RT_SPRITE && component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE)
+		if (mesh->renderType != RT_SPRITE && component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE)
 		{
 			return;
 		}
@@ -103,7 +103,10 @@ namespace Engine {
 		auto pos = GetTransformation()->GetAbsolutePosition();
 		for (auto &mesh : this->resource->GetMeshes())
 		{
-			this->boxes[i].setBox(pos, pos.x + mesh->box.x, pos.y + mesh->box.y, pos.z + mesh->box.z);
+			auto& box = this->boxes[i];
+			auto tmpMin = pos + mesh->min;
+			auto tmpMax = pos + mesh->max;
+			box.setBox(tmpMin, tmpMax.x, tmpMax.y, tmpMax.z);
 
 			i++;
 		}

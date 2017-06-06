@@ -63,6 +63,7 @@ void PlaceHeli(Entity *child, ModelResource *heliResource, ModelResource *heliMa
 
 	auto heli = child->CreateChild();
 	auto heliModel = heli->CreateChild();
+
 	heliModel->Add(new Model(heliResource));
 	heliModel->GetTransformation()->Translate(vec3(0, 2.5, 0));
 
@@ -80,7 +81,7 @@ void PlaceHeli(Entity *child, ModelResource *heliResource, ModelResource *heliMa
 	heli->GetTransformation()->Translate(pos);
 	heli->Add(new Game::HelicopterBehaviour(heliMainRotor->GetTransformation(), heliSideRotor->GetTransformation(), broken));
 
-	auto spotLight = broken ? new SpotLight(15.0f, 20.0f) : new SpotLight(40.0f, 1.0f, 1000.0f, 1024, 15.0f, 20.0f);
+	auto spotLight = broken ? new SpotLight(15.0f, 20.0f) : new SpotLight(60.0f, 0.1f, 1000.0f, 1024, 19.0f, 20.0f);
 	spotLight->SetAmbient(vec3(0, 0, 0));
 	spotLight->SetSpecular(vec3(1, 1, 1));
 	spotLight->SetDiffuse(vec3(0.9f, 0.9f, 0.9f));
@@ -92,6 +93,9 @@ void PlaceHeli(Entity *child, ModelResource *heliResource, ModelResource *heliMa
 	{
 		spotLight->GetCamera()->SetLookAtVector(heli->GetTransformation()->GetAbsolutePosition() + vec3(0, -1, 2.5));
 		heli->GetTransformation()->Rotate(30, vec3(0, 0, 1));
+	} else
+	{
+		heliModel->GetTransformation()->Translate(vec3(0, 10, 0));
 	}
 }
 
@@ -141,10 +145,9 @@ int main(int argc, char **argv)
 	camera->GetTransformation()->Translate(vec3(30.0, 60.0, 30.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 
-	for (auto i = 0; i < 1; i++) {
-		PlaceHeli(engine->GetRootEntity(),  heliResource, heliMainRotorResource, heliSideRotorResource, vec3(256, 200, 256), false);
-	}
-	PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(60, 26, 60), true);
+
+	PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(256, 185, 256), false);
+	//PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(60, 26, 60), true);
 
 	PlacePalms(engine->GetRootEntity(), palmResource, mapResource);
 

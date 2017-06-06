@@ -66,7 +66,7 @@ struct SpotLight {
 	int shadowMapIndex;
 	mat4 spaceMatrix;
 };  
-#define MAX_NR_SPOT_LIGHTS 50
+#define MAX_NR_SPOT_LIGHTS 10
 
 uniform SpotLight spotLights[MAX_NR_SPOT_LIGHTS];
 uniform int numSpotLights;
@@ -93,18 +93,6 @@ uniform vec3 viewPos;
 		X = A(shadowMap8, C); \
 	} else if (B == 9) { \
 		X = A(shadowMap9, C); \
-	} else if (B == 10) { \
-		X = A(shadowMap10, C); \
-	} else if (B == 11) { \
-		X = A(shadowMap11, C); \
-	} else if (B == 12) { \
-		X = A(shadowMap12, C); \
-	} else if (B == 13) { \
-		X = A(shadowMap13, C); \
-	} else if (B == 14) { \
-		X = A(shadowMap14, C); \
-	} else if (B == 15) { \
-		X = A(shadowMap15, C); \
 	}
 
 float ShadowCalculation(SpotLight light, vec4 fragPosLightSpace)

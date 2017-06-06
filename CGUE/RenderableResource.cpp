@@ -1,4 +1,5 @@
 #include "RenderableResource.h"
+#include "assimp/types.h"
 
 
 namespace Engine {
@@ -41,8 +42,8 @@ namespace Engine {
 	{
 		// find out box
 		if (this->vertices.size() > 0) {
-			auto min = this->vertices[0].Position;
-			auto max = this->vertices[0].Position;
+			min = this->vertices[0].Position;
+			max = this->vertices[0].Position;
 
 			for (auto& vertex : this->vertices)
 			{
@@ -73,9 +74,8 @@ namespace Engine {
 					max.z = pos.z;
 				}
 			}
-			auto size = max - min;
-			auto zero = vec3(0);
-			box.setBox(zero, size.x, size.y, size.z);
+			box.setBox(min, max.x, max.y, max.z);
+
 		}
 
 		glGenVertexArrays(1, &this->VAO);

@@ -60,7 +60,7 @@ namespace Engine {
 		// Data to fill
 		auto engineMesh = new Mesh();
 		engineMesh->name = mesh->mName.C_Str();
-
+		
 		// Walk through each of the mesh's vertices
 		for (GLuint i = 0; i < mesh->mNumVertices; i++)
 		{
@@ -137,6 +137,8 @@ namespace Engine {
 			auto heightMaps = this->LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
 			engineMesh->heightTexture.insert(engineMesh->heightTexture.end(), heightMaps.begin(), heightMaps.end());
 		}
+
+		
 
 		// Return a mesh object created from the extracted mesh data
 		return engineMesh;

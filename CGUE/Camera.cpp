@@ -282,6 +282,7 @@ namespace Engine {
 
 	FRUSTUM_COLLISION Camera::BoxInFrustum(AABox &b) {
 		auto result = F_INSIDE;
+
 		for (auto i = 0; i < 6; i++) {
 
 			if (frustumPlanes[i].distance(b.getVertexP(frustumPlanes[i].normal)) < 0)

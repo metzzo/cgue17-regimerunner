@@ -116,7 +116,6 @@ namespace Engine {
 			this->mouseYRel = 0;
 			auto newTime = SDL_GetTicks();
 			this->deltaTime = newTime - this->lastTime;
-			this->lastTime = newTime;
 
 			SDL_Event e;
 			while (SDL_PollEvent(&e) != 0)
@@ -163,6 +162,7 @@ namespace Engine {
 
 			UpdatePhysics();
 			GetUpdatePass()->DoPass();
+			this->lastTime = newTime;
 
 			this->Render();
 		}

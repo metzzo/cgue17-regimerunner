@@ -45,18 +45,6 @@ namespace Engine
 			this->normal = normalize(normal);
 			d = -dot(this->normal, point);
 		}
-		void setCoefficients(float a, float b, float c, float d)
-		{
-
-			// set the normal vector
-			normal = vec3(a, b, c);
-			//compute the lenght of the vector
-			float l = normal.length();
-			// normalize the vector
-			normal = vec3(a / l, b / l, c / l);
-			// and divide d by th length as well
-			this->d = d / l;
-		}
 		float distance(vec3 &p) const
 		{
 			return d + dot(normal, p);
