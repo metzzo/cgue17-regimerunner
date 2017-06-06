@@ -147,8 +147,8 @@ int main(int argc, char **argv)
 	camera->GetTransformation()->Translate(vec3(30.0, 60.0, 30.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 
-	secondcamera->GetTransformation()->Translate(vec3(30.0, 60.0, 30.0));
-	secondcamera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
+	//secondcamera->GetTransformation()->Translate(vec3(30.0, 60.0, 30.0));
+	//secondcamera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 	secondcamera->SetUpVector(vec3(0.0, -1.0, 0.0));
 
 	for (auto i = 0; i < 1; i++) {
