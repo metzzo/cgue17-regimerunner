@@ -236,9 +236,14 @@ namespace Engine {
 
 	float HeightMapResource::GetHeightAt(int x, int z) const
 	{
-		auto xPos = int(float(x) / size.x * heightMap->GetWidth());
-		auto zPos = int(float(z) / size.z * heightMap->GetHeight());
-		return float(pixels[heightMap->GetBytesPerPixel()*(xPos*heightMap->GetHeight() + zPos)])/255.0f * size.y;
+		if (x >= 0 && z >= 0 && x < heightMap->GetWidth() && z < heightMap->GetHeight()) {
+			auto xPos = int(float(x) / size.x * heightMap->GetWidth());
+			auto zPos = int(float(z) / size.z * heightMap->GetHeight());
+			return float(pixels[heightMap->GetBytesPerPixel()*(xPos*heightMap->GetHeight() + zPos)]) / 255.0f * size.y;
+		} else
+		{
+			return 0;
+		}
 	}
 
 	TextureResource* HeightMapResource::GetHeightMap() const

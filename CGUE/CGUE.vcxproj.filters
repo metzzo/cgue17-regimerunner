@@ -69,9 +69,6 @@
     <ClCompile Include="Transformation.cpp">
       <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
-    <ClCompile Include="Rotating.cpp">
-      <Filter>Source Files\Game</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
@@ -147,6 +144,9 @@
     <ClCompile Include="SpriteResource.cpp">
       <Filter>Source Files\Engine\Resource</Filter>
     </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -160,9 +160,6 @@
     </ClInclude>
     <ClInclude Include="Transformation.h">
       <Filter>Header Files\Engine\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Rotating.h">
-      <Filter>Header Files\Game</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Engine\Component</Filter>
@@ -244,6 +241,9 @@
     </ClInclude>
     <ClInclude Include="Frustum.h">
       <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
