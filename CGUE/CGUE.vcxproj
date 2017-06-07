@@ -152,6 +152,7 @@
     <ClCompile Include="TextureResource.cpp" />
     <ClCompile Include="Transformation.cpp" />
     <ClCompile Include="PalmInteraction.cpp" />
+    <ClCompile Include="WaterSurface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -188,6 +189,7 @@
     <ClInclude Include="TextureResource.h" />
     <ClInclude Include="Transformation.h" />
     <ClInclude Include="PalmInteraction.h" />
+    <ClInclude Include="WaterSurface.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

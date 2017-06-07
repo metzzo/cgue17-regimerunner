@@ -212,10 +212,10 @@ namespace Engine {
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
 
-				glGenRenderbuffers(1, &this->renderbuffer);
+				/*glGenRenderbuffers(1, &this->renderbuffer);
 				glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
 				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, this->width, this->height);
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbuffer);
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbuffer);*/
 
 				glDrawBuffer(GL_COLOR_ATTACHMENT0);
 			}
@@ -315,9 +315,9 @@ namespace Engine {
 		this->hudProjectionMatrix = hudMatrix;
 	}
 
-
 	FRUSTUM_COLLISION Camera::PointInFrustum(vec3 &p) const
 	{
+		return F_INSIDE;
 
 		auto result = F_INSIDE;
 		for (auto i = 0; i < 6; i++) {
@@ -334,6 +334,8 @@ namespace Engine {
 
 	FRUSTUM_COLLISION Camera::SphereInFrustum(vec3 &p, float raio) const
 	{
+		return F_INSIDE;
+
 		auto result = F_INSIDE;
 		float distance;
 
@@ -354,6 +356,7 @@ namespace Engine {
 
 
 	FRUSTUM_COLLISION Camera::BoxInFrustum(AABox &b) {
+		return F_INSIDE;
 		auto result = F_INSIDE;
 		for (auto i = 0; i < 6; i++) {
 

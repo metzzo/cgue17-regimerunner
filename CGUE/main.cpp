@@ -20,6 +20,7 @@
 #include "HeightMapResource.h"
 #include "DirectionalLight.h"
 #include "SpriteResource.h"
+#include "WaterSurface.h"
 
 using namespace Engine;
 
@@ -125,11 +126,15 @@ int main(int argc, char **argv)
 	player->Add(camera);
 
 	auto secondcamera = new Camera(80.0f, 0.1f, 500.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
+	secondcamera->SetHudProjectionMatrix(glm::ortho(0.0f, GLfloat(engine->GetScreenWidth()), GLfloat(engine->GetScreenHeight()), 0.0f, -1.0f, 1.0f));
 	secondcamera->EnableRender2Texture();
 	secondcamera->EnableRenderImage();
-	auto attachedCamera = player->CreateChild();
-	attachedCamera->Add(secondcamera);
+	//auto attachedCamera = player->CreateChild();
+	player->Add(secondcamera);
 
+	auto watersurface = engine->GetRootEntity()->CreateChild();
+	auto water = new WaterSurface();
+	watersurface->Add(water);
 
 	auto light = player->CreateChild();
 	light->GetTransformation()->Translate(vec3(0, 2.5, 0));
@@ -141,15 +146,15 @@ int main(int argc, char **argv)
 	spotLight->SetLinear(0.007f);
 	spotLight->SetQuadratic(0.002f);
 	light->Add(spotLight);
-	player->Add(new Game::CameraMovement(spotLight));
+	player->Add(new Game::CameraMovement(spotLight,secondcamera));
 
 	engine->SetMainCamera(camera);
 	camera->GetTransformation()->Translate(vec3(30.0, 60.0, 30.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 
-	//secondcamera->GetTransformation()->Translate(vec3(30.0, 60.0, 30.0));
-	//secondcamera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
-	secondcamera->SetUpVector(vec3(0.0, -1.0, 0.0));
+	secondcamera->GetTransformation()->Translate(vec3(30.0, 60.0, 30.0));
+	secondcamera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
+	secondcamera->SetUpVector(vec3(0.0, 1.0, 0.0));//TODO: -1
 
 	for (auto i = 0; i < 1; i++) {
 		PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(256, 200, 256), false);
@@ -168,11 +173,13 @@ int main(int argc, char **argv)
 	map->Add(rigidBody);
 	map->Add(new HeightFieldShape(mapResource->GetHeightMap(), mapSize));
 
+	
 	auto hudTest = engine->GetRootEntity()->CreateChild();
-	hudTest->GetTransformation()->Scale(vec3(0.50, 0.50, 1));
-	hudTest->GetTransformation()->Translate(vec3(300, 300, 0));
+	hudTest->GetTransformation()->Scale(vec3(0.5, 0.5, 1));
+	hudTest->GetTransformation()->Translate(vec3(500, 500, 0));
 	auto spriteResource = new SpriteResource(secondcamera);
 	hudTest->Add(new Model(spriteResource));
+	
 
 	engine->Run();
 

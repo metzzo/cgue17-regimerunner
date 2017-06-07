@@ -106,6 +106,7 @@ namespace Engine {
 
 		// TODO: handle case where no light exists
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		glCullFace(GL_BACK);
 
 		auto programId = shader->GetProgramId();
 
@@ -121,7 +122,6 @@ namespace Engine {
 		DEBUG_OGL(glUniform1i(this->materialDiffuseUniform, 0));
 		DEBUG_OGL(glUniform1i(this->materialSpecularUniform, 0));
 		DEBUG_OGL(glUniform1f(this->materialShininessUniform, 64.0f)); // TODO: Get Shininess from model
-		DEBUG_OGL(glUniform1i(this->renderTypeUniform, 0));
 
 		// TODO: handle multiple lights properly
 		auto cam = gameEngine->GetMainCamera();
@@ -193,6 +193,14 @@ namespace Engine {
 		this->modelUniform = glGetUniformLocation(programId, "model");
 		this->renderTypeUniform = glGetUniformLocation(programId, "renderType");
 
+		this->waterHeightUniform = glGetUniformLocation(programId, "waterHeight");
+		this->timeUniform = glGetUniformLocation(programId, "timeUniform");
+		this->numWavesUniform = glGetUniformLocation(programId, "numWaves");
+		this->numWavesUniform = glGetUniformLocation(programId, "aplitude");
+		this->wavelengthUniform = glGetUniformLocation(programId, "wavelength");
+		this->speedUniform = glGetUniformLocation(programId, "speed");
+		this->directionUniform = glGetUniformLocation(programId, "direction");
+
 		this->viewPosUniform = glGetUniformLocation(programId, "viewPos");
 		this->materialDiffuseUniform = glGetUniformLocation(programId, "material.diffuse");
 		this->materialSpecularUniform = glGetUniformLocation(programId, "material.specular");
@@ -242,5 +250,23 @@ namespace Engine {
 	GLint RenderPass::GetRenderTypeUniform() const
 	{
 		return renderTypeUniform;
+	}
+	GLint RenderPass::GetWaterHeightUniform() const
+	{
+		return waterHeightUniform;
+	}
+	GLint RenderPass::GetTimeUniform() const
+	{
+		return timeUniform;
+	}
+
+	GLint RenderPass::GetNumberOfWavesUniform() const
+	{
+		return numWavesUniform;
+	}
+
+	
+	GLint RenderPass::GetArrayUniformLocation(int id, string name) {
+		return glGetUniformLocation(this->shader->GetProgramId(), (name + "[" + to_string(id) + "]").c_str());
 	}
 }

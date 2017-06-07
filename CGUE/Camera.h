@@ -54,7 +54,6 @@ namespace Engine {
 
 		mat4x4 projectionMatrix;
 		mat4x4 hudProjectionMatrix;
-		mat4x4 viewMatrix;
 		vec3 lookAtVector;
 		vec3 upVector;
 
@@ -79,6 +78,7 @@ namespace Engine {
 		float fh;
 		float fw;
 	public:
+		mat4x4 viewMatrix;
 
 		//explicit Camera(float fov = 45.0f, float near = 0.1f, float far=100.0f, int width=640, int height=480, bool ortho = false);
 		explicit Camera();

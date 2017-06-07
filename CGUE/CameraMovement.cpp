@@ -24,6 +24,7 @@ namespace Game {
 		}
 		auto component = static_cast<CameraMovement*>(GetComponent());
 		auto camerapos = component->camera->GetTransformation()->GetAbsolutePosition();
+		auto waterpos = component->watercamera->GetTransformation()->GetAbsolutePosition();
 
 		yaw += xspeed;
 		pitch -= yspeed;
@@ -45,6 +46,8 @@ namespace Game {
 
 		component->camera->SetLookAtVector(camerapos + cameraFront);
 		component->spotLight->GetCamera()->SetLookAtVector(component->spotLight->GetTransformation()->GetAbsolutePosition() + cameraFront);
+		//component->watercamera->SetLookAtVector(waterpos + cameraFront);		
+		component->watercamera->SetLookAtVector(component->camera->GetLookAtVector());
 	}
 
 	void CameraMovementKeyOperation::Execute() {
@@ -59,14 +62,22 @@ namespace Game {
 		auto cameraFront = cam->GetLookAtVector() - cam->GetTransformation()->GetAbsolutePosition();
 		auto camerapos = cam->GetTransformation()->GetAbsolutePosition();
 
+		auto waterFront = component->watercamera->GetLookAtVector() - component->GetTransformation()->GetAbsolutePosition();
+		auto waterpos = component->watercamera->GetTransformation()->GetAbsolutePosition();
+
 		auto physicsPos = component->controller->getPosition();
 		auto pos = vec3(physicsPos.x, physicsPos.y, physicsPos.z);
 
 		if (pos != camerapos) {
 			cout << pos.x << " " << pos.y << " " << pos.z << endl;
 			component->GetTransformation()->SetRelativeMatrix(translate(mat4(), pos));
+
 			cam->SetLookAtVector(pos + cameraFront);
+			component->watercamera->SetLookAtVector(cam->GetLookAtVector());
 			component->spotLight->GetCamera()->SetLookAtVector(component->spotLight->GetTransformation()->GetAbsolutePosition() + cameraFront);
+			if (cam->viewMatrix != component->watercamera->viewMatrix) {
+				cout << "UAAAH" << endl;
+			}
 		}
 
 
@@ -114,15 +125,17 @@ namespace Game {
 		GetEngine()->GetUpdatePass()->AddOperation(new CameraMovementKeyOperation(this));
 	}
 
-	CameraMovement::CameraMovement(Engine::SpotLight* spotLight) : Component()
+	CameraMovement::CameraMovement(Engine::SpotLight* spotLight, Engine::Camera* watercamera) : Component()
 	{
 		this->spotLight = spotLight;
 		this->controller = nullptr;
 		this->camera = nullptr;
+		this->watercamera = watercamera;
 	}
 
 	void CameraMovement::Wire()
 	{
 		WIRE_COMPONENT(this->camera, Engine::CameraClass);
+		WIRE_COMPONENT(this->watercamera, Engine::CameraClass);
 	}
 }
