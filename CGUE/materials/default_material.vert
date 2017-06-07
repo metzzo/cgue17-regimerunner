@@ -16,10 +16,15 @@ out VS_OUT {
     vec2 TexCoords;
 } vs_out;
 
+out vec3 eyeDirection;
+
 uniform mat4 projection;
 uniform mat4 hudProjection;
 uniform mat4 view;
 uniform mat4 model;
+
+uniform vec3 eyeTanSpace;
+out vec4 clipTexProjCoord;
 
 void main()
 {
@@ -28,7 +33,16 @@ void main()
 	} else {
 		gl_Position = projection * view * model * vec4(position, 1.0f);
 	}
-    vs_out.FragPos = vec3(model * vec4(position, 1.0));
-    vs_out.Normal = transpose(inverse(mat3(model))) * normal;
-    vs_out.TexCoords = texCoords;
+
+    if(renderType == RT_WATER) {
+        vs_out.FragPos = vec3(model * vec4(position, 1.0));
+        vs_out.Normal = transpose(inverse(mat3(model))) * normal;
+        vs_out.TexCoords = texCoords;	
+		eyeDirection = eyeTanSpace - vs_out.FragPos; 
+		clipTexProjCoord = vec4(1,1,1,1);	
+    } else {
+        vs_out.FragPos = vec3(model * vec4(position, 1.0));
+        vs_out.Normal = transpose(inverse(mat3(model))) * normal;
+        vs_out.TexCoords = texCoords;
+    }
 }

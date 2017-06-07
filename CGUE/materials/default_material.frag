@@ -12,6 +12,10 @@ in VS_OUT {
     vec2 TexCoords;
 } fs_in;
 
+
+in vec4 clipTexProjCoord;
+in vec3 eyeDirection;
+
 struct Material {
     sampler2D diffuse;
     sampler2D specular;
@@ -47,6 +51,17 @@ uniform sampler2D shadowMap13;
 uniform sampler2D shadowMap14;
 uniform sampler2D shadowMap15;
 
+uniform sampler2D normalSampler;
+uniform sampler2D displaceSampler;
+uniform sampler2D reflectSampler;
+
+uniform vec3 lightTanSpace;
+uniform float texOffset1;
+uniform float texOffset2;
+
+vec2 texProjCoord;
+float dblDispTiling = 2.0;
+float normalTiling = 2.0;
 
 struct SpotLight {
 	vec3 position;
@@ -223,8 +238,64 @@ vec3 renderHud() {
 	return vec3(texture(material.diffuse, fs_in.TexCoords));
 }
 
+vec2 GetMapCoord(in vec2 offset, in float scale)
+{
+	return vec2(fract(fs_in.FragPos[0] * scale + offset.x), fract(fs_in.FragPos[2] * scale + offset.y));
+}
+
+float GetWaterDepth(in vec2 displacedCoord)
+{
+	return 0.05;
+}
+
 vec3 renderWater() {
-	return vec3(1,0,0);
+
+	vec2 offsetVec1 = vec2(0.0, texOffset1);
+	vec2 offsetVec2 = vec2(0.0, -texOffset2);
+
+	texProjCoord.x = clipTexProjCoord.x / clipTexProjCoord.w;
+	texProjCoord.y = clipTexProjCoord.y / clipTexProjCoord.w;
+
+	vec2 doubleDispMapCoord = texture2D(displaceSampler, GetMapCoord(offsetVec2, dblDispTiling)).rg * 0.1;
+	vec2 dispMapCoord = GetMapCoord(doubleDispMapCoord + offsetVec1, normalTiling);
+	vec2 displacement = texture2D(displaceSampler, dispMapCoord).rg;
+	displacement = ((displacement - vec2(0.5)) * 2) * 0.1;
+
+	vec2 displacedCoord = texProjCoord + displacement;
+	displacedCoord = clamp(displacedCoord, 0.001, 0.999);
+
+	//vec2 depthCoord = displacedCoord;
+	vec4 refractColor = texture2D(reflectSampler, displacedCoord);
+	if (refractColor.a != 1.0)
+	{
+		refractColor = texture2D(reflectSampler, texProjCoord);
+		displacedCoord = texProjCoord;
+	}
+
+	//water depth
+	float waterDepth = GetWaterDepth(displacedCoord);
+	float invWaterDepth = 1.0 - waterDepth;
+
+	//displaced normal
+	vec2 normalMapCoord = GetMapCoord(doubleDispMapCoord + offsetVec1, normalTiling);
+	vec2 reverseMapCoord = GetMapCoord(doubleDispMapCoord + offsetVec1, normalTiling * 4);
+	vec3 normal = texture2D(normalSampler, normalMapCoord).rbg;
+	vec3 reverseMapNormal = texture2D(normalSampler, vec2(1.0)-reverseMapCoord).rbg;
+	normal = normalize((normal - vec3(0.5)) + (reverseMapNormal - vec3(0.5)));
+
+	//specular light
+	vec3 eyeNormDirection = normalize(eyeDirection);
+	vec3 halfAngle = normalize(lightTanSpace + eyeNormDirection);
+	float specular = pow(max(dot(halfAngle, normal), 0), 100);
+
+	//fresnel
+	float invFresnel = max(dot(normal, eyeNormDirection), 0);
+	float fresnel = 1.0 - invFresnel;
+
+	vec4 reflectColor = texture2D(reflectSampler, displacedCoord);
+
+	vec4 n = (refractColor * invWaterDepth * invFresnel) + reflectColor * fresnel + (normalize(vec4(0.3, 0.5, 0.8, 0.0)) * waterDepth * invFresnel) + vec4(0.8, 0.5, 0.5, 1.0) * specular;
+	return vec3(n);
 }
 
 void main()

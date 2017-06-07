@@ -25,11 +25,11 @@ namespace Engine {
 		DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), 2));
 
 		DEBUG_OGL(glUniform1i(pass->GetWaterNormalMapUniform(), 17));
-		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + 16));
+		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + 17));
 		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, component->GetNormalMap()->GetTextureId()));
 
 		DEBUG_OGL(glUniform1i(pass->GetWaterUVDVMapUniform(), 18));
-		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + 16));
+		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + 18));
 		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, component->GetDuDv()->GetTextureId()));
 
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));
