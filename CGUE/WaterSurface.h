@@ -3,6 +3,7 @@
 #include "glew/glew.h"
 #include "Operation.h"
 #include "Model.h"
+#include "TextureResource.h"
 
 namespace Engine {
 
@@ -18,6 +19,8 @@ namespace Engine {
 	class WaterSurface : public Component {
 
 		HeightMapResource* resource;
+		TextureResource* normalmap;
+		TextureResource* dudv;
 
 	public:
 
@@ -26,6 +29,8 @@ namespace Engine {
 		~WaterSurface();
 
 		HeightMapResource *GetResource() const;
+		TextureResource *GetNormalMap() const;
+		TextureResource *GetDuDv() const;
 
 		void Init() override;
 		void Wire() override;

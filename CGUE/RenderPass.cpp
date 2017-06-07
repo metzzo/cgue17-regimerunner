@@ -125,6 +125,7 @@ namespace Engine {
 
 		// TODO: handle multiple lights properly
 		auto cam = gameEngine->GetMainCamera();
+		auto utilitycam = gameEngine->GetUtilityCamera();
 		auto lightId = 0;
 		auto shadowMapIndex = 0;
 		for (auto light : spotLights)
@@ -152,6 +153,11 @@ namespace Engine {
 			lightId++;
 		}
 		this->numShadowMaps = shadowMapIndex;
+
+		// REFLECTION TEXTURE FROM SECOND CAMERA
+		DEBUG_OGL(glUniform1i(this->GetWaterReflectionUniform(), 16));
+		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + 16));
+		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, utilitycam->GetTextureId()));
 
 		if (directionalLight != nullptr)
 		{
@@ -193,14 +199,6 @@ namespace Engine {
 		this->modelUniform = glGetUniformLocation(programId, "model");
 		this->renderTypeUniform = glGetUniformLocation(programId, "renderType");
 
-		this->waterHeightUniform = glGetUniformLocation(programId, "waterHeight");
-		this->timeUniform = glGetUniformLocation(programId, "timeUniform");
-		this->numWavesUniform = glGetUniformLocation(programId, "numWaves");
-		this->numWavesUniform = glGetUniformLocation(programId, "aplitude");
-		this->wavelengthUniform = glGetUniformLocation(programId, "wavelength");
-		this->speedUniform = glGetUniformLocation(programId, "speed");
-		this->directionUniform = glGetUniformLocation(programId, "direction");
-
 		this->viewPosUniform = glGetUniformLocation(programId, "viewPos");
 		this->materialDiffuseUniform = glGetUniformLocation(programId, "material.diffuse");
 		this->materialSpecularUniform = glGetUniformLocation(programId, "material.specular");
@@ -235,6 +233,21 @@ namespace Engine {
 		return this->numShadowMaps;
 	}
 
+	GLint RenderPass::GetWaterNormalMapUniform() const
+	{
+		return this->WaterNormalMapUniform;
+	}
+
+	GLint RenderPass::GetWaterUVDVMapUniform() const
+	{
+		return this->WaterUVDVMapUniform;
+	}
+
+	GLint RenderPass::GetWaterReflectionUniform() const
+	{
+		return this->WaterReflectionUniform;
+	}
+
 	void RenderPass::AddSpotLight(SpotLight* spotLight)
 	{
 		this->spotLights.push_back(spotLight);
@@ -251,20 +264,6 @@ namespace Engine {
 	{
 		return renderTypeUniform;
 	}
-	GLint RenderPass::GetWaterHeightUniform() const
-	{
-		return waterHeightUniform;
-	}
-	GLint RenderPass::GetTimeUniform() const
-	{
-		return timeUniform;
-	}
-
-	GLint RenderPass::GetNumberOfWavesUniform() const
-	{
-		return numWavesUniform;
-	}
-
 	
 	GLint RenderPass::GetArrayUniformLocation(int id, string name) {
 		return glGetUniformLocation(this->shader->GetProgramId(), (name + "[" + to_string(id) + "]").c_str());

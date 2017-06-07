@@ -48,14 +48,9 @@ namespace Engine {
 		GLint modelUniform;
 		GLint renderTypeUniform;
 
-		// water Uniforms
-		GLint waterHeightUniform;
-		GLint timeUniform;
-		GLint numWavesUniform;
-		GLint amplitudeUniform;
-		GLint wavelengthUniform;
-		GLint speedUniform;
-		GLint directionUniform;
+		GLint WaterNormalMapUniform;
+		GLint WaterUVDVMapUniform;
+		GLint WaterReflectionUniform;
 
 		GLint materialDiffuseUniform;
 		GLint materialSpecularUniform;
@@ -83,14 +78,14 @@ namespace Engine {
 		GLint GetSpecularUniform(int number) const;
 		int GetNumShadowMaps() const;
 
+		GLint GetWaterNormalMapUniform() const;
+		GLint GetWaterUVDVMapUniform() const;
+		GLint GetWaterReflectionUniform() const;
+
 		void AddSpotLight(SpotLight *spotLight);
 		void SetDirectionalLight(DirectionalLight *directionalLight);
+
 		GLint GetRenderTypeUniform() const;
-
-		GLint GetWaterHeightUniform() const;
-		GLint GetTimeUniform() const;
-		GLint GetNumberOfWavesUniform() const;
-
 		GLint GetArrayUniformLocation(int id, string name);
 	};
 }

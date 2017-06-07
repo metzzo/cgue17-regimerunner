@@ -23,37 +23,13 @@ namespace Engine {
 
 		DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), 2));
 
-		GLfloat directionArr[8][8];
+		DEBUG_OGL(glUniform1i(pass->GetWaterNormalMapUniform(), 17));
+		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + 16));
+		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, component->GetNormalMap()->GetTextureId()));
 
-		for (int i = 0; i < 4; i++) {
-			float amplitude = 0.5f / (i + 1);
-			GLint loc = pass->GetArrayUniformLocation(i, "amplitude");
-			DEBUG_OGL(glUniform1f(loc, amplitude));
-
-			float wavelength = 8 * M_PI / (i + 1);
-			loc = pass->GetArrayUniformLocation(i, "wavelength");
-			DEBUG_OGL(glUniform1f(loc, wavelength));
-
-			float speed = 1.0f + 2 * i;
-			loc = pass->GetArrayUniformLocation(i, "speed");
-			DEBUG_OGL(glUniform1f(loc, speed));
-
-			float min = -M_PI / 3;
-			float max = M_PI / 3;
-			double n = (double)rand() / (double)RAND_MAX;
-			double angle = min + n * (max - min);
-			auto dir = glm::vec2(sin(angle), cos(angle));
-			loc = pass->GetArrayUniformLocation(i, "direction");
-			DEBUG_OGL(glUniform2fv(loc,1, &dir[0]));
-		}
-
-		DEBUG_OGL(glUniform1i(pass->GetWaterHeightUniform(), 5));
-		DEBUG_OGL(glUniform1i(pass->GetNumberOfWavesUniform(), 4));
-
-		//DEBUG_OGL(glUniform4fv(pass->GetAmplitudeUniform(),8, &amplitudeArr[0]));
-		//DEBUG_OGL(glUniform4fv(pass->GetWaveLengthUniform(), 4, waveArr));
-		//DEBUG_OGL(glUniform4fv(pass->GetSpeedUniform(), 4, speedArr));
-		//DEBUG_OGL(glUniform4fv(pass->GetDirectionUniform(), 4, (GLfloat *)&directionArr));
+		DEBUG_OGL(glUniform1i(pass->GetWaterUVDVMapUniform(), 18));
+		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + 16));
+		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, component->GetDuDv()->GetTextureId()));
 
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));
 		DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
@@ -83,7 +59,9 @@ namespace Engine {
 
 	WaterSurface::WaterSurface() {
 		auto mapSize = vec3(1024, 40, 1024);
-		this->resource = new HeightMapResource("textures/water.jpg", mapSize, 200, 200);
+		this->resource = new HeightMapResource("textures/water.png", mapSize, 200, 200);
+		this->normalmap = new TextureResource("textures/normalmap.png");
+		this->dudv = new TextureResource("textures/waterdudv.png");
 	}
 
 	WaterSurface::WaterSurface(int size) {
@@ -97,6 +75,16 @@ namespace Engine {
 	HeightMapResource * WaterSurface::GetResource() const
 	{
 		return this->resource;
+	}
+
+	TextureResource * WaterSurface::GetNormalMap() const
+	{
+		return this->normalmap;
+	}
+
+	TextureResource * WaterSurface::GetDuDv() const
+	{
+		return this->dudv;
 	}
 
 }

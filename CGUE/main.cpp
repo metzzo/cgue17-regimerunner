@@ -149,6 +149,7 @@ int main(int argc, char **argv)
 	player->Add(new Game::CameraMovement(spotLight,secondcamera));
 
 	engine->SetMainCamera(camera);
+	engine->SetUtilityCamera(secondcamera);
 	camera->GetTransformation()->Translate(vec3(30.0, 60.0, 30.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 

@@ -38,6 +38,7 @@ namespace Engine {
 		bool cancelled;
 		Entity* rootEntity;
 		Camera* mainCamera;
+		Camera* utilityCamera;
 		int width;
 		int height;
 		int mouseXRel;
@@ -90,7 +91,9 @@ namespace Engine {
 		int GetMouseYRel() const;
 
 		void SetMainCamera(Camera *mainCamera);
+		void SetUtilityCamera(Camera *utilityCamera);
 		Camera *GetMainCamera() const;
+		Camera *GetUtilityCamera() const;
 		string GetProgramName() const;
 		Entity *GetRootEntity() const;
 		int GetScreenWidth() const;
