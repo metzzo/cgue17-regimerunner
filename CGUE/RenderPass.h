@@ -8,6 +8,7 @@ namespace Engine {
 	class SpotLight;
 	class RenderPass;
 	class BaseLight;
+	class Timer;
 
 	class LightInfo
 	{
@@ -51,6 +52,10 @@ namespace Engine {
 		GLint WaterNormalMapUniform;
 		GLint WaterUVDVMapUniform;
 		GLint WaterReflectionUniform;
+		GLint EyeTanSpaceUniform;
+		GLint LightTanSpaceUniform;
+		GLint waveOffsetUniform;
+		GLint texOffsetUniform;
 
 		GLint materialDiffuseUniform;
 		GLint materialSpecularUniform;
@@ -81,6 +86,9 @@ namespace Engine {
 		GLint GetWaterNormalMapUniform() const;
 		GLint GetWaterUVDVMapUniform() const;
 		GLint GetWaterReflectionUniform() const;
+
+		GLint GetWaveOffsetUniform() const;
+		GLint GetTexOffsetUniform() const;
 
 		void AddSpotLight(SpotLight *spotLight);
 		void SetDirectionalLight(DirectionalLight *directionalLight);

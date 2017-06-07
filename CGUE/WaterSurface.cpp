@@ -5,6 +5,7 @@
 #include "HeightMapResource.h"
 #include "TextureResource.h"
 #include "RenderPass.h"
+#include "Timer.h"
 
 namespace Engine {
 
@@ -35,6 +36,12 @@ namespace Engine {
 		DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
 		DEBUG_OGL(glBindVertexArray(0));
 
+		float texOffset = component->getTexAlpha();
+		float waveOffset = component->getWaveAlpha();
+
+		DEBUG_OGL(glUniform1f(pass->GetWaveOffsetUniform(), waveOffset));
+		DEBUG_OGL(glUniform1f(pass->GetTexOffsetUniform(), texOffset));
+
 		if (mesh->restartIndex != -1)
 		{
 			DEBUG_OGL(glDisable(GL_PRIMITIVE_RESTART));
@@ -62,6 +69,9 @@ namespace Engine {
 		this->resource = new HeightMapResource("textures/water.png", mapSize, 200, 200);
 		this->normalmap = new TextureResource("textures/normalmap.png");
 		this->dudv = new TextureResource("textures/waterdudv.png");
+		
+		this->texOffset = new Timer(true,20.0);
+		this->waveOffset = new Timer(true,18.0);
 	}
 
 	WaterSurface::WaterSurface(int size) {
@@ -85,6 +95,14 @@ namespace Engine {
 	TextureResource * WaterSurface::GetDuDv() const
 	{
 		return this->dudv;
+	}
+
+	float WaterSurface::getTexAlpha() {
+		return this->texOffset->GetAlpha();
+	}
+
+	float WaterSurface::getWaveAlpha() {
+		return this->waveOffset->GetAlpha();
 	}
 
 }

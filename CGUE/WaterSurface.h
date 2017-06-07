@@ -4,8 +4,11 @@
 #include "Operation.h"
 #include "Model.h"
 #include "TextureResource.h"
+#include "Timer.h"
 
 namespace Engine {
+
+	class Timer;
 
 	class WaterRenderOperation : public Operation {
 		Mesh *mesh;
@@ -24,6 +27,9 @@ namespace Engine {
 
 	public:
 
+		Timer* texOffset;
+		Timer* waveOffset;
+
 		WaterSurface();
 		WaterSurface(int size);
 		~WaterSurface();
@@ -31,6 +37,9 @@ namespace Engine {
 		HeightMapResource *GetResource() const;
 		TextureResource *GetNormalMap() const;
 		TextureResource *GetDuDv() const;
+
+		float getWaveAlpha();
+		float getTexAlpha();
 
 		void Init() override;
 		void Wire() override;

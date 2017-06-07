@@ -150,6 +150,7 @@
     <ClCompile Include="Rotating.cpp" />
     <ClCompile Include="SpotLight.cpp" />
     <ClCompile Include="TextureResource.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transformation.cpp" />
     <ClCompile Include="PalmInteraction.cpp" />
     <ClCompile Include="WaterSurface.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="TextureRenderable.h" />
     <ClInclude Include="TextureResource.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Transformation.h" />
     <ClInclude Include="PalmInteraction.h" />
     <ClInclude Include="WaterSurface.h" />

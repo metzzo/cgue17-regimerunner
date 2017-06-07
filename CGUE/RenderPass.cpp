@@ -7,6 +7,8 @@
 #include "DirectionalLight.h"
 #include <string>
 #include <sstream>
+#include "glm/glm.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 namespace Engine {
 	void LightInfo::AssignUniforms(GLuint programId, string name, int lightId, BaseLight *light)
@@ -46,6 +48,13 @@ namespace Engine {
 		this->modelUniform = -2;
 		this->shaderViewPosId = -2;
 
+		this->WaterNormalMapUniform = -2;
+		this->WaterUVDVMapUniform = -2;
+		this->WaterReflectionUniform = -2;
+		this->EyeTanSpaceUniform =-2;
+		this->LightTanSpaceUniform = -2;
+		this->waveOffsetUniform = -2;
+		this->texOffsetUniform = -2;
 
 		this->materialDiffuseUniform = -2;
 		this->materialSpecularUniform = -2;
@@ -159,6 +168,9 @@ namespace Engine {
 		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + 16));
 		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, utilitycam->GetTextureId()));
 
+		DEBUG_OGL(glUniform3fv(this->EyeTanSpaceUniform,1, glm::value_ptr(glm::vec3(cam->GetTransformation()->GetAbsolutePosition()))));
+		DEBUG_OGL(glUniform3fv(this->LightTanSpaceUniform, 1, glm::value_ptr(glm::vec3(spotLights[0]->GetTransformation()->GetAbsolutePosition()))));
+
 		if (directionalLight != nullptr)
 		{
 			auto lightPos = directionalLight->GetTransformation()->GetAbsolutePosition();
@@ -198,6 +210,15 @@ namespace Engine {
 		this->hudProjectionUniform = glGetUniformLocation(programId, "hudProjection");
 		this->modelUniform = glGetUniformLocation(programId, "model");
 		this->renderTypeUniform = glGetUniformLocation(programId, "renderType");
+
+		this->WaterNormalMapUniform = glGetUniformLocation(programId,"normalSampler");
+		this->WaterUVDVMapUniform = glGetUniformLocation(programId, "displaceSampler");
+		this->WaterReflectionUniform = glGetUniformLocation(programId, "reflectSampler");
+		this->EyeTanSpaceUniform = glGetUniformLocation(programId, "eyeTanSpace");
+		this->LightTanSpaceUniform = glGetUniformLocation(programId, "lightTanSpace");
+
+		this->waveOffsetUniform = glGetUniformLocation(programId, "waveOffset");
+		this->texOffsetUniform = glGetUniformLocation(programId, "texOffset");
 
 		this->viewPosUniform = glGetUniformLocation(programId, "viewPos");
 		this->materialDiffuseUniform = glGetUniformLocation(programId, "material.diffuse");
@@ -246,6 +267,16 @@ namespace Engine {
 	GLint RenderPass::GetWaterReflectionUniform() const
 	{
 		return this->WaterReflectionUniform;
+	}
+
+	GLint RenderPass::GetWaveOffsetUniform() const
+	{
+		return this->waveOffsetUniform;
+	}
+
+	GLint RenderPass::GetTexOffsetUniform() const
+	{
+		return this->texOffsetUniform;
 	}
 
 	void RenderPass::AddSpotLight(SpotLight* spotLight)
