@@ -13,18 +13,18 @@ namespace Game {
 
 	enum HelicopterMovementState
 	{
-		HMS_ONLY_ROTATE = 1,
-		HMS_FOLLOW_PLAYER,
+		HMS_FOLLOW_PLAYER=0,
 		HMS_FORWARD,
 		HMS_LEFT_FORWARD,
-		HMS_RIGHT_FORWARD
+		HMS_RIGHT_FORWARD,
+		HMS_GOTO_CENTER
 	};
 
 	class HelicopterBehaviourOperation : public Engine::Operation
 	{
 		
 	public:
-		void ChangeDirection();
+		void ChangeDirection() const;
 
 		explicit HelicopterBehaviourOperation(Engine::Component* component)
 			: Operation(component)
@@ -46,8 +46,10 @@ namespace Game {
 		Engine::Transformation *sideRotor;
 		Engine::HeightMapResource *heightMap;
 
-		HelicopterMovementState state;
+		int state;
 		Player* player;
+		int start;
+		int duration;
 	public:
 		explicit HelicopterBehaviour(Engine::Transformation *mainRotor, Engine::Transformation *sideRotor, bool broken, Engine::HeightMapResource *heightMap, Player *player);
 		

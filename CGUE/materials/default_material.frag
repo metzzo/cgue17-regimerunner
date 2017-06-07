@@ -106,8 +106,9 @@ float ShadowCalculation(SpotLight light, vec4 fragPosLightSpace)
 	vec4 shadowMapColor;
 	SHADOW_MAP(texture, light.shadowMapIndex, projCoords.xy, shadowMapColor);
 	
-    float closestDepth = shadowMapColor.r; 
-    // Get depth of current fragment from light's perspective
+    //float closestDepth = shadowMapColor.r; 
+    
+	// Get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     // Calculate bias (based on depth map resolution and slope)
     vec3 normal = normalize(fs_in.Normal);
@@ -164,7 +165,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     specular *= attenuation * intensity;
 	float shadow = light.shadowCasting ? ShadowCalculation(light, light.spaceMatrix * vec4(fs_in.FragPos, 1.0)) : 0.0;
 	
-    return ambient + (1.0 - shadow)*(diffuse + specular); // + shadow*vec3(0,1,0);
+    return ambient + (1.0 - shadow)*(diffuse + specular); // + shadow*vec3(0,0,0);
 }
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
@@ -202,13 +203,13 @@ vec3 renderMesh() {
 }
 
 vec3 renderHud() {
-	/*float depthValue = texture(material.diffuse, fs_in.TexCoords).r;
+	float depthValue = texture(material.diffuse, fs_in.TexCoords).r;
 	float near_plane = 1.0;
 	float far_plane = 1000.0;
 	float z = depthValue * 2.0 - 1.0;
-	return vec3(vec3(((2.0 * near_plane * far_plane) / (far_plane + near_plane - z * (far_plane - near_plane))) / far_plane));*/
+	return vec3(vec3(((2.0 * near_plane * far_plane) / (far_plane + near_plane - z * (far_plane - near_plane))) / far_plane));
 	
-	return vec3(texture(material.diffuse, fs_in.TexCoords));
+	//return vec3(texture(material.diffuse, fs_in.TexCoords));
 }
 
 vec3 renderWater() {

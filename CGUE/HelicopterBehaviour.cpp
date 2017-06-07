@@ -11,49 +11,22 @@
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtx/quaternion.hpp"
 #include "glm/gtx/norm.hpp"
+#include "glm/gtx/matrix_decompose.inl"
+#include <iostream>
 
 using namespace glm;
 
 namespace Game {
-	quat RotationBetweenVectors(vec3 start, vec3 dest) {
-		start = normalize(start);
-		dest = normalize(dest);
-
-		float cosTheta = dot(start, dest);
-		vec3 rotationAxis;
-
-		if (cosTheta < -1 + 0.001f) {
-			// special case when vectors in opposite directions:
-			// there is no "ideal" rotation axis
-			// So guess one; any will do as long as it's perpendicular to start
-			rotationAxis = cross(vec3(0.0f, 0.0f, 1.0f), start);
-			if (length2(rotationAxis) < 0.01) // bad luck, they were parallel, try again!
-				rotationAxis = cross(vec3(1.0f, 0.0f, 0.0f), start);
-
-			rotationAxis = normalize(rotationAxis);
-			return angleAxis(180.0f, rotationAxis);
-		}
-
-		rotationAxis = cross(start, dest);
-
-		float s = sqrt((1 + cosTheta) * 2);
-		float invs = 1 / s;
-
-		return quat(
-			s * 0.5f,
-			rotationAxis.x * invs,
-			rotationAxis.y * invs,
-			rotationAxis.z * invs
-		);
-
-	}
-
-	void HelicopterBehaviourOperation::ChangeDirection()
+	void HelicopterBehaviourOperation::ChangeDirection() const
 	{
 
+		auto component = static_cast<HelicopterBehaviour*>(this->GetComponent());
+		component->state = HelicopterMovementState(rand() % 5);
+		component->start = SDL_GetTicks();
+		component->duration = 2000 + rand() % 5000;
 	}
 
-	void HelicopterBehaviourOperation::Execute()
+	void Game::HelicopterBehaviourOperation::Execute()
 	{
 		// TODO: make frame independent
 
@@ -63,41 +36,48 @@ namespace Game {
 		auto speed = 10.0f;
 		if (!component->broken) {
 			auto pos = component->GetTransformation()->GetAbsolutePosition();
-			auto targetHeight = component->heightMap->GetHeightAt(pos.x, pos.z) + 130;
-			auto translation = vec3(0, (targetHeight - pos.y) / 100.0f * dt, 0);
-
-			vec3 targetPos;
-			vec3 dir;
-			quat rot;
-
+			auto cumHeight = 0.0f;
+			for (auto x = -16; x < 16; x += 4)
+			{
+				for (auto z = -16; z < 16; z += 4)
+				{
+					auto height = component->heightMap->GetHeightAt(pos.x + x, pos.z + z);
+					if (height == -1 && component->state != HMS_FOLLOW_PLAYER)
+					{
+						component->state = HMS_GOTO_CENTER;
+					}
+					cumHeight = max(cumHeight, height);
+				}
+			}
+			auto translation = vec3(0, float(cumHeight) - pos.y + 100, 0);
+			cout << component->state << endl;
 			switch(component->state)
 			{
+			case HMS_GOTO_CENTER:
 			case HMS_FOLLOW_PLAYER: {
-				/*targetPos = component->player->GetTransformation()->GetAbsolutePosition();
+				glm::vec3 scale;
+				glm::quat rotation;
+				glm::vec3 IGNORE;
+				glm::vec3 skew;
+				glm::vec4 perspective;
+				glm::decompose(component->GetTransformation()->GetRelativeMatrix(), scale, rotation, IGNORE, skew, perspective);
 
-				vec3 direction = targetPos - pos;
-				if (direction.length() > 1) {
-					direction = normalize(direction);
-					quat rot1 = RotationBetweenVectors(vec3(0.0f, 0.0f, 1.0f), direction);
-					vec3 right = cross(direction, vec3(0, 1, 0));
-					vec3 desiredUp = cross(right, direction);
+				auto targetPos = component->state == HMS_FOLLOW_PLAYER ? component->player->GetTransformation()->GetAbsolutePosition() : component->heightMap->GetSize()/2.0f;
 
-					// Because of the 1rst rotation, the up is probably completely screwed up.
-					// Find the rotation between the "up" of the rotated object, and the desired up
-					vec3 newUp = rot1 * vec3(0.0f, 1.0f, 0.0f);
-					quat rot2 = RotationBetweenVectors(newUp, desiredUp);
-					quat targetOrientation = rot2 * rot1;
+				auto direction = targetPos - pos;
+				direction.y = 0;
 
-					auto mat = toMat4(targetOrientation);
-					mat = translate(mat, pos);
+				if (length(direction) > 5) {
+					auto angle = atan2(direction.z, direction.x);
+					auto rotMatrix = toMat4(slerp(rotation, angleAxis(-angle + radians(90.0f), vec3(0, 1, 0)), 0.05f*dt));
 
-					component->GetTransformation()->SetRelativeMatrix(mat);
-				}*/
+					component->GetTransformation()->SetRelativeMatrix(translate(mat4(), pos)*rotMatrix);
 
+					translation += vec3(0, 0, 1) * dt * 0.05f;
+				}
 
-				//translation += vec3(0,0,0.25 * dt * 0.05f);
-			}
 				break;
+			}
 			case HMS_LEFT_FORWARD:
 			case HMS_RIGHT_FORWARD:
 				component->GetTransformation()->Rotate(dt*0.05, vec3(0, component->state == HMS_LEFT_FORWARD ? 1 : -1, 0));
@@ -113,6 +93,11 @@ namespace Game {
 
 			component->spotLight->GetCamera()->SetLookAtVector(component->GetTransformation()->GetAbsolutePosition() + vec3(cos(SDL_GetTicks() / 1000.0f) / 1.5f, -1, sin(SDL_GetTicks()/1000.0f)/1.5f));
 			
+			if (SDL_GetTicks() - component->start > component->duration)
+			{
+				ChangeDirection();
+			}
+
 			speed = 100.0f;
 		}
 		component->mainRotor->Rotate(radians(speed * dt), vec3(0.0f, 1.0f, 0.0f));
@@ -129,6 +114,8 @@ namespace Game {
 		this->heightMap = heightMap;
 		this->state = HMS_FOLLOW_PLAYER;
 		this->player = player;
+		this->start = 0;
+		this->duration = 0;
 	}
 
 	void HelicopterBehaviour::Init()

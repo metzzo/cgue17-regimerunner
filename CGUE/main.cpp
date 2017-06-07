@@ -88,7 +88,7 @@ void PlaceHeli(
 	heli->GetTransformation()->Translate(pos);
 	heli->Add(new Game::HelicopterBehaviour(heliMainRotor->GetTransformation(), heliSideRotor->GetTransformation(), broken, heightMap, player));
 
-	auto spotLight = broken ? new SpotLight(15.0f, 20.0f) : new SpotLight(60.0f, 0.1f, 1000.0f, 1024, 19.0f, 20.0f);
+	auto spotLight = broken ? new SpotLight(15.0f, 20.0f) : new SpotLight(80.0f, 1.0f, 1000.0f, 512, 19.0f, 20.0f);
 	spotLight->SetAmbient(vec3(0, 0, 0));
 	spotLight->SetSpecular(vec3(1, 1, 1));
 	spotLight->SetDiffuse(vec3(0.9f, 0.9f, 0.9f));
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
 	auto heliMainRotorResource = new ModelResource("objects/heli2/main_rotor.obj");
 	auto heliSideRotorResource = new ModelResource("objects/heli2/side_rotor.obj");
 
-	
+	/**/
 	auto dirLight = new DirectionalLight();
 	auto dirLightEntity = engine->GetRootEntity()->CreateChild();
 	dirLightEntity->Add(dirLight);
@@ -128,7 +128,7 @@ int main(int argc, char **argv)
 	dirLight->SetAmbient(vec3(0, 0, 0));
 	dirLight->SetSpecular(vec3(0.2f, 0.2f, 0.2f));
 	dirLight->SetDiffuse(vec3(0.2f, 0.2f, 0.2f));
-	dirLight->SetLookAtVector(vec3(0, 0, 0));
+	dirLight->SetLookAtVector(vec3(0, 0, 0));/**/
 
 	auto camera = new Camera(80.0f, 0.1f, 500.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
 	camera->SetHudProjectionMatrix(glm::ortho(0.0f, GLfloat(engine->GetScreenWidth()), GLfloat(engine->GetScreenHeight()), 0.0f, -1.0f, 1.0f));

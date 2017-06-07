@@ -80,11 +80,11 @@ namespace Engine {
 			camera->SetCameraPass(GetEngine()->GetDepthPass());
 
 
-			/*auto hudTest = GetEngine()->GetRootEntity()->CreateChild();
+			auto hudTest = GetEngine()->GetRootEntity()->CreateChild();
 			hudTest->GetTransformation()->Scale(vec3(0.25, 0.25, 1));
 			hudTest->GetTransformation()->Translate(vec3(300,300,0));
 			auto spriteResource = new SpriteResource(camera);
-			hudTest->Add(new Model(spriteResource));*/
+			hudTest->Add(new Model(spriteResource));
 		} else
 		{
 			this->camera->RenderingEnabled(false);

@@ -236,13 +236,13 @@ namespace Engine {
 
 	float HeightMapResource::GetHeightAt(int x, int z) const
 	{
-		if (x >= 0 && z >= 0 && x < heightMap->GetWidth() && z < heightMap->GetHeight()) {
+		if (x >= 0 && z >= 0 && x < size.x && z < size.z) {
 			auto xPos = int(float(x) / size.x * heightMap->GetWidth());
 			auto zPos = int(float(z) / size.z * heightMap->GetHeight());
 			return float(pixels[heightMap->GetBytesPerPixel()*(xPos*heightMap->GetHeight() + zPos)]) / 255.0f * size.y;
 		} else
 		{
-			return 0;
+			return -1;
 		}
 	}
 
