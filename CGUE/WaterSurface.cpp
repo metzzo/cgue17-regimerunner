@@ -6,6 +6,7 @@
 #include "TextureResource.h"
 #include "RenderPass.h"
 #include "Timer.h"
+#include "Model.h"
 
 namespace Engine {
 
@@ -24,12 +25,16 @@ namespace Engine {
 
 		DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), 2));
 
-		DEBUG_OGL(glUniform1i(pass->GetWaterNormalMapUniform(), 17));
-		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + 17));
+		auto currentTexture = pass->GetNumShadowMaps();
+
+		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + currentTexture));
+		DEBUG_OGL(glUniform1i(pass->GetWaterNormalMapUniform(), currentTexture));
 		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, component->GetNormalMap()->GetTextureId()));
 
-		DEBUG_OGL(glUniform1i(pass->GetWaterUVDVMapUniform(), 18));
-		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + 18));
+		currentTexture++;
+
+		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + currentTexture));
+		DEBUG_OGL(glUniform1i(pass->GetWaterUVDVMapUniform(), currentTexture));
 		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, component->GetDuDv()->GetTextureId()));
 
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));
@@ -56,6 +61,8 @@ namespace Engine {
 		if (this->resource != nullptr)
 		{
 			this->resource->Init();
+			this->normalmap->Init();
+			this->dudv->Init();
 		}
 
 		for (auto &mesh : this->resource->GetMeshes())
@@ -67,7 +74,8 @@ namespace Engine {
 	WaterSurface::WaterSurface() {
 		auto mapSize = vec3(1024, 40, 1024);
 		this->resource = new HeightMapResource("textures/water.png", mapSize, 200, 200);
-		this->normalmap = new TextureResource("textures/normalmap.png");
+
+		this->normalmap = new TextureResource("textures/waternormal.png");
 		this->dudv = new TextureResource("textures/waterdudv.png");
 		
 		this->texOffset = new Timer(true,20.0);
