@@ -73,7 +73,7 @@ namespace Engine {
 
 	WaterSurface::WaterSurface() {
 		auto mapSize = vec3(1024, 40, 1024);
-		this->resource = new HeightMapResource("textures/water.png", mapSize, 200, 200);
+		this->resource = new HeightMapResource("textures/water.png", mapSize, 10, 10);
 
 		this->normalmap = new TextureResource("textures/waternormal.png");
 		this->dudv = new TextureResource("textures/waterdudv.png");

@@ -175,11 +175,11 @@ int main(int argc, char **argv)
 	map->Add(new HeightFieldShape(mapResource->GetHeightMap(), mapSize));
 
 	
-	auto hudTest = engine->GetRootEntity()->CreateChild();
-	hudTest->GetTransformation()->Scale(vec3(0.5, 0.5, 1));
-	hudTest->GetTransformation()->Translate(vec3(500, 500, 0));
-	auto spriteResource = new SpriteResource(secondcamera);
-	hudTest->Add(new Model(spriteResource));
+	//auto hudTest = engine->GetRootEntity()->CreateChild();
+	//hudTest->GetTransformation()->Scale(vec3(0.5, 0.5, 1));
+	//hudTest->GetTransformation()->Translate(vec3(500, 500, 0));
+	//auto spriteResource = new SpriteResource(secondcamera);
+	//hudTest->Add(new Model(spriteResource));
 	
 
 	engine->Run();

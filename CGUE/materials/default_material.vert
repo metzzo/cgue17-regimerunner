@@ -39,7 +39,9 @@ void main()
         vs_out.Normal = transpose(inverse(mat3(model))) * normal;
         vs_out.TexCoords = texCoords;	
 		eyeDirection = eyeTanSpace - vs_out.FragPos; 
-		clipTexProjCoord = vec4(1,1,1,1);	
+		vec4 clipPosition = -projection * (view * vec4(position, 1.0));
+		clipTexProjCoord = clipPosition;	
+
     } else {
         vs_out.FragPos = vec3(model * vec4(position, 1.0));
         vs_out.Normal = transpose(inverse(mat3(model))) * normal;
