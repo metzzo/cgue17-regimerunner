@@ -15,6 +15,7 @@ in VS_OUT {
 
 in vec4 clipTexProjCoord;
 in vec3 eyeDirection;
+in vec3 fromLightVector;
 in vec2 TexCoords;
 
 struct Material {
@@ -89,6 +90,8 @@ uniform int numSpotLights;
 uniform vec3 viewPos;
 
 const float waveStrength = 0.02;
+const float shineDamper = 20.0;
+const float reflectivity = 0.6;
 
 #define SHADOW_MAP(A,B,C,X) \
 	if (B == 0) { \
@@ -241,16 +244,6 @@ vec3 renderHud() {
 	return vec3(texture(material.diffuse, fs_in.TexCoords));
 }
 
-vec2 GetMapCoord(in vec2 offset, in float scale)
-{
-	return vec2(fract(fs_in.FragPos[0] * scale + offset.x), fract(fs_in.FragPos[2] * scale + offset.y));
-}
-
-float GetWaterDepth(in vec2 displacedCoord)
-{
-	float waterDepth = ((1.0/(1.0 - texture2D(shadowMap0, displacedCoord).r)) - (1.0/(1.0 - texture2D(shadowMap0, displacedCoord).r))) * 0.1;
-	return clamp(waterDepth, 0.001, 0.999);
-}
 
 vec3 renderWater() {
 
@@ -268,10 +261,21 @@ vec3 renderWater() {
 	float transparency = dot(viewVector, vec3(0.0,1.0,0.0));
 	transparency = pow(transparency, 3.0);
 
+	vec4 normalMap = texture(normalSampler, distortion);
+	vec3  normal = vec3(normalMap.r * 2.0 - 1.0, normalMap.b, normalMap.g * 2.0 - 1.0);
+	normal = normalize(normal);
+
+	vec3 reflectedLight = reflect(normalize(fromLightVector),normal);
+	float specular = max(dot(reflectedLight, viewVector),0.0);
+	specular = pow(specular, shineDamper);
+	vec3 highlights = vec3(1.0,1.0,1.0) * specular * transparency;
+
 	vec4 out_color = mix(reflectColor, vec4(0.38,0.47,0.97,1.0), transparency);
 
+	out_color = mix(out_color, vec4(0.0,0.3,0.5,1.0),0.2);
 
-	return vec3(out_color);
+	vec3 result = vec3(out_color) + highlights;
+	return result;
 }
 
 void main()

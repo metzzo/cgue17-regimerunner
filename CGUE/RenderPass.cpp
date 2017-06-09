@@ -169,13 +169,12 @@ namespace Engine {
 		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, utilitycam->GetTextureId()));
 
 		DEBUG_OGL(glUniform3fv(this->EyeTanSpaceUniform,1, glm::value_ptr(glm::vec3(cam->GetTransformation()->GetAbsolutePosition()))));
-		DEBUG_OGL(glUniform3fv(this->LightTanSpaceUniform, 1, glm::value_ptr(glm::vec3(spotLights[0]->GetTransformation()->GetAbsolutePosition()))));
 
 		if (directionalLight != nullptr)
 		{
 			auto lightPos = directionalLight->GetTransformation()->GetAbsolutePosition();
 			auto dir = directionalLight->GetLookAtVector() - lightPos;
-
+			DEBUG_OGL(glUniform3fv(this->LightTanSpaceUniform, 1, glm::value_ptr(dir)));
 			DEBUG_OGL(glUniform3fv(directionalLightInfo.directionUniform, 1, &dir[0]));
 		}
 

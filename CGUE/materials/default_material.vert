@@ -17,6 +17,7 @@ out VS_OUT {
 } vs_out;
 
 out vec3 eyeDirection;
+out vec3 fromLightVector;
 out vec4 clipTexProjCoord;
 
 uniform mat4 projection;
@@ -25,6 +26,7 @@ uniform mat4 view;
 uniform mat4 model;
 
 uniform vec3 eyeTanSpace;
+uniform vec3 lightTanSpace;
 
 const float tiling = 6.0;
 
@@ -51,6 +53,8 @@ void main()
 
 		vec4 worldPosition = model * vec4(position, 1.0f);
 		eyeDirection = eyeTanSpace - worldPosition.xyz;
+
+		fromLightVector = worldPosition.xyz - lightTanSpace;
 
 
     } else {
