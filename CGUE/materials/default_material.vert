@@ -28,9 +28,11 @@ out vec4 clipTexProjCoord;
 
 void main()
 {
+
 	if (renderType == RT_HUD) {
 		gl_Position = hudProjection * model * vec4(position, 1.0f);
-	} else {
+	}
+	 else {
 		gl_Position = projection * view * model * vec4(position, 1.0f);
 	}
 
@@ -39,12 +41,14 @@ void main()
         vs_out.Normal = transpose(inverse(mat3(model))) * normal;
         vs_out.TexCoords = texCoords;	
 		eyeDirection = eyeTanSpace - vs_out.FragPos; 
-		vec4 clipPosition = -projection * (view * vec4(position, 1.0));
+		vec4 clipPosition = projection * view * model * vec4(position, 1.0f);
 		clipTexProjCoord = clipPosition;	
+		//gl_Position = projection * view * model * vec4(vs_out.FragPos[0],0.0,vs_out.FragPos[2],0.0);
 
     } else {
         vs_out.FragPos = vec3(model * vec4(position, 1.0));
         vs_out.Normal = transpose(inverse(mat3(model))) * normal;
         vs_out.TexCoords = texCoords;
     }
+
 }
