@@ -110,6 +110,10 @@ int main(int argc, char **argv)
 	auto heliMainRotorResource = new ModelResource("objects/heli2/main_rotor.obj");
 	auto heliSideRotorResource = new ModelResource("objects/heli2/side_rotor.obj");
 
+	auto skybox = new ModelResource("objects/skybox/skybox.obj");
+	auto skyBoxEntity = engine->GetRootEntity()->CreateChild();
+	skyBoxEntity->GetTransformation()->Scale(vec3(5,5,5));
+	skyBoxEntity->Add(new Model(skybox));
 
 	auto dirLight = new DirectionalLight();
 	auto dirLightEntity = engine->GetRootEntity()->CreateChild();
@@ -153,7 +157,7 @@ int main(int argc, char **argv)
 	camera->GetTransformation()->Translate(vec3(30.0, 60.0, 30.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 
-	secondcamera->GetTransformation()->Translate(vec3(30.0, 60.0, 30.0));
+	secondcamera->GetTransformation()->Translate(vec3(30.0, 80.0, 30.0));
 	secondcamera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 	secondcamera->SetUpVector(vec3(0.0, 1.0, 0.0));//TODO: -1
 

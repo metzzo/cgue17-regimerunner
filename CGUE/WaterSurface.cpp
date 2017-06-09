@@ -47,7 +47,6 @@ namespace Engine {
 		DEBUG_OGL(glUniform1f(pass->GetWaveOffsetUniform(), waveOffset));
 		DEBUG_OGL(glUniform1f(pass->GetTexOffsetUniform(), texOffset));
 
-		cout << "WaveOffset: " << waveOffset << endl;
 
 		if (mesh->restartIndex != -1)
 		{
@@ -74,7 +73,7 @@ namespace Engine {
 	}
 
 	WaterSurface::WaterSurface() {
-		auto mapSize = vec3(1024, 40, 1024);
+		auto mapSize = vec3(2048, 50, 2048);
 		this->resource = new HeightMapResource("textures/water.png", mapSize, 10, 10);
 
 		this->normalmap = new TextureResource("textures/waternormal.png");

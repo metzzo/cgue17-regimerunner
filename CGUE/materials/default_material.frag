@@ -264,7 +264,14 @@ vec3 renderWater() {
 
 	vec4 reflectColor = texture(reflectSampler, reflectTexCoords);
 
-	return vec3(reflectColor);
+	vec3 viewVector = normalize(eyeDirection);
+	float transparency = dot(viewVector, vec3(0.0,1.0,0.0));
+	transparency = pow(transparency, 3.0);
+
+	vec4 out_color = mix(reflectColor, vec4(0.38,0.47,0.97,1.0), transparency);
+
+
+	return vec3(out_color);
 }
 
 void main()

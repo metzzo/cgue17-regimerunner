@@ -17,6 +17,7 @@ out VS_OUT {
 } vs_out;
 
 out vec3 eyeDirection;
+out vec4 clipTexProjCoord;
 
 uniform mat4 projection;
 uniform mat4 hudProjection;
@@ -24,7 +25,6 @@ uniform mat4 view;
 uniform mat4 model;
 
 uniform vec3 eyeTanSpace;
-out vec4 clipTexProjCoord;
 
 const float tiling = 6.0;
 
@@ -48,6 +48,9 @@ void main()
 		clipTexProjCoord = clipPosition;	
 
 		TexCoords = vec2(vs_out.TexCoords[0]/2.0 + 0.5, vs_out.TexCoords[0]/2.0 + 0.5) * tiling;
+
+		vec4 worldPosition = model * vec4(position, 1.0f);
+		eyeDirection = eyeTanSpace - worldPosition.xyz;
 
 
     } else {
