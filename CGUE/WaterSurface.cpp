@@ -7,7 +7,7 @@
 #include "RenderPass.h"
 #include "Timer.h"
 #include "Model.h"
-
+#include <iostream>
 namespace Engine {
 
 	void WaterRenderOperation::Execute() {
@@ -47,6 +47,8 @@ namespace Engine {
 		DEBUG_OGL(glUniform1f(pass->GetWaveOffsetUniform(), waveOffset));
 		DEBUG_OGL(glUniform1f(pass->GetTexOffsetUniform(), texOffset));
 
+		cout << "WaveOffset: " << waveOffset << endl;
+
 		if (mesh->restartIndex != -1)
 		{
 			DEBUG_OGL(glDisable(GL_PRIMITIVE_RESTART));
@@ -76,7 +78,7 @@ namespace Engine {
 		this->resource = new HeightMapResource("textures/water.png", mapSize, 10, 10);
 
 		this->normalmap = new TextureResource("textures/waternormal.png");
-		this->dudv = new TextureResource("textures/waterdudv.png");
+		this->dudv = new TextureResource("textures/dudvmap.jpg");
 		
 		this->texOffset = new Timer(true,20.0);
 		this->waveOffset = new Timer(true,18.0);
