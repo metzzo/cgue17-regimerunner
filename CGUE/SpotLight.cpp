@@ -76,7 +76,7 @@ namespace Engine {
 
 		if (this->shadowCasting) {
 			camera->SetUpVector(vec3(0, -1, 0));
-			camera->EnableRender2Texture();
+			camera->SetCameraMode(CM_DEPTH);
 			camera->SetCameraPass(GetEngine()->GetDepthPass());
 
 

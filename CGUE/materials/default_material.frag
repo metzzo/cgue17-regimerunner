@@ -50,6 +50,7 @@ uniform sampler2D shadowMap9;
 uniform sampler2D normalSampler;
 uniform sampler2D displaceSampler;
 uniform sampler2D reflectSampler;
+uniform sampler2D refractSampler;
 
 uniform vec3 lightTanSpace;
 uniform float waveOffset;
@@ -231,6 +232,7 @@ vec3 renderHud() {
 vec3 renderWater() {
 
 	vec2 ndc = (clipTexProjCoord.xy/clipTexProjCoord.w)/2.0 + 0.5;
+	vec2 refractTexCoords = vec2(ndc.x, ndc.y);
 	vec2 reflectTexCoords = vec2(ndc.x, -ndc.y);
 
 	vec2 distortion = (texture(displaceSampler, vec2(TexCoords.x + waveOffset,TexCoords.y)).rg * 2.0 - 1.0) * sin(waveStrength);
@@ -239,6 +241,7 @@ vec3 renderWater() {
 	reflectTexCoords.y = clamp(reflectTexCoords.y, -0.999, -0.001);
 
 	vec4 reflectColor = texture(reflectSampler, reflectTexCoords);
+	vec4 refractColor = texture(refractSampler, refractTexCoords);
 
 	vec3 viewVector = normalize(eyeDirection);
 	float transparency = dot(viewVector, vec3(0.0,1.0,0.0));
@@ -247,13 +250,14 @@ vec3 renderWater() {
 	vec4 normalMap = texture(normalSampler, distortion);
 	vec3  normal = vec3(normalMap.r * 2.0 - 1.0, normalMap.b, normalMap.g * 2.0 - 1.0);
 	normal = normalize(normal);
+	
 
 	vec3 reflectedLight = reflect(normalize(fromLightVector),normal);
 	float specular = max(dot(reflectedLight, viewVector),0.0);
 	specular = pow(specular, shineDamper);
 	vec3 highlights = vec3(1.0,1.0,1.0) * specular * transparency;
 
-	vec4 out_color = mix(reflectColor, vec4(0.38,0.47,0.97,1.0), transparency);
+	vec4 out_color = mix(reflectColor, refractColor, transparency);
 
 	out_color = mix(out_color, vec4(0.0,0.3,0.5,1.0),0.2);
 

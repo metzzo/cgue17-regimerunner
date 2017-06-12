@@ -60,9 +60,10 @@ namespace Game {
 
 		component->spotLight->GetCamera()->SetLookAtVector(component->spotLight->GetTransformation()->GetAbsolutePosition() + cameraFront);
 		cam->SetLookAtVector(pos + cameraFront);
+		component->refractionCamera->SetLookAtVector(pos + cameraFront);
 
-		component->watercamera->GetTransformation()->SetRelativeMatrix(translate(mat4(), vec3(0, -2 * (pos.y - 20), 0)));
-		component->watercamera->SetLookAtVector(component->watercamera->GetTransformation()->GetAbsolutePosition() + waterCameraFront);
+		component->reflectionCamera->GetTransformation()->SetRelativeMatrix(translate(mat4(), vec3(0, -2 * (pos.y - 20), 0)));
+		component->reflectionCamera->SetLookAtVector(component->reflectionCamera->GetTransformation()->GetAbsolutePosition() + waterCameraFront);
 
 
 		auto direction = vec3(0.0f, -9.81f, 0.0f) + jump;
@@ -108,12 +109,13 @@ namespace Game {
 		GetEngine()->GetUpdatePass()->AddOperation(new CameraMovementOperation(this));
 	}
 
-	CameraMovement::CameraMovement(Engine::SpotLight* spotLight, Engine::Camera* watercamera) : Component()
+	CameraMovement::CameraMovement(Engine::SpotLight* spotLight, Engine::Camera* reflectionCamera, Engine::Camera *refractionCamera) : Component()
 	{
 		this->spotLight = spotLight;
 		this->controller = nullptr;
 		this->camera = nullptr;
-		this->watercamera = watercamera;
+		this->reflectionCamera = reflectionCamera;
+		this->refractionCamera = refractionCamera;
 	}
 
 	void CameraMovement::Wire()

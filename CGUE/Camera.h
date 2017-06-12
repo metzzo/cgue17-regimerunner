@@ -39,6 +39,14 @@ namespace Engine {
 		int GetPriority() override;
 	};
 
+	enum CameraMode
+	{
+		CM_REFLECTION = 1,
+		CM_REFRACTION = 2,
+		CM_DEPTH = 3,
+		CM_NORMAL = 4
+	};
+
 	class Pass;
 
 	class Camera :
@@ -60,11 +68,12 @@ namespace Engine {
 
 		GLuint frameBuffer;
 		GLuint texture;
+		GLuint depthTexture;
 		GLuint depthBuffer;
 
 		bool hudEnabled;
-		bool r2t;
-		bool renderImage;
+		CameraMode cameraMode;
+
 		Pass* cameraPass;
 		float fov;
 		float near;
@@ -92,8 +101,8 @@ namespace Engine {
 
 		void RenderingEnabled(bool enabled);
 
-		virtual void EnableRender2Texture();
-		virtual void EnableRenderImage();
+		void SetCameraMode(CameraMode mode);
+
 		void SetCameraPass(Pass *pass);
 
 		void SetLookAtVector(vec3 lookAt);
@@ -110,6 +119,7 @@ namespace Engine {
 		vec4 GetClippingPlane() const;
 
 		GLuint GetTextureId() override;
+		GLuint GetDepthTextureId() const;
 		int GetWidth() override;
 		int GetHeight() override;
 

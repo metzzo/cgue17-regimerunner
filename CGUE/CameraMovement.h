@@ -34,10 +34,11 @@ namespace Game {
 
 		PxController* controller;
 		Engine::Camera *camera;
-		Engine::Camera *watercamera;
+		Engine::Camera *reflectionCamera;
+		Engine::Camera *refractionCamera;
 		Engine::SpotLight* spotLight;
 	public:
-		explicit CameraMovement(Engine::SpotLight *spotLight, Engine::Camera *watercamera);
+		explicit CameraMovement(Engine::SpotLight *spotLight, Engine::Camera *reflectionCamera, Engine::Camera *refractionCamera);
 
 		void Init() override;
 		void Wire() override;

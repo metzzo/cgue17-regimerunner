@@ -29,16 +29,14 @@ namespace Engine {
 
 		DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), RT_WATER));
 
-		auto currentTexture = pass->GetNumShadowMaps();
 
-		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + currentTexture));
-		DEBUG_OGL(glUniform1i(pass->GetWaterNormalMapUniform(), currentTexture));
+		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + MAX_NUM_SHADOW_MAPS));
+		DEBUG_OGL(glUniform1i(pass->GetWaterNormalMapUniform(), MAX_NUM_SHADOW_MAPS));
 		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, component->GetNormalMap()->GetTextureId()));
 
-		currentTexture++;
 
-		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + currentTexture));
-		DEBUG_OGL(glUniform1i(pass->GetWaterUVDVMapUniform(), currentTexture));
+		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + MAX_NUM_SHADOW_MAPS + 1));
+		DEBUG_OGL(glUniform1i(pass->GetWaterUVDVMapUniform(), MAX_NUM_SHADOW_MAPS + 1));
 		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, component->GetDuDv()->GetTextureId()));
 
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));

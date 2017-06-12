@@ -2,6 +2,8 @@
 #include "Pass.h"
 #include "glew/glew.h"
 
+#define MAX_NUM_SHADOW_MAPS 10
+
 namespace Engine {
 	class Shader;
 	class DirectionalLight;
@@ -52,6 +54,7 @@ namespace Engine {
 		GLint WaterNormalMapUniform;
 		GLint WaterUVDVMapUniform;
 		GLint WaterReflectionUniform;
+		GLint WaterRefractionUniform;
 		GLint EyeTanSpaceUniform;
 		GLint LightTanSpaceUniform;
 		GLint waveOffsetUniform;
@@ -91,6 +94,7 @@ namespace Engine {
 		GLint GetWaterNormalMapUniform() const;
 		GLint GetWaterUVDVMapUniform() const;
 		GLint GetWaterReflectionUniform() const;
+		GLint GetWaterRefractionUniform() const;
 
 		GLint GetWaveOffsetUniform() const;
 		GLint GetTexOffsetUniform() const;

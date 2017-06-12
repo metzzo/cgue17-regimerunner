@@ -140,13 +140,20 @@ int main(int argc, char **argv)
 
 	auto reflectionCamera = new Camera(80.0f, 0.1f, 500.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
 	reflectionCamera->SetHudEnabled(false);
-	reflectionCamera->EnableRender2Texture();
-	reflectionCamera->EnableRenderImage();
+	reflectionCamera->SetCameraMode(CM_REFLECTION);
 	reflectionCamera->SetAsReflectionCamera(true);
-	auto attachedCamera = player->CreateChild();
-	attachedCamera->GetTransformation()->Rotate(180, vec3(0, 1, 0));
-	//a ttachedCamera->GetTransformation()->Translate(vec3(0, -0.1, 0));
-	attachedCamera->Add(reflectionCamera);
+	reflectionCamera->SetUpVector(vec3(0.0, 1.0, 0.0));
+	reflectionCamera->SetClipping(true, vec4(0, 1, 0, -20));
+	player->CreateChild()->Add(reflectionCamera);
+
+
+	auto refractionCamera = new Camera(80.0f, 0.1f, 500.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
+	refractionCamera->SetHudEnabled(false);
+	refractionCamera->SetCameraMode(CM_REFRACTION);
+	refractionCamera->SetAsRefractionCamera(true);
+	refractionCamera->SetUpVector(vec3(0.0, 1.0, 0.0));
+	refractionCamera->SetClipping(true, vec4(0, -1, 0, 20));
+	player->CreateChild()->Add(refractionCamera);
 
 	auto watersurface = engine->GetRootEntity()->CreateChild();
 	watersurface->GetTransformation()->Translate(vec3(0, 20, 0));
@@ -163,16 +170,12 @@ int main(int argc, char **argv)
 	spotLight->SetLinear(0.007f);
 	spotLight->SetQuadratic(0.002f);
 	light->Add(spotLight);
-	player->Add(new Game::CameraMovement(spotLight,reflectionCamera));
+	player->Add(new Game::CameraMovement(spotLight,reflectionCamera, refractionCamera));
 
 	engine->SetMainCamera(camera);
 	camera->GetTransformation()->Translate(vec3(116.0, 60.0, 141.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 
-	//secondcamera->GetTransformation()->Translate(vec3(30.0, 80.0, 30.0));
-	//secondcamera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
-	reflectionCamera->SetUpVector(vec3(0.0, 1.0, 0.0));
-	reflectionCamera->SetClipping(true, vec4(0, 1, 0, -20));
 
 	PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(256, 185, 256), false, mapResource, playerComponent);
 	PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(60, 26, 60), true, mapResource, playerComponent);
@@ -193,7 +196,7 @@ int main(int argc, char **argv)
 	auto hudTest = engine->GetRootEntity()->CreateChild();
 	hudTest->GetTransformation()->Scale(vec3(0.5, 0.5, 1));
 	hudTest->GetTransformation()->Translate(vec3(500, 500, 0));
-	auto spriteResource = new SpriteResource(reflectionCamera);
+	auto spriteResource = new SpriteResource(refractionCamera);
 	hudTest->Add(new Model(spriteResource));
 	
 

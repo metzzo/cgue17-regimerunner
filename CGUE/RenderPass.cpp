@@ -10,7 +10,6 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-#define MAX_NUM_SHADOW_MAPS 10
 
 namespace Engine {
 	void LightInfo::AssignUniforms(GLuint programId, string name, int lightId, BaseLight *light)
@@ -176,15 +175,17 @@ namespace Engine {
 		DEBUG_OGL(glUniform4fv(this->clippingPlaneUniform, 1, &cam->GetClippingPlane()[0]));
 
 
-		// REFLECTION TEXTURE FROM SECOND CAMERA
-		DEBUG_OGL(glUniform1i(this->GetWaterReflectionUniform(), MAX_NUM_SHADOW_MAPS + 2));
+		// REFLECTION TEXTURE FROM SECOND CAMERA;
 		if (reflectionTexture != -1) {
+			DEBUG_OGL(glUniform1i(this->GetWaterReflectionUniform(), MAX_NUM_SHADOW_MAPS + 2))
 			DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + MAX_NUM_SHADOW_MAPS + 2));
 			DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, reflectionTexture));
 		}
 		if (refractionTexture != -1)
 		{
-			
+			DEBUG_OGL(glUniform1i(this->GetWaterRefractionUniform(), MAX_NUM_SHADOW_MAPS + 3))
+			DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + MAX_NUM_SHADOW_MAPS + 3));
+			DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, refractionTexture));
 		}
 
 		DEBUG_OGL(glUniform3fv(this->EyeTanSpaceUniform,1, glm::value_ptr(glm::vec3(cam->GetTransformation()->GetAbsolutePosition()))));
@@ -236,6 +237,7 @@ namespace Engine {
 		this->WaterNormalMapUniform = glGetUniformLocation(programId,"normalSampler");
 		this->WaterUVDVMapUniform = glGetUniformLocation(programId, "displaceSampler");
 		this->WaterReflectionUniform = glGetUniformLocation(programId, "reflectSampler");
+		this->WaterRefractionUniform = glGetUniformLocation(programId, "refractSampler");
 		this->EyeTanSpaceUniform = glGetUniformLocation(programId, "eyeTanSpace");
 		this->LightTanSpaceUniform = glGetUniformLocation(programId, "lightTanSpace");
 
@@ -290,6 +292,11 @@ namespace Engine {
 	GLint RenderPass::GetWaterReflectionUniform() const
 	{
 		return this->WaterReflectionUniform;
+	}
+
+	GLint RenderPass::GetWaterRefractionUniform() const
+	{
+		return this->WaterRefractionUniform;
 	}
 
 	GLint RenderPass::GetWaveOffsetUniform() const

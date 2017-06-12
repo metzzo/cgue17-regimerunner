@@ -65,7 +65,6 @@ namespace Engine {
 		this->texture = 0;
 		this->cameraPass = nullptr;
 		this->upVector = vec3(0.0, 1.0, 0.0);
-		this->r2t = false;
 		this->renderingEnabled = true;
 		this->fov = fov;
 		this->near = near;
@@ -73,9 +72,9 @@ namespace Engine {
 		this->ratio = float(width) / float(height);
 		this->frustumChanged = true;
 		this->projectionMatrix = perspective(radians(fov), ratio, near, far);
-		this->renderImage = false;
 		this->hudEnabled = true;
 		this->clippingEnabled = false;
+		this->cameraMode = CM_NORMAL;
 
 		auto tang = float(tan(0.5*radians(fov)));
 		nh = near*tang;
@@ -94,14 +93,9 @@ namespace Engine {
 		this->renderingEnabled = enabled;
 	}
 
-	void Camera::EnableRender2Texture()
+	void Camera::SetCameraMode(CameraMode mode)
 	{
-		this->r2t = true;
-	}
-
-	void Camera::EnableRenderImage()
-	{
-		this->renderImage = true;
+		this->cameraMode = mode;
 	}
 
 	void Camera::SetCameraPass(Pass* pass)
@@ -147,6 +141,11 @@ namespace Engine {
 		return this->texture;
 	}
 
+	GLuint Camera::GetDepthTextureId() const
+	{
+		return depthTexture;
+	}
+
 	int Camera::GetWidth()
 	{
 		return this->width;
@@ -174,71 +173,111 @@ namespace Engine {
 		}
 		DEBUG_OGL();
 		
-		if (this->r2t)
+		switch(this->cameraMode)
 		{
-			if (renderImage)
-			{
-				glGenFramebuffers(1, &this->frameBuffer);
-				glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-				glDrawBuffer(GL_COLOR_ATTACHMENT0);
-				DEBUG_OGL();
+		case CM_DEPTH: {
+			// create depth map FBO
+			glGenFramebuffers(1, &this->frameBuffer);
+			glGenTextures(1, &this->texture);
+			glBindTexture(GL_TEXTURE_2D, texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+				this->width, this->height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+			GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
-				glGenTextures(1, &texture);
-				glBindTexture(GL_TEXTURE_2D, texture);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
-					0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-					texture, 0);
-				DEBUG_OGL();
+			glBindFramebuffer(GL_FRAMEBUFFER, this->frameBuffer);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture, 0);
+
+			glDrawBuffer(GL_NONE);
+			//glReadBuffer(GL_NONE);
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			break;
+		}
+		case CM_REFLECTION: {
+			glGenFramebuffers(1, &this->frameBuffer);
+			glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+			glDrawBuffer(GL_COLOR_ATTACHMENT0);
+			DEBUG_OGL();
+
+			glGenTextures(1, &texture);
+			glBindTexture(GL_TEXTURE_2D, texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
+				0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+				texture, 0);
+			DEBUG_OGL();
 
 
-				glGenRenderbuffers(1, &depthBuffer);
-				glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
-				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width,
-					height);
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-					GL_RENDERBUFFER, depthBuffer);
+			glGenRenderbuffers(1, &depthBuffer);
+			glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width,
+				height);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+				GL_RENDERBUFFER, depthBuffer);
 
-				auto status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
-				if (status != GL_FRAMEBUFFER_COMPLETE) {
-					RaiseEngineError("Incomplete Framebuffer");
-				}
+			auto status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+			if (status != GL_FRAMEBUFFER_COMPLETE) {
+				RaiseEngineError("Incomplete Framebuffer");
 			}
-			else {
-				// create depth map FBO
-				glGenFramebuffers(1, &this->frameBuffer);
-				glGenTextures(1, &this->texture);
-				glBindTexture(GL_TEXTURE_2D, texture);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-					this->width, this->height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-				GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-				glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
-				glBindFramebuffer(GL_FRAMEBUFFER, this->frameBuffer);
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture, 0);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+			break;
+		case CM_REFRACTION: {
+			glGenFramebuffers(1, &this->frameBuffer);
+			glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+			glDrawBuffer(GL_COLOR_ATTACHMENT0);
+			DEBUG_OGL();
 
-				glDrawBuffer(GL_NONE);
-				//glReadBuffer(GL_NONE);
+			glGenTextures(1, &texture);
+			glBindTexture(GL_TEXTURE_2D, texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
+				0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+				texture, 0);
+			DEBUG_OGL();
 
-				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glGenTextures(1, &depthTexture);
+			glBindTexture(GL_TEXTURE_2D, depthTexture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height,
+				0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+				depthTexture, 0);
+
+
+			auto status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+			if (status != GL_FRAMEBUFFER_COMPLETE) {
+				RaiseEngineError("Incomplete Framebuffer");
 			}
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-			if (isReflection)
-			{
-				GetEngine()->GetRenderPass()->SetReflectionTexture(GetTextureId());
-			}
-			if (isRefraction)
-			{
-				GetEngine()->GetRenderPass()->SetRefractionTexture(GetTextureId());
-			}
+			break;
+		}
+		case CM_NORMAL:
+			break;
+		default:
+			RaiseEngineError("Unknown mode");
+		}
+
+		if (isReflection)
+		{
+			GetEngine()->GetRenderPass()->SetReflectionTexture(GetTextureId());
+		}
+		if (isRefraction)
+		{
+			GetEngine()->GetRenderPass()->SetRefractionTexture(GetTextureId());
 		}
 
 		DEBUG_OGL();
