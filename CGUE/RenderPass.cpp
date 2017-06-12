@@ -7,6 +7,8 @@
 #include "DirectionalLight.h"
 #include <string>
 #include <sstream>
+#include "glm/glm.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 namespace Engine {
 	void LightInfo::AssignUniforms(GLuint programId, string name, int lightId, BaseLight *light)
@@ -46,6 +48,13 @@ namespace Engine {
 		this->modelUniform = -2;
 		this->shaderViewPosId = -2;
 
+		this->WaterNormalMapUniform = -2;
+		this->WaterUVDVMapUniform = -2;
+		this->WaterReflectionUniform = -2;
+		this->EyeTanSpaceUniform =-2;
+		this->LightTanSpaceUniform = -2;
+		this->waveOffsetUniform = -2;
+		this->texOffsetUniform = -2;
 
 		this->materialDiffuseUniform = -2;
 		this->materialSpecularUniform = -2;
@@ -106,6 +115,7 @@ namespace Engine {
 
 		// TODO: handle case where no light exists
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		glCullFace(GL_BACK);
 
 		auto programId = shader->GetProgramId();
 
@@ -121,10 +131,10 @@ namespace Engine {
 		DEBUG_OGL(glUniform1i(this->materialDiffuseUniform, 0));
 		DEBUG_OGL(glUniform1i(this->materialSpecularUniform, 0));
 		DEBUG_OGL(glUniform1f(this->materialShininessUniform, 64.0f)); // TODO: Get Shininess from model
-		DEBUG_OGL(glUniform1i(this->renderTypeUniform, 0));
 
 		// TODO: handle multiple lights properly
 		auto cam = gameEngine->GetMainCamera();
+		auto utilitycam = gameEngine->GetUtilityCamera();
 		auto lightId = 0;
 		auto shadowMapIndex = 0;
 		for (auto light : spotLights)
@@ -153,11 +163,18 @@ namespace Engine {
 		}
 		this->numShadowMaps = shadowMapIndex;
 
+		// REFLECTION TEXTURE FROM SECOND CAMERA
+		DEBUG_OGL(glUniform1i(this->GetWaterReflectionUniform(), 16));
+		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + 16));
+		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, utilitycam->GetTextureId()));
+
+		DEBUG_OGL(glUniform3fv(this->EyeTanSpaceUniform,1, glm::value_ptr(glm::vec3(cam->GetTransformation()->GetAbsolutePosition()))));
+
 		if (directionalLight != nullptr)
 		{
 			auto lightPos = directionalLight->GetTransformation()->GetAbsolutePosition();
 			auto dir = directionalLight->GetLookAtVector() - lightPos;
-
+			DEBUG_OGL(glUniform3fv(this->LightTanSpaceUniform, 1, glm::value_ptr(dir)));
 			DEBUG_OGL(glUniform3fv(directionalLightInfo.directionUniform, 1, &dir[0]));
 		}
 
@@ -193,6 +210,15 @@ namespace Engine {
 		this->modelUniform = glGetUniformLocation(programId, "model");
 		this->renderTypeUniform = glGetUniformLocation(programId, "renderType");
 
+		this->WaterNormalMapUniform = glGetUniformLocation(programId,"normalSampler");
+		this->WaterUVDVMapUniform = glGetUniformLocation(programId, "displaceSampler");
+		this->WaterReflectionUniform = glGetUniformLocation(programId, "reflectSampler");
+		this->EyeTanSpaceUniform = glGetUniformLocation(programId, "eyeTanSpace");
+		this->LightTanSpaceUniform = glGetUniformLocation(programId, "lightTanSpace");
+
+		this->waveOffsetUniform = glGetUniformLocation(programId, "waveOffset");
+		this->texOffsetUniform = glGetUniformLocation(programId, "texOffset");
+
 		this->viewPosUniform = glGetUniformLocation(programId, "viewPos");
 		this->materialDiffuseUniform = glGetUniformLocation(programId, "material.diffuse");
 		this->materialSpecularUniform = glGetUniformLocation(programId, "material.specular");
@@ -227,6 +253,31 @@ namespace Engine {
 		return this->numShadowMaps;
 	}
 
+	GLint RenderPass::GetWaterNormalMapUniform() const
+	{
+		return this->WaterNormalMapUniform;
+	}
+
+	GLint RenderPass::GetWaterUVDVMapUniform() const
+	{
+		return this->WaterUVDVMapUniform;
+	}
+
+	GLint RenderPass::GetWaterReflectionUniform() const
+	{
+		return this->WaterReflectionUniform;
+	}
+
+	GLint RenderPass::GetWaveOffsetUniform() const
+	{
+		return this->waveOffsetUniform;
+	}
+
+	GLint RenderPass::GetTexOffsetUniform() const
+	{
+		return this->texOffsetUniform;
+	}
+
 	void RenderPass::AddSpotLight(SpotLight* spotLight)
 	{
 		this->spotLights.push_back(spotLight);
@@ -242,5 +293,9 @@ namespace Engine {
 	GLint RenderPass::GetRenderTypeUniform() const
 	{
 		return renderTypeUniform;
+	}
+	
+	GLint RenderPass::GetArrayUniformLocation(int id, string name) {
+		return glGetUniformLocation(this->shader->GetProgramId(), (name + "[" + to_string(id) + "]").c_str());
 	}
 }

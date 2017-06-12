@@ -20,6 +20,7 @@
 #include "HeightMapResource.h"
 #include "DirectionalLight.h"
 #include "SpriteResource.h"
+#include "WaterSurface.h"
 
 using namespace Engine;
 
@@ -28,7 +29,7 @@ void PlacePalms(Entity *child, ModelResource *palmResource, HeightMapResource *m
 	auto mapSize = map->GetSize();
 	for (auto x = 32; x < mapSize.x; x += 64)
 	{
-		for (auto z = 32; z < mapSize.z; z+= 64)
+		for (auto z = 32; z < mapSize.z; z += 64)
 		{
 			auto palm = child->CreateChild();
 			palm->Add(new Model(palmResource));
@@ -113,7 +114,11 @@ int main(int argc, char **argv)
 	auto heliMainRotorResource = new ModelResource("objects/heli2/main_rotor.obj");
 	auto heliSideRotorResource = new ModelResource("objects/heli2/side_rotor.obj");
 
-	
+	auto skybox = new ModelResource("objects/skybox/skybox.obj");
+	auto skyBoxEntity = engine->GetRootEntity()->CreateChild();
+	skyBoxEntity->GetTransformation()->Scale(vec3(5,5,5));
+	skyBoxEntity->Add(new Model(skybox));
+
 	auto dirLight = new DirectionalLight();
 	auto dirLightEntity = engine->GetRootEntity()->CreateChild();
 	dirLightEntity->Add(dirLight);
@@ -128,6 +133,17 @@ int main(int argc, char **argv)
 	auto player = engine->GetRootEntity()->CreateChild();
 	player->Add(camera);
 
+	auto secondcamera = new Camera(80.0f, 0.1f, 500.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
+	secondcamera->SetHudProjectionMatrix(glm::ortho(0.0f, GLfloat(engine->GetScreenWidth()), GLfloat(engine->GetScreenHeight()), 0.0f, -1.0f, 1.0f));
+	secondcamera->EnableRender2Texture();
+	secondcamera->EnableRenderImage();
+	//auto attachedCamera = player->CreateChild();
+	player->Add(secondcamera);
+
+	auto watersurface = engine->GetRootEntity()->CreateChild();
+	auto water = new WaterSurface();
+	watersurface->Add(water);
+
 	auto light = player->CreateChild();
 	light->GetTransformation()->Translate(vec3(0, 2.5, 0));
 
@@ -138,16 +154,19 @@ int main(int argc, char **argv)
 	spotLight->SetLinear(0.007f);
 	spotLight->SetQuadratic(0.002f);
 	light->Add(spotLight);
-	player->Add(new Game::CameraMovement(spotLight));
-
+	player->Add(new Game::CameraMovement(spotLight,secondcamera));
 
 	engine->SetMainCamera(camera);
+	engine->SetUtilityCamera(secondcamera);
 	camera->GetTransformation()->Translate(vec3(30.0, 60.0, 30.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 
+	secondcamera->GetTransformation()->Translate(vec3(30.0, 80.0, 30.0));
+	secondcamera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
+	secondcamera->SetUpVector(vec3(0.0, 1.0, 0.0));//TODO: -1
 
 	PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(256, 185, 256), false);
-	//PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(60, 26, 60), true);
+	PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(60, 26, 60), true);
 
 	PlacePalms(engine->GetRootEntity(), palmResource, mapResource);
 
@@ -160,7 +179,15 @@ int main(int argc, char **argv)
 	rigidBody->SetDensity(10);
 	map->Add(rigidBody);
 	map->Add(new HeightFieldShape(mapResource->GetHeightMap(), mapSize));
+
 	
+	//auto hudTest = engine->GetRootEntity()->CreateChild();
+	//hudTest->GetTransformation()->Scale(vec3(0.5, 0.5, 1));
+	//hudTest->GetTransformation()->Translate(vec3(500, 500, 0));
+	//auto spriteResource = new SpriteResource(secondcamera);
+	//hudTest->Add(new Model(spriteResource));
+	
+
 	engine->Run();
 
 	delete engine;

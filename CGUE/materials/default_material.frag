@@ -12,6 +12,12 @@ in VS_OUT {
     vec2 TexCoords;
 } fs_in;
 
+
+in vec4 clipTexProjCoord;
+in vec3 eyeDirection;
+in vec3 fromLightVector;
+in vec2 TexCoords;
+
 struct Material {
     sampler2D diffuse;
     sampler2D specular;
@@ -47,6 +53,17 @@ uniform sampler2D shadowMap13;
 uniform sampler2D shadowMap14;
 uniform sampler2D shadowMap15;
 
+uniform sampler2D normalSampler;
+uniform sampler2D displaceSampler;
+uniform sampler2D reflectSampler;
+
+uniform vec3 lightTanSpace;
+uniform float waveOffset;
+uniform float texOffset;
+
+vec2 texProjCoord;
+float dblDispTiling = 2.0;
+float normalTiling = 2.0;
 
 struct SpotLight {
 	vec3 position;
@@ -71,6 +88,10 @@ struct SpotLight {
 uniform SpotLight spotLights[MAX_NR_SPOT_LIGHTS];
 uniform int numSpotLights;
 uniform vec3 viewPos;
+
+const float waveStrength = 0.02;
+const float shineDamper = 20.0;
+const float reflectivity = 0.6;
 
 #define SHADOW_MAP(A,B,C,X) \
 	if (B == 0) { \
@@ -211,8 +232,38 @@ vec3 renderHud() {
 	return vec3(texture(material.diffuse, fs_in.TexCoords));
 }
 
+
 vec3 renderWater() {
-	return vec3(1,0,0);
+
+	vec2 ndc = (clipTexProjCoord.xy/clipTexProjCoord.w)/2.0 + 0.5;
+	vec2 reflectTexCoords = vec2(ndc.x, -ndc.y);
+
+	vec2 distortion = (texture(displaceSampler, vec2(TexCoords.x + waveOffset,TexCoords.y)).rg * 2.0 - 1.0) * sin(waveStrength);
+	reflectTexCoords += distortion;
+	reflectTexCoords.x = clamp(reflectTexCoords.x, 0.001, 0.999);
+	reflectTexCoords.y = clamp(reflectTexCoords.y, -0.999, -0.001);
+
+	vec4 reflectColor = texture(reflectSampler, reflectTexCoords);
+
+	vec3 viewVector = normalize(eyeDirection);
+	float transparency = dot(viewVector, vec3(0.0,1.0,0.0));
+	transparency = pow(transparency, 3.0);
+
+	vec4 normalMap = texture(normalSampler, distortion);
+	vec3  normal = vec3(normalMap.r * 2.0 - 1.0, normalMap.b, normalMap.g * 2.0 - 1.0);
+	normal = normalize(normal);
+
+	vec3 reflectedLight = reflect(normalize(fromLightVector),normal);
+	float specular = max(dot(reflectedLight, viewVector),0.0);
+	specular = pow(specular, shineDamper);
+	vec3 highlights = vec3(1.0,1.0,1.0) * specular * transparency;
+
+	vec4 out_color = mix(reflectColor, vec4(0.38,0.47,0.97,1.0), transparency);
+
+	out_color = mix(out_color, vec4(0.0,0.3,0.5,1.0),0.2);
+
+	vec3 result = vec3(out_color) + highlights;
+	return result;
 }
 
 void main()

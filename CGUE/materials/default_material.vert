@@ -16,19 +16,51 @@ out VS_OUT {
     vec2 TexCoords;
 } vs_out;
 
+out vec3 eyeDirection;
+out vec3 fromLightVector;
+out vec4 clipTexProjCoord;
+
 uniform mat4 projection;
 uniform mat4 hudProjection;
 uniform mat4 view;
 uniform mat4 model;
 
+uniform vec3 eyeTanSpace;
+uniform vec3 lightTanSpace;
+
+const float tiling = 6.0;
+
 void main()
 {
+
 	if (renderType == RT_HUD) {
 		gl_Position = hudProjection * model * vec4(position, 1.0f);
-	} else {
+	}
+	 else {
 		gl_Position = projection * view * model * vec4(position, 1.0f);
 	}
-    vs_out.FragPos = vec3(model * vec4(position, 1.0));
-    vs_out.Normal = transpose(inverse(mat3(model))) * normal;
-    vs_out.TexCoords = texCoords;
+
+    if(renderType == RT_WATER) {
+        vs_out.FragPos = vec3(model * vec4(position, 1.0));
+        vs_out.Normal = transpose(inverse(mat3(model))) * normal;
+        vs_out.TexCoords = texCoords;	
+		eyeDirection = eyeTanSpace - vs_out.FragPos; 
+
+		vec4 clipPosition = projection * view * model * vec4(position, 1.0f);
+		clipTexProjCoord = clipPosition;	
+
+		TexCoords = vec2(vs_out.TexCoords[0]/2.0 + 0.5, vs_out.TexCoords[0]/2.0 + 0.5) * tiling;
+
+		vec4 worldPosition = model * vec4(position, 1.0f);
+		eyeDirection = eyeTanSpace - worldPosition.xyz;
+
+		fromLightVector = worldPosition.xyz - lightTanSpace;
+
+
+    } else {
+        vs_out.FragPos = vec3(model * vec4(position, 1.0));
+        vs_out.Normal = transpose(inverse(mat3(model))) * normal;
+        vs_out.TexCoords = texCoords;
+    }
+
 }

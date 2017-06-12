@@ -18,8 +18,8 @@ namespace Engine {
 
 	enum FRUSTUM_COLLISION
 	{
-		F_OUTSIDE, 
-		F_INTERSECT, 
+		F_OUTSIDE,
+		F_INTERSECT,
 		F_INSIDE
 	};
 
@@ -54,13 +54,18 @@ namespace Engine {
 
 		mat4x4 projectionMatrix;
 		mat4x4 hudProjectionMatrix;
-		mat4x4 viewMatrix;
 		vec3 lookAtVector;
 		vec3 upVector;
 
 		GLuint depthMapFbo;
 		GLuint depthMap;
+
+		GLuint renderFbo;
+		GLuint texture;
+		GLuint renderbuffer;
+
 		bool r2t;
+		bool renderImage;
 		Pass* cameraPass;
 		float fov;
 		float near;
@@ -73,6 +78,7 @@ namespace Engine {
 		float fh;
 		float fw;
 	public:
+		mat4x4 viewMatrix;
 
 		//explicit Camera(float fov = 45.0f, float near = 0.1f, float far=100.0f, int width=640, int height=480, bool ortho = false);
 		explicit Camera();
@@ -82,6 +88,7 @@ namespace Engine {
 		void RenderingEnabled(bool enabled);
 
 		virtual void EnableRender2Texture();
+		virtual void EnableRenderImage();
 		void SetCameraPass(Pass *pass);
 
 		void SetLookAtVector(vec3 lookAt);
