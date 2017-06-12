@@ -8,14 +8,19 @@ using namespace physx;
 
 namespace Game {
 
-	class CameraMovementMouseOperation : public Engine::Operation
+
+	class CameraMovementOperation : public Engine::Operation
 	{
 		float yaw;
 		float pitch;
+
+		bool jumpPress;
+		vec3 jump;
 	public:
-		explicit CameraMovementMouseOperation(Engine::Component* component)
+		explicit CameraMovementOperation(Engine::Component* component)
 			: Operation(component)
 		{
+			jumpPress = false;
 			yaw = 0;
 			pitch = 0;
 		}
@@ -23,24 +28,9 @@ namespace Game {
 		void Execute() override;
 	};
 
-	class CameraMovementKeyOperation : public Engine::Operation
-	{
-		bool jumpPress;
-		vec3 jump;
-	public:
-		explicit CameraMovementKeyOperation(Engine::Component* component)
-			: Operation(component)
-		{
-			jumpPress = false;
-		}
-
-		void Execute() override;
-	};
-
 	class CameraMovement : public Engine::Component
 	{
-		friend CameraMovementKeyOperation;
-		friend CameraMovementMouseOperation;
+		friend CameraMovementOperation;
 
 		PxController* controller;
 		Engine::Camera *camera;

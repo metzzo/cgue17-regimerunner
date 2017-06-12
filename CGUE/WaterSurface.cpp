@@ -11,8 +11,12 @@
 namespace Engine {
 
 	void WaterRenderOperation::Execute() {
-	
 		auto component = static_cast<WaterSurface*>(this->GetComponent());
+		if (component->GetEngine()->GetMainCamera()->IsClippingEnabled())
+		{
+			return;
+		}
+
 		auto pass = static_cast<RenderPass*>(this->GetPass());
 
 		pass->SetDrawingTransform(component->GetTransformation());
@@ -64,6 +68,9 @@ namespace Engine {
 			this->resource->Init();
 			this->normalmap->Init();
 			this->dudv->Init();
+
+
+			this->resource->GetMeshes()[0]->renderType = RT_WATER;
 		}
 
 		for (auto &mesh : this->resource->GetMeshes())

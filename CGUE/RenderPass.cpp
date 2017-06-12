@@ -61,6 +61,9 @@ namespace Engine {
 		this->materialShininessUniform = -2;
 		this->viewPosUniform = -2;
 
+		this->clippingPlaneUniform = -2;
+		this->enableClippingUniform = -2;
+
 		this->numShadowMaps = 0;
 	}
 
@@ -114,8 +117,12 @@ namespace Engine {
 	{
 
 		// TODO: handle case where no light exists
-		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		auto cam = gameEngine->GetMainCamera();
+		DEBUG_OGL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 		glCullFace(GL_BACK);
+		if (cam->IsClippingEnabled()) {
+			glEnable(GL_CLIP_DISTANCE0);
+		}
 
 		auto programId = shader->GetProgramId();
 
@@ -132,8 +139,6 @@ namespace Engine {
 		DEBUG_OGL(glUniform1i(this->materialSpecularUniform, 0));
 		DEBUG_OGL(glUniform1f(this->materialShininessUniform, 64.0f)); // TODO: Get Shininess from model
 
-		// TODO: handle multiple lights properly
-		auto cam = gameEngine->GetMainCamera();
 		auto utilitycam = gameEngine->GetUtilityCamera();
 		auto lightId = 0;
 		auto shadowMapIndex = 0;
@@ -162,6 +167,10 @@ namespace Engine {
 			lightId++;
 		}
 		this->numShadowMaps = shadowMapIndex;
+
+		DEBUG_OGL(glUniform1i(this->enableClippingUniform, cam->IsClippingEnabled()));
+		DEBUG_OGL(glUniform4fv(this->clippingPlaneUniform, 1, &cam->GetClippingPlane()[0]));
+
 
 		// REFLECTION TEXTURE FROM SECOND CAMERA
 		DEBUG_OGL(glUniform1i(this->GetWaterReflectionUniform(), 16));
@@ -195,6 +204,10 @@ namespace Engine {
 
 	void RenderPass::AfterPass()
 	{
+		auto cam = gameEngine->GetMainCamera();
+		if (cam->IsClippingEnabled()) {
+			glDisable(GL_CLIP_DISTANCE0);
+		}
 	}
 
 	void RenderPass::Init()
@@ -226,7 +239,8 @@ namespace Engine {
 		for (auto i = 0; i < NUM_SHADOW_MAPS; i++) {
 			DEBUG_OGL(this->shadowMapUniform[i] = glGetUniformLocation(programId, ("shadowMap" + to_string(i)).c_str()));
 		}
-	
+		this->clippingPlaneUniform = glGetUniformLocation(programId, "clippingPlane");
+		this->enableClippingUniform = glGetUniformLocation(programId, "enableClipping");
 	
 		DEBUG_OGL(this->shaderViewPosId = glGetUniformLocation(programId, "viewPos"));
 	}

@@ -25,15 +25,16 @@ namespace Engine {
 			component->RefreshFrustum();
 		}
 
-		glViewport(0, 0, component->width, component->height);
-		if (component->textureFbo)
+		if (component->frameBuffer)
 		{
-			glBindFramebuffer(GL_FRAMEBUFFER, component->textureFbo);
+			glBindTexture(GL_TEXTURE_2D, 0);
+			DEBUG_OGL(glBindFramebuffer(GL_FRAMEBUFFER, component->frameBuffer));
 		}
+		DEBUG_OGL(glViewport(0, 0, component->width, component->height));
 
 		component->cameraPass->DoPass();
 
-		if (component->textureFbo)
+		if (component->frameBuffer)
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
@@ -60,7 +61,7 @@ namespace Engine {
 	{
 		this->width = width;
 		this->height = height;
-		this->textureFbo = 0;
+		this->frameBuffer = 0;
 		this->texture = 0;
 		this->cameraPass = nullptr;
 		this->upVector = vec3(0.0, 1.0, 0.0);
@@ -73,6 +74,8 @@ namespace Engine {
 		this->frustumChanged = true;
 		this->projectionMatrix = perspective(radians(fov), ratio, near, far);
 		this->renderImage = false;
+		this->hudEnabled = true;
+		this->clippingEnabled = false;
 
 		auto tang = float(tan(0.5*radians(fov)));
 		nh = near*tang;
@@ -173,38 +176,64 @@ namespace Engine {
 		
 		if (this->r2t)
 		{
-			// create depth map FBO
-			glGenFramebuffers(1, &this->textureFbo);
-			glGenTextures(1, &this->texture);
-			glBindTexture(GL_TEXTURE_2D, texture);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-				this->width, this->height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-			GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-			
-			glBindFramebuffer(GL_FRAMEBUFFER, this->textureFbo);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture, 0);
-			
-			if (this->renderImage) {
+			if (renderImage || true)
+			{
+				glGenFramebuffers(1, &this->frameBuffer);
+				glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+				glDrawBuffer(GL_COLOR_ATTACHMENT0);
+				DEBUG_OGL();
 
-				glGenTextures(1, &this->texture);
+				glGenTextures(1, &texture);
 				glBindTexture(GL_TEXTURE_2D, texture);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->width, this->height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
+					0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
+				glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+					texture, 0);
+				DEBUG_OGL();
 
-				glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
+				glGenRenderbuffers(1, &depthBuffer);
+				glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
+				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width,
+					height);
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+					GL_RENDERBUFFER, depthBuffer);
+
+				auto status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+				if (status != GL_FRAMEBUFFER_COMPLETE) {
+					RaiseEngineError("Incomplete Framebuffer");
+				}
+
+
+
 			}
 			else {
+				// create depth map FBO
+				glGenFramebuffers(1, &this->frameBuffer);
+				glGenTextures(1, &this->texture);
+				glBindTexture(GL_TEXTURE_2D, texture);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+					this->width, this->height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+				GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+				glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+				glBindFramebuffer(GL_FRAMEBUFFER, this->frameBuffer);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture, 0);
+
 				glDrawBuffer(GL_NONE);
+				//glReadBuffer(GL_NONE);
+
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			}
-			//glReadBuffer(GL_NONE);
+
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 		}
 
 		DEBUG_OGL();
@@ -216,6 +245,16 @@ namespace Engine {
 	{
 		return this->upVector;
 
+	}
+
+	bool Camera::IsClippingEnabled() const
+	{
+		return clippingEnabled;
+	}
+
+	vec4 Camera::GetClippingPlane() const
+	{
+		return clippingPlane;
 	}
 
 	void Camera::TransformationUpdated()
@@ -259,6 +298,12 @@ namespace Engine {
 	void Camera::SetHudProjectionMatrix(mat4x4 hudMatrix)
 	{
 		this->hudProjectionMatrix = hudMatrix;
+	}
+
+	void Camera::SetClipping(bool enabled, vec4 plane)
+	{
+		this->clippingEnabled = enabled;
+		this->clippingPlane = plane;
 	}
 
 	FRUSTUM_COLLISION Camera::PointInFrustum(vec3 &p) const
@@ -315,4 +360,13 @@ namespace Engine {
 
 	}
 
+	void Camera::SetHudEnabled(bool isEnabled)
+	{
+		this->hudEnabled = isEnabled;
+	}
+
+	bool Camera::IsHudEnabled() const
+	{
+		return this->hudEnabled;
+	}
 }

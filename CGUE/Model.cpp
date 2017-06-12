@@ -17,7 +17,9 @@ namespace Engine {
 		assert(mesh->specularTexture.size() <= 1);
 
 		auto component = static_cast<Model*>(this->GetComponent());
-		if (mesh->renderType != RT_SPRITE && component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE)
+		auto cam = component->GetEngine()->GetMainCamera();
+		if (mesh->renderType != RT_SPRITE && component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE || 
+			(mesh->renderType == RT_SPRITE && !cam->IsHudEnabled()))
 		{
 			return;
 		}

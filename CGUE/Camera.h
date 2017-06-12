@@ -4,6 +4,7 @@
 #include "Operation.h"
 #include "TextureRenderable.h"
 #include "Frustum.h"
+#include "RenderableResource.h"
 
 namespace Engine {
 	enum {
@@ -57,9 +58,11 @@ namespace Engine {
 		vec3 lookAtVector;
 		vec3 upVector;
 
-		GLuint textureFbo;
+		GLuint frameBuffer;
 		GLuint texture;
+		GLuint depthBuffer;
 
+		bool hudEnabled;
 		bool r2t;
 		bool renderImage;
 		Pass* cameraPass;
@@ -73,6 +76,9 @@ namespace Engine {
 		float nw;
 		float fh;
 		float fw;
+
+		vec4 clippingPlane;
+		bool clippingEnabled;
 	public:
 		mat4x4 viewMatrix;
 
@@ -90,12 +96,15 @@ namespace Engine {
 		void SetLookAtVector(vec3 lookAt);
 		void SetUpVector(vec3 upVector);
 		void SetHudProjectionMatrix(mat4x4 hudMatrix);
+		void SetClipping(bool enabled, vec4 plane);
 
 		vec3 GetLookAtVector() const;
 		mat4x4 GetViewMatrix() const;
 		mat4x4 GetProjectionMatrix() const;
 		mat4x4 GetHudProjectionMatrix() const;
 		vec3 GetUpVector() const;
+		bool IsClippingEnabled() const;
+		vec4 GetClippingPlane() const;
 
 		GLuint GetTextureId() override;
 		int GetWidth() override;
@@ -109,6 +118,8 @@ namespace Engine {
 		FRUSTUM_COLLISION PointInFrustum(vec3 &p) const;
 		FRUSTUM_COLLISION SphereInFrustum(vec3 &p, float raio) const;
 		FRUSTUM_COLLISION Camera::BoxInFrustum(AABox &b);
+		void SetHudEnabled(bool isEnabled);
+		bool IsHudEnabled() const;
 	};
 
 	extern const Camera CameraClass;

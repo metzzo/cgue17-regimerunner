@@ -25,6 +25,9 @@ uniform mat4 hudProjection;
 uniform mat4 view;
 uniform mat4 model;
 
+uniform vec4 clippingPlane;
+uniform bool enableClipping;
+
 uniform vec3 eyeTanSpace;
 uniform vec3 lightTanSpace;
 
@@ -32,6 +35,12 @@ const float tiling = 6.0;
 
 void main()
 {
+    vs_out.FragPos = vec3(model * vec4(position, 1.0));
+	
+	if (enableClipping) {
+		gl_ClipDistance[0] = dot(vec4(vs_out.FragPos, 1.0), clippingPlane);
+	}
+	
 
 	if (renderType == RT_HUD) {
 		gl_Position = hudProjection * model * vec4(position, 1.0f);
@@ -39,9 +48,8 @@ void main()
 	 else {
 		gl_Position = projection * view * model * vec4(position, 1.0f);
 	}
-
+	
     if(renderType == RT_WATER) {
-        vs_out.FragPos = vec3(model * vec4(position, 1.0));
         vs_out.Normal = transpose(inverse(mat3(model))) * normal;
         vs_out.TexCoords = texCoords;	
 		eyeDirection = eyeTanSpace - vs_out.FragPos; 
@@ -58,7 +66,6 @@ void main()
 
 
     } else {
-        vs_out.FragPos = vec3(model * vec4(position, 1.0));
         vs_out.Normal = transpose(inverse(mat3(model))) * normal;
         vs_out.TexCoords = texCoords;
     }

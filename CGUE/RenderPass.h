@@ -62,6 +62,8 @@ namespace Engine {
 		GLint materialShininessUniform;
 		GLint viewPosUniform;
 		GLint shadowMapUniform[NUM_SHADOW_MAPS];
+		GLint clippingPlaneUniform;
+		GLint enableClippingUniform;
 
 		GLint shaderViewPosId;
 

@@ -12,28 +12,36 @@
 #include "Camera.h"
 
 namespace Game {
-
-	void CameraMovementMouseOperation::Execute()
-	{
+	void CameraMovementOperation::Execute() {
+		auto component = static_cast<CameraMovement*>(this->GetComponent());
 		auto engine = this->GetComponent()->GetEngine();
 		auto xspeed = engine->GetMouseXRel();
 		auto yspeed = engine->GetMouseYRel();
-		if (xspeed == 0 && yspeed == 0) 
-		{
-			return;
+		auto cam = component->camera;
+		auto keyDown = engine->KeyDown(SDL_SCANCODE_S);
+		auto keyUp = engine->KeyDown(SDL_SCANCODE_W);
+		auto keyLeft = engine->KeyDown(SDL_SCANCODE_A);
+		auto keyRight = engine->KeyDown(SDL_SCANCODE_D);
+		auto keySpace = engine->KeyDown(SDL_SCANCODE_Q);
+		auto camerapos = cam->GetTransformation()->GetAbsolutePosition();
+
+		// key
+		auto physicsPos = component->controller->getPosition();
+		auto pos = vec3(physicsPos.x, physicsPos.y, physicsPos.z);
+
+		if (pos != camerapos) {
+			cout << pos.x << " " << pos.y << " " << pos.z << endl;
+			component->GetTransformation()->SetRelativeMatrix(translate(mat4(), pos));
 		}
-		auto component = static_cast<CameraMovement*>(GetComponent());
-		auto camerapos = component->camera->GetTransformation()->GetAbsolutePosition();
-		auto waterpos = component->watercamera->GetTransformation()->GetAbsolutePosition();
 
 		yaw += xspeed;
 		pitch -= yspeed;
 
-		if (pitch > 89.0f) 
+		if (pitch > 89.0f)
 		{
 			pitch = 89.0f;
 		}
-		if (pitch < -89.0f) 
+		if (pitch < -89.0f)
 		{
 			pitch = -89.0f;
 		}
@@ -44,41 +52,16 @@ namespace Game {
 		front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
 		auto cameraFront = glm::normalize(front);
 
-		component->camera->SetLookAtVector(camerapos + cameraFront);
+		front.x = cos(glm::radians(-pitch)) * cos(glm::radians(yaw));
+		front.y = sin(glm::radians(-pitch));
+		front.z = cos(glm::radians(-pitch)) * sin(glm::radians(yaw));
+		auto waterCameraFront = glm::normalize(front);
+
 		component->spotLight->GetCamera()->SetLookAtVector(component->spotLight->GetTransformation()->GetAbsolutePosition() + cameraFront);
-		//component->watercamera->SetLookAtVector(waterpos + cameraFront);		
-		component->watercamera->SetLookAtVector(component->camera->GetLookAtVector());
-	}
+		cam->SetLookAtVector(pos + cameraFront);
 
-	void CameraMovementKeyOperation::Execute() {
-		auto component = static_cast<CameraMovement*>(this->GetComponent());
-		auto cam = component->GetEngine()->GetMainCamera();
-		auto keyDown = component->GetEngine()->KeyDown(SDL_SCANCODE_S);
-		auto keyUp = component->GetEngine()->KeyDown(SDL_SCANCODE_W);
-		auto keyLeft = component->GetEngine()->KeyDown(SDL_SCANCODE_A);
-		auto keyRight = component->GetEngine()->KeyDown(SDL_SCANCODE_D);
-		auto keySpace = component->GetEngine()->KeyDown(SDL_SCANCODE_Q);
-
-		auto cameraFront = cam->GetLookAtVector() - cam->GetTransformation()->GetAbsolutePosition();
-		auto camerapos = cam->GetTransformation()->GetAbsolutePosition();
-
-		auto waterFront = component->watercamera->GetLookAtVector() - component->GetTransformation()->GetAbsolutePosition();
-		auto waterpos = component->watercamera->GetTransformation()->GetAbsolutePosition();
-
-		auto physicsPos = component->controller->getPosition();
-		auto pos = vec3(physicsPos.x, physicsPos.y, physicsPos.z);
-
-		if (pos != camerapos) {
-			cout << pos.x << " " << pos.y << " " << pos.z << endl;
-			component->GetTransformation()->SetRelativeMatrix(translate(mat4(), pos));
-
-			cam->SetLookAtVector(pos + cameraFront);
-			component->watercamera->SetLookAtVector(cam->GetLookAtVector());
-			component->spotLight->GetCamera()->SetLookAtVector(component->spotLight->GetTransformation()->GetAbsolutePosition() + cameraFront);
-			if (cam->viewMatrix != component->watercamera->viewMatrix) {
-				cout << "UAAAH" << endl;
-			}
-		}
+		component->watercamera->GetTransformation()->SetRelativeMatrix(translate(mat4(), vec3(0, -2 * (pos.y - 20), 0)));
+		component->watercamera->SetLookAtVector(component->watercamera->GetTransformation()->GetAbsolutePosition() + waterCameraFront);
 
 
 		auto direction = vec3(0.0f, -9.81f, 0.0f) + jump;
@@ -121,8 +104,7 @@ namespace Game {
 		this->controller = GetEngine()->GetControllerManager()->createController(desc);
 		assert(this->controller != nullptr);
 
-		GetEngine()->GetUpdatePass()->AddOperation(new CameraMovementMouseOperation(this));
-		GetEngine()->GetUpdatePass()->AddOperation(new CameraMovementKeyOperation(this));
+		GetEngine()->GetUpdatePass()->AddOperation(new CameraMovementOperation(this));
 	}
 
 	CameraMovement::CameraMovement(Engine::SpotLight* spotLight, Engine::Camera* watercamera) : Component()
@@ -136,6 +118,5 @@ namespace Game {
 	void CameraMovement::Wire()
 	{
 		WIRE_COMPONENT(this->camera, Engine::CameraClass);
-		WIRE_COMPONENT(this->watercamera, Engine::CameraClass);
 	}
 }
