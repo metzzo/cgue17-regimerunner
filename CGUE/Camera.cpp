@@ -26,31 +26,17 @@ namespace Engine {
 		}
 
 		glViewport(0, 0, component->width, component->height);
-		if (component->depthMapFbo)
+		if (component->textureFbo)
 		{
-			glBindFramebuffer(GL_FRAMEBUFFER, component->depthMapFbo);
+			glBindFramebuffer(GL_FRAMEBUFFER, component->textureFbo);
 		}
 
-		/*
-		if (component->renderFbo) {
-			glBindFramebuffer(GL_FRAMEBUFFER, component->renderFbo);
-		}
-		*/
-
-		// TODO: only draw objects that could potentially visible for the camera
 		component->cameraPass->DoPass();
 
-		if (component->depthMapFbo)
+		if (component->textureFbo)
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
-
-		/*
-		if (component->renderFbo) {
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		}
-		*/
-
 
 		component->GetEngine()->SetMainCamera(oldMainCamera);
 	}
@@ -74,8 +60,8 @@ namespace Engine {
 	{
 		this->width = width;
 		this->height = height;
-		this->depthMapFbo = 0;
-		this->depthMap = 0;
+		this->textureFbo = 0;
+		this->texture = 0;
 		this->cameraPass = nullptr;
 		this->upVector = vec3(0.0, 1.0, 0.0);
 		this->r2t = false;
@@ -86,7 +72,7 @@ namespace Engine {
 		this->ratio = float(width) / float(height);
 		this->frustumChanged = true;
 		this->projectionMatrix = perspective(radians(fov), ratio, near, far);
-
+		this->renderImage = false;
 
 		auto tang = float(tan(0.5*radians(fov)));
 		nh = near*tang;
@@ -188,9 +174,9 @@ namespace Engine {
 		if (this->r2t)
 		{
 			// create depth map FBO
-			glGenFramebuffers(1, &this->depthMapFbo);
-			glGenTextures(1, &this->depthMap);
-			glBindTexture(GL_TEXTURE_2D, depthMap);
+			glGenFramebuffers(1, &this->textureFbo);
+			glGenTextures(1, &this->texture);
+			glBindTexture(GL_TEXTURE_2D, texture);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
 				this->width, this->height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -200,8 +186,8 @@ namespace Engine {
 			GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
 			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 			
-			glBindFramebuffer(GL_FRAMEBUFFER, this->depthMapFbo);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+			glBindFramebuffer(GL_FRAMEBUFFER, this->textureFbo);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture, 0);
 			
 			if (this->renderImage) {
 
@@ -212,11 +198,6 @@ namespace Engine {
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
 
-				/*glGenRenderbuffers(1, &this->renderbuffer);
-				glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
-				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, this->width, this->height);
-				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbuffer);*/
-
 				glDrawBuffer(GL_COLOR_ATTACHMENT0);
 			}
 			else {
@@ -225,41 +206,6 @@ namespace Engine {
 			//glReadBuffer(GL_NONE);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
-
-		/*
-		if (this->renderImage) {
-			//Gen Buffer
-			glGenFramebuffers(1, &this->renderFbo);
-			glBindFramebuffer(GL_FRAMEBUFFER, this->renderFbo);
-			glDrawBuffer(GL_COLOR_ATTACHMENT0);
-
-			//add ColorTextureAttachment
-			glGenTextures(1, &this->texture);
-			glBindTexture(GL_TEXTURE_2D, texture);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->width, this->height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
-
-			//add DepthbufferAttachment
-			glGenTextures(1, &this->depthMap);
-			glBindTexture(GL_TEXTURE_2D, depthMap);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, this->width, this->height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-			GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-
-			//RenderBuffer
-			glGenRenderbuffers(1, &this->renderbuffer);
-			glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, this->width, this->height);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbuffer);
-		} */
-
 
 		DEBUG_OGL();
 
@@ -317,8 +263,6 @@ namespace Engine {
 
 	FRUSTUM_COLLISION Camera::PointInFrustum(vec3 &p) const
 	{
-		return F_INSIDE;
-
 		auto result = F_INSIDE;
 		for (auto i = 0; i < 6; i++) {
 
@@ -334,8 +278,6 @@ namespace Engine {
 
 	FRUSTUM_COLLISION Camera::SphereInFrustum(vec3 &p, float raio) const
 	{
-		return F_INSIDE;
-
 		auto result = F_INSIDE;
 		float distance;
 
@@ -356,7 +298,6 @@ namespace Engine {
 
 
 	FRUSTUM_COLLISION Camera::BoxInFrustum(AABox &b) {
-		return F_INSIDE;
 		auto result = F_INSIDE;
 
 		for (auto i = 0; i < 6; i++) {

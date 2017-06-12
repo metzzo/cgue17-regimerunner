@@ -223,13 +223,13 @@ vec3 renderMesh() {
 }
 
 vec3 renderHud() {
-	/*float depthValue = texture(material.diffuse, fs_in.TexCoords).r;
+	float depthValue = texture(material.diffuse, fs_in.TexCoords).r;
 	float near_plane = 1.0;
 	float far_plane = 1000.0;
 	float z = depthValue * 2.0 - 1.0;
-	return vec3(vec3(((2.0 * near_plane * far_plane) / (far_plane + near_plane - z * (far_plane - near_plane))) / far_plane));*/
+	return vec3(vec3(((2.0 * near_plane * far_plane) / (far_plane + near_plane - z * (far_plane - near_plane))) / far_plane));
 	
-	return vec3(texture(material.diffuse, fs_in.TexCoords));
+	//return vec3(texture(material.diffuse, fs_in.TexCoords));
 }
 
 

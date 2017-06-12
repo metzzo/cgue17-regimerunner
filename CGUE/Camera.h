@@ -57,12 +57,8 @@ namespace Engine {
 		vec3 lookAtVector;
 		vec3 upVector;
 
-		GLuint depthMapFbo;
-		GLuint depthMap;
-
-		GLuint renderFbo;
+		GLuint textureFbo;
 		GLuint texture;
-		GLuint renderbuffer;
 
 		bool r2t;
 		bool renderImage;
