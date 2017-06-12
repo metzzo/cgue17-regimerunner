@@ -10,6 +10,7 @@
 #include "GameEngine.h"
 #include "Entity.h"
 #include "Camera.h"
+#include "RenderPass.h"
 
 namespace Game {
 	void CameraMovementOperation::Execute() {

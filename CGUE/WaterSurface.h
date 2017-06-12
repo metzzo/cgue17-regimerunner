@@ -31,7 +31,6 @@ namespace Engine {
 		Timer* waveOffset;
 
 		WaterSurface();
-		WaterSurface(int size);
 		~WaterSurface();
 
 		HeightMapResource *GetResource() const;

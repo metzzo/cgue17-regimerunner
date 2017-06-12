@@ -10,6 +10,8 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+#define MAX_NUM_SHADOW_MAPS 10
+
 namespace Engine {
 	void LightInfo::AssignUniforms(GLuint programId, string name, int lightId, BaseLight *light)
 	{
@@ -65,6 +67,9 @@ namespace Engine {
 		this->enableClippingUniform = -2;
 
 		this->numShadowMaps = 0;
+
+		this->reflectionTexture = -1;
+		this->refractionTexture = -1;
 	}
 
 
@@ -139,7 +144,6 @@ namespace Engine {
 		DEBUG_OGL(glUniform1i(this->materialSpecularUniform, 0));
 		DEBUG_OGL(glUniform1f(this->materialShininessUniform, 64.0f)); // TODO: Get Shininess from model
 
-		auto utilitycam = gameEngine->GetUtilityCamera();
 		auto lightId = 0;
 		auto shadowMapIndex = 0;
 		for (auto light : spotLights)
@@ -173,9 +177,15 @@ namespace Engine {
 
 
 		// REFLECTION TEXTURE FROM SECOND CAMERA
-		DEBUG_OGL(glUniform1i(this->GetWaterReflectionUniform(), 16));
-		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + 16));
-		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, utilitycam->GetTextureId()));
+		DEBUG_OGL(glUniform1i(this->GetWaterReflectionUniform(), MAX_NUM_SHADOW_MAPS + 2));
+		if (reflectionTexture != -1) {
+			DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + MAX_NUM_SHADOW_MAPS + 2));
+			DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, reflectionTexture));
+		}
+		if (refractionTexture != -1)
+		{
+			
+		}
 
 		DEBUG_OGL(glUniform3fv(this->EyeTanSpaceUniform,1, glm::value_ptr(glm::vec3(cam->GetTransformation()->GetAbsolutePosition()))));
 
@@ -308,8 +318,14 @@ namespace Engine {
 	{
 		return renderTypeUniform;
 	}
-	
-	GLint RenderPass::GetArrayUniformLocation(int id, string name) {
-		return glGetUniformLocation(this->shader->GetProgramId(), (name + "[" + to_string(id) + "]").c_str());
+
+	void RenderPass::SetReflectionTexture(GLint reflectionTexture)
+	{
+		this->reflectionTexture = reflectionTexture;
+	}
+
+	void RenderPass::SetRefractionTexture(GLint refractionTexture)
+	{
+		this->refractionTexture = refractionTexture;
 	}
 }

@@ -46,12 +46,6 @@ uniform sampler2D shadowMap6;
 uniform sampler2D shadowMap7;
 uniform sampler2D shadowMap8;
 uniform sampler2D shadowMap9;
-uniform sampler2D shadowMap10;
-uniform sampler2D shadowMap11;
-uniform sampler2D shadowMap12;
-uniform sampler2D shadowMap13;
-uniform sampler2D shadowMap14;
-uniform sampler2D shadowMap15;
 
 uniform sampler2D normalSampler;
 uniform sampler2D displaceSampler;

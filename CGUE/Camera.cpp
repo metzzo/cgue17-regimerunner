@@ -176,7 +176,7 @@ namespace Engine {
 		
 		if (this->r2t)
 		{
-			if (renderImage || true)
+			if (renderImage)
 			{
 				glGenFramebuffers(1, &this->frameBuffer);
 				glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
@@ -205,9 +205,6 @@ namespace Engine {
 				if (status != GL_FRAMEBUFFER_COMPLETE) {
 					RaiseEngineError("Incomplete Framebuffer");
 				}
-
-
-
 			}
 			else {
 				// create depth map FBO
@@ -234,6 +231,14 @@ namespace Engine {
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+			if (isReflection)
+			{
+				GetEngine()->GetRenderPass()->SetReflectionTexture(GetTextureId());
+			}
+			if (isRefraction)
+			{
+				GetEngine()->GetRenderPass()->SetRefractionTexture(GetTextureId());
+			}
 		}
 
 		DEBUG_OGL();
@@ -368,5 +373,15 @@ namespace Engine {
 	bool Camera::IsHudEnabled() const
 	{
 		return this->hudEnabled;
+	}
+
+	void Camera::SetAsReflectionCamera(bool reflection)
+	{
+		this->isReflection = reflection;
+	}
+
+	void Camera::SetAsRefractionCamera(bool refraction)
+	{
+		this->isRefraction = refraction;
 	}
 }

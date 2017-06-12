@@ -142,6 +142,7 @@ int main(int argc, char **argv)
 	reflectionCamera->SetHudEnabled(false);
 	reflectionCamera->EnableRender2Texture();
 	reflectionCamera->EnableRenderImage();
+	reflectionCamera->SetAsReflectionCamera(true);
 	auto attachedCamera = player->CreateChild();
 	attachedCamera->GetTransformation()->Rotate(180, vec3(0, 1, 0));
 	//a ttachedCamera->GetTransformation()->Translate(vec3(0, -0.1, 0));
@@ -165,7 +166,6 @@ int main(int argc, char **argv)
 	player->Add(new Game::CameraMovement(spotLight,reflectionCamera));
 
 	engine->SetMainCamera(camera);
-	engine->SetUtilityCamera(reflectionCamera);
 	camera->GetTransformation()->Translate(vec3(116.0, 60.0, 141.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 

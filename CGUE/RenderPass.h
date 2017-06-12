@@ -69,6 +69,9 @@ namespace Engine {
 
 		bool lightsDirty;
 		int numShadowMaps;
+
+		GLint reflectionTexture;
+		GLint refractionTexture;
 	public:
 		explicit RenderPass(GameEngine *gameEngine);
 		~RenderPass();
@@ -96,6 +99,8 @@ namespace Engine {
 		void SetDirectionalLight(DirectionalLight *directionalLight);
 
 		GLint GetRenderTypeUniform() const;
-		GLint GetArrayUniformLocation(int id, string name);
+
+		void SetReflectionTexture(GLint reflectionTexture);
+		void SetRefractionTexture(GLint refractionTexture);
 	};
 }

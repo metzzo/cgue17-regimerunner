@@ -181,17 +181,6 @@ namespace Engine {
 		return this->mainCamera;
 	}
 
-	void GameEngine::SetUtilityCamera(Camera* utilityCamera)
-	{
-		this->utilityCamera = utilityCamera;
-
-	}
-
-	Camera* GameEngine::GetUtilityCamera() const
-	{
-		return this->utilityCamera;
-	}
-
 
 	string GameEngine::GetProgramName() const
 	{

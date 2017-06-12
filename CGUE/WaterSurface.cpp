@@ -27,7 +27,7 @@ namespace Engine {
 			DEBUG_OGL(glPrimitiveRestartIndex(mesh->restartIndex));
 		}
 
-		DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), 2));
+		DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), RT_WATER));
 
 		auto currentTexture = pass->GetNumShadowMaps();
 
@@ -88,10 +88,6 @@ namespace Engine {
 		
 		this->texOffset = new Timer(true,20.0);
 		this->waveOffset = new Timer(true,18.0);
-	}
-
-	WaterSurface::WaterSurface(int size) {
-	
 	}
 
 	WaterSurface::~WaterSurface() {

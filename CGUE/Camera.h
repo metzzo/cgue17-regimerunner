@@ -79,6 +79,9 @@ namespace Engine {
 
 		vec4 clippingPlane;
 		bool clippingEnabled;
+
+		bool isReflection;
+		bool isRefraction;
 	public:
 		mat4x4 viewMatrix;
 
@@ -120,6 +123,8 @@ namespace Engine {
 		FRUSTUM_COLLISION Camera::BoxInFrustum(AABox &b);
 		void SetHudEnabled(bool isEnabled);
 		bool IsHudEnabled() const;
+		void SetAsReflectionCamera(bool reflection);
+		void SetAsRefractionCamera(bool refraction);
 	};
 
 	extern const Camera CameraClass;
