@@ -85,8 +85,8 @@ uniform int numSpotLights;
 uniform vec3 viewPos;
 
 const float waveStrength = 0.02;
-const float shineDamper = 20.0;
-const float reflectivity = 0.6;
+const float shineDamper = 1.0;
+const float reflectivity = 0.2;
 
 #define SHADOW_MAP(A,B,C,X) \
 	if (B == 0) { \
@@ -235,34 +235,74 @@ vec3 renderWater() {
 	vec2 refractTexCoords = vec2(ndc.x, ndc.y);
 	vec2 reflectTexCoords = vec2(ndc.x, -ndc.y);
 
-	vec2 distortion = (texture(displaceSampler, vec2(TexCoords.x + waveOffset,TexCoords.y)).rg * 2.0 - 1.0) * sin(waveStrength);
+	vec2 distortedTexCoords = texture(displaceSampler, vec2(fs_in.TexCoords.x + (waveOffset/10), fs_in.TexCoords.y)).rg*0.1;
+	distortedTexCoords = TexCoords + vec2(distortedTexCoords.x, distortedTexCoords.y+(waveOffset/10));
+	vec2 distortion = (texture(displaceSampler, distortedTexCoords).rg * 2.0 - 1.0) * waveStrength;
 	reflectTexCoords += distortion;
 	reflectTexCoords.x = clamp(reflectTexCoords.x, 0.001, 0.999);
 	reflectTexCoords.y = clamp(reflectTexCoords.y, -0.999, -0.001);
+
+	refractTexCoords += distortion;
+	refractTexCoords.x = clamp(refractTexCoords.x, 0.001, 0.999);
+	refractTexCoords.y = clamp(refractTexCoords.y, -0.999, -0.001);
 
 	vec4 reflectColor = texture(reflectSampler, reflectTexCoords);
 	vec4 refractColor = texture(refractSampler, refractTexCoords);
 
 	vec3 viewVector = normalize(eyeDirection);
 	float transparency = dot(viewVector, vec3(0.0,1.0,0.0));
-	transparency = pow(transparency, 3.0);
+	transparency = pow(transparency, 4.0);
 
-	vec4 normalMap = texture(normalSampler, distortion);
+	vec4 normalMap = texture(normalSampler, distortedTexCoords);
 	vec3  normal = vec3(normalMap.r * 2.0 - 1.0, normalMap.b, normalMap.g * 2.0 - 1.0);
-	normal = normalize(normal);
-	
+    normal = normalize(normal);
 
-	vec3 reflectedLight = reflect(normalize(fromLightVector),normal);
-	float specular = max(dot(reflectedLight, viewVector),0.0);
-	specular = pow(specular, shineDamper);
-	vec3 highlights = vec3(1.0,1.0,1.0) * specular * transparency;
+	vec3 result = vec3(0.0,0.0,0.0);
+
+	vec3 viewDir = normalize(viewPos - fs_in.FragPos);
+
+	for (int i = 0; i < numDirLights; i++) 
+	{
+		vec3 lightDir = normalize(-dirLights[i].direction);
+		// diffuse shading
+		float diff = max(dot(normal, lightDir), 0.0);
+		// specular shading
+		vec3 reflectDir = reflect(-lightDir, normal);
+		float spec = pow(max(dot(viewDir, reflectDir), 0.0), shineDamper);
+		// combine results
+		vec3 specular = dirLights[i].specular * spec;    
+		result += specular;
+	}
+
+	for(int i = 0; i < numSpotLights; i++) 
+	{
+		vec3 lightDir = normalize(spotLights[i].position - fs_in.FragPos);
+		// specular shading
+		vec3 reflectDir = reflect(-lightDir, normal);
+		float spec = pow(max(dot(viewDir, reflectDir), 0.0), shineDamper);
+		// attenuation
+		float distance = length(spotLights[i].position - fs_in.FragPos);
+		float attenuation = 1.0f / (spotLights[i].constant + spotLights[i].linear * distance + spotLights[i].quadratic * (distance * distance));    
+		// spotlight intensity
+		float theta = dot(lightDir, normalize(-spotLights[i].direction)); 
+		float epsilon = spotLights[i].cutOff - spotLights[i].outerCutOff;
+		float intensity = clamp((theta - spotLights[i].outerCutOff) / epsilon, 0.0, 1.0);
+		// combine results
+		vec3 specular = spotLights[i].specular * spec;
+		specular *= attenuation * intensity;
+		float shadow = spotLights[i].shadowCasting ? ShadowCalculation(spotLights[i], spotLights[i].spaceMatrix * vec4(fs_in.FragPos, 1.0)) : 0.0;
+	
+		result += (1.0 - shadow)*(0 + specular); 
+	}
+
+
 
 	vec4 out_color = mix(reflectColor, refractColor, transparency);
 
 	out_color = mix(out_color, vec4(0.0,0.3,0.5,1.0),0.2);
 
-	vec3 result = vec3(out_color) + highlights;
-	return result;
+	vec3 outgoing = vec3(out_color) + result;
+	return outgoing;
 }
 
 void main()

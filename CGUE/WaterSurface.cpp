@@ -29,11 +29,9 @@ namespace Engine {
 
 		DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), RT_WATER));
 
-
 		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + MAX_NUM_SHADOW_MAPS));
 		DEBUG_OGL(glUniform1i(pass->GetWaterNormalMapUniform(), MAX_NUM_SHADOW_MAPS));
 		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, component->GetNormalMap()->GetTextureId()));
-
 
 		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + MAX_NUM_SHADOW_MAPS + 1));
 		DEBUG_OGL(glUniform1i(pass->GetWaterUVDVMapUniform(), MAX_NUM_SHADOW_MAPS + 1));
@@ -81,7 +79,7 @@ namespace Engine {
 		auto mapSize = vec3(2048, 60, 2048);
 		this->resource = new HeightMapResource("textures/water.png", mapSize, 10, 10);
 
-		this->normalmap = new TextureResource("textures/waternormal.png");
+		this->normalmap = new TextureResource("textures/normalMap.png");
 		this->dudv = new TextureResource("textures/dudvmap.jpg");
 		
 		this->texOffset = new Timer(true,20.0);
