@@ -85,8 +85,8 @@ uniform int numSpotLights;
 uniform vec3 viewPos;
 
 const float waveStrength = 0.02;
-const float shineDamper = 1.0;
-const float reflectivity = 0.2;
+const float shineDamper = 20.0;
+const float reflectivity = 0.08;
 
 #define SHADOW_MAP(A,B,C,X) \
 	if (B == 0) { \
@@ -243,8 +243,7 @@ vec3 renderWater() {
 	reflectTexCoords.y = clamp(reflectTexCoords.y, -0.999, -0.001);
 
 	refractTexCoords += distortion;
-	refractTexCoords.x = clamp(refractTexCoords.x, 0.001, 0.999);
-	refractTexCoords.y = clamp(refractTexCoords.y, -0.999, -0.001);
+	refractTexCoords = clamp(refractTexCoords, 0.001, 0.999);
 
 	vec4 reflectColor = texture(reflectSampler, reflectTexCoords);
 	vec4 refractColor = texture(refractSampler, refractTexCoords);
