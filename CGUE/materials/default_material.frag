@@ -84,7 +84,7 @@ uniform SpotLight spotLights[MAX_NR_SPOT_LIGHTS];
 uniform int numSpotLights;
 uniform vec3 viewPos;
 
-const float waveStrength = 0.02;
+const float waveStrength = 0.05;
 const float shineDamper = 20.0;
 const float reflectivity = 0.08;
 
@@ -277,7 +277,7 @@ vec3 renderWater() {
 	{
 		vec3 lightDir = normalize(spotLights[i].position - fs_in.FragPos);
 		// specular shading
-		vec3 reflectDir = reflect(-lightDir, normal);
+		vec3 reflectDir = reflect(viewDir, normal);
 		float spec = pow(max(dot(viewDir, reflectDir), 0.0), shineDamper);
 		// attenuation
 		float distance = length(spotLights[i].position - fs_in.FragPos);
@@ -293,7 +293,6 @@ vec3 renderWater() {
 	
 		result += (1.0 - shadow)*(0 + specular); 
 	}
-
 
 
 	vec4 out_color = mix(reflectColor, refractColor, transparency);
