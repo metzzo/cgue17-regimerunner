@@ -67,14 +67,14 @@ namespace Engine {
 		GLint shadowMapUniform[NUM_SHADOW_MAPS];
 		GLint clippingPlaneUniform;
 		GLint enableClippingUniform;
-
-		GLint shaderViewPosId;
+		GLint bloodUniform;
 
 		bool lightsDirty;
 		int numShadowMaps;
 
 		GLint reflectionTexture;
 		GLint refractionTexture;
+		float blood;
 	public:
 		explicit RenderPass(GameEngine *gameEngine);
 		~RenderPass();
@@ -87,6 +87,7 @@ namespace Engine {
 		void AfterPass() override;
 		void Init() override;
 		void SetDrawingTransform(Transformation* transformation) const;
+		void SetBlood(float blood);
 		GLint GetDiffuseUniform(int number) const;
 		GLint GetSpecularUniform(int number) const;
 		int GetNumShadowMaps() const;

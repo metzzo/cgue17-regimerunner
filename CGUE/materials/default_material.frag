@@ -5,6 +5,7 @@ out vec4 FragColor;
 #define RT_HUD 1
 #define RT_WATER 2
 uniform int renderType;
+uniform float blood;
 
 in VS_OUT {
     vec3 FragPos;
@@ -321,6 +322,10 @@ void main()
 		default:
 			result = vec3(0,1,0);
 	}
+	
+	result.x = min(result.x + blood, 1.0);
+	result.y = max(0.0, result.y - blood);
+	result.z = max(0.0, result.z - blood);
     
     FragColor = vec4(result, 1.0);
 }

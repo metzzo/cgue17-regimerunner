@@ -26,9 +26,9 @@ using namespace Engine;
 void PlacePalms(Entity *child, ModelResource *palmResource, HeightMapResource *map)
 {
 	auto mapSize = map->GetSize();
-	for (auto x = 32; x < mapSize.x; x += 64)
+	for (auto x = 32; x < mapSize.x; x += 96)
 	{
-		for (auto z = 32; z < mapSize.z; z += 64)
+		for (auto z = 32; z < mapSize.z; z += 96)
 		{
 			auto palm = child->CreateChild();
 			palm->Add(new Model(palmResource));
@@ -40,15 +40,15 @@ void PlacePalms(Entity *child, ModelResource *palmResource, HeightMapResource *m
 			transform.p = PxVec3(0, 30, 0);
 			trunk->SetLocalPose(transform);
 
-			auto woods = new Engine::BoxGeometry(vec3(50, 2, 50));
+			auto leaves = new Engine::BoxGeometry(vec3(50, 4, 50));
 			transform = physx::PxTransform();
 			transform.q = PxQuat(0, PxVec3(0, 0, 1));
 			transform.p = PxVec3(0, 60, 0);
-			woods->SetLocalPose(transform);
+			leaves->SetLocalPose(transform);
 
 			auto rigidBody = new Engine::RigidBody();
 			rigidBody->AddGeometry(trunk);
-			rigidBody->AddGeometry(woods);
+			rigidBody->AddGeometry(leaves);
 			rigidBody->SetStaticness(true);
 			rigidBody->SetDensity(50);
 			rigidBody->SetMaterial(0.5, 0.5, 0.5);
@@ -93,7 +93,25 @@ void PlaceHeli(
 	heliSideRotor->Add(new Model(heliSideRotorResource));
 
 	heli->GetTransformation()->Translate(pos);
-	heli->Add(new Game::HelicopterBehaviour(heliMainRotor->GetTransformation(), heliSideRotor->GetTransformation(), broken, heightMap, player));
+
+	auto viewCamera = new Camera(20.0f, 1.0f, 300.0f, 512, 512);
+	//viewCamera->RenderingEnabled(false);
+	viewCamera->SetCameraMode(CM_REFRACTION);
+	heli->CreateChild()->Add(viewCamera);
+
+	heli->Add(new Game::HelicopterBehaviour(
+		heliMainRotor->GetTransformation(), 
+		heliSideRotor->GetTransformation(),
+		broken, 
+		heightMap, 
+		player,
+		viewCamera));
+	/*
+	auto hudTest = engine->GetRootEntity()->CreateChild();
+	hudTest->GetTransformation()->Scale(vec3(1, 1, 1));
+	hudTest->GetTransformation()->Translate(vec3(500, 500, 0));
+	auto spriteResource = new SpriteResource(viewCamera);
+	hudTest->Add(new Model(spriteResource));*/
 
 	auto spotLight = broken ? new SpotLight(15.0f, 20.0f) : new SpotLight(80.0f, 1.0f, 1000.0f, 512, 19.0f, 20.0f);
 	spotLight->SetAmbient(vec3(0, 0, 0));
@@ -127,7 +145,7 @@ int main(int argc, char **argv)
 	auto heliMainRotorResource = new ModelResource("objects/heli2/main_rotor.obj");
 	auto heliSideRotorResource = new ModelResource("objects/heli2/side_rotor.obj");
 
-	/**/
+	/*
 	auto dirLight = new DirectionalLight();
 	auto dirLightEntity = engine->GetRootEntity()->CreateChild();
 	dirLightEntity->Add(dirLight);
@@ -176,7 +194,7 @@ int main(int argc, char **argv)
 	spotLight->SetLinear(0.007f);
 	spotLight->SetQuadratic(0.002f);
 	light->Add(spotLight);
-	player->Add(new Game::CameraMovement(spotLight,reflectionCamera, refractionCamera));
+	player->Add(new Game::CameraMovement(spotLight,reflectionCamera, refractionCamera, playerComponent));
 
 	engine->SetMainCamera(camera);
 	camera->GetTransformation()->Translate(vec3(116.0, 60.0, 141.0));
@@ -184,6 +202,7 @@ int main(int argc, char **argv)
 
 
 	PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(256, 185, 256), false, mapResource, playerComponent);
+	//PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(32, 185, 32), false, mapResource, playerComponent);
 	PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(60, 26, 60), true, mapResource, playerComponent);
 
 	PlacePalms(engine->GetRootEntity(), palmResource, mapResource);

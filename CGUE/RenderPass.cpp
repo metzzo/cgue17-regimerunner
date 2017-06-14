@@ -47,7 +47,8 @@ namespace Engine {
 		this->projectionUniform = -2;
 		this->hudProjectionUniform = -2;
 		this->modelUniform = -2;
-		this->shaderViewPosId = -2;
+		this->viewPosUniform = -2;
+		this->bloodUniform = -2;
 
 		this->WaterNormalMapUniform = -2;
 		this->WaterUVDVMapUniform = -2;
@@ -139,6 +140,7 @@ namespace Engine {
 			this->lightsDirty = false;
 		}
 
+		DEBUG_OGL(glUniform1f(this->bloodUniform, blood));
 		DEBUG_OGL(glUniform1i(this->materialDiffuseUniform, 0));
 		DEBUG_OGL(glUniform1i(this->materialSpecularUniform, 0));
 		DEBUG_OGL(glUniform1f(this->materialShininessUniform, 64.0f)); // TODO: Get Shininess from model
@@ -207,7 +209,7 @@ namespace Engine {
 		DEBUG_OGL(glUniformMatrix4fv(this->hudProjectionUniform, 1, GL_FALSE, &hudProjection[0][0]));
 		DEBUG_OGL(glUniformMatrix4fv(this->viewUniform, 1, GL_FALSE, &view[0][0]));
 
-		DEBUG_OGL(glUniform3fv(this->shaderViewPosId, 1, &viewPos[0]));
+		DEBUG_OGL(glUniform3fv(this->viewPosUniform, 1, &viewPos[0]));
 
 		DEBUG_OGL(glActiveTexture(GL_TEXTURE0));
 
@@ -253,13 +255,21 @@ namespace Engine {
 		}
 		this->clippingPlaneUniform = glGetUniformLocation(programId, "clippingPlane");
 		this->enableClippingUniform = glGetUniformLocation(programId, "enableClipping");
+
+
+		this->bloodUniform = glGetUniformLocation(programId, "blood");
 	
-		DEBUG_OGL(this->shaderViewPosId = glGetUniformLocation(programId, "viewPos"));
+		DEBUG_OGL(this->viewPosUniform = glGetUniformLocation(programId, "viewPos"));
 	}
 
 	void RenderPass::SetDrawingTransform(Transformation* transformation) const
 	{
 		DEBUG_OGL(glUniformMatrix4fv(this->modelUniform, 1, GL_FALSE, &transformation->GetAbsoluteMatrix()[0][0]));
+	}
+
+	void RenderPass::SetBlood(float blood)
+	{
+		this->blood = blood;
 	}
 
 	GLint RenderPass::GetDiffuseUniform(int number) const

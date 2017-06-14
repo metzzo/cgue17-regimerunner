@@ -50,8 +50,16 @@ namespace Game {
 		Player* player;
 		int start;
 		int duration;
+		float spotLightTimer;
+		Engine::Camera* viewCamera;
 	public:
-		explicit HelicopterBehaviour(Engine::Transformation *mainRotor, Engine::Transformation *sideRotor, bool broken, Engine::HeightMapResource *heightMap, Player *player);
+		explicit HelicopterBehaviour(
+			Engine::Transformation *mainRotor, 
+			Engine::Transformation *sideRotor, 
+			bool broken, 
+			Engine::HeightMapResource *heightMap, 
+			Player *player,
+			Engine::Camera *viewCamera);
 		
 		void Init() override;
 		void Wire() override;

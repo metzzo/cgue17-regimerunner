@@ -7,6 +7,7 @@
 using namespace physx;
 
 namespace Game {
+	class Player;
 
 
 	class CameraMovementOperation : public Engine::Operation
@@ -37,8 +38,9 @@ namespace Game {
 		Engine::Camera *reflectionCamera;
 		Engine::Camera *refractionCamera;
 		Engine::SpotLight* spotLight;
+		Player *player;
 	public:
-		explicit CameraMovement(Engine::SpotLight *spotLight, Engine::Camera *reflectionCamera, Engine::Camera *refractionCamera);
+		explicit CameraMovement(Engine::SpotLight *spotLight, Engine::Camera *reflectionCamera, Engine::Camera *refractionCamera, Player *player);
 
 		void Init() override;
 		void Wire() override;

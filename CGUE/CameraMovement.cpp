@@ -11,6 +11,7 @@
 #include "Entity.h"
 #include "Camera.h"
 #include "RenderPass.h"
+#include "Player.h"
 
 namespace Game {
 	void CameraMovementOperation::Execute() {
@@ -97,8 +98,8 @@ namespace Game {
 		auto pos = GetTransformation()->GetAbsolutePosition();
 
 		PxCapsuleControllerDesc desc;
-		desc.height = 8.0;
-		desc.radius = 1.0;
+		desc.height = player->GetHeight();
+		desc.radius = player->GetRadius();
 		desc.userData = GetEntity();
 		desc.position = PxExtendedVec3(pos.x, pos.y, pos.z);
 		desc.material = GetEngine()->GetPhysics()->createMaterial(0.25f, 0.25f, 0.25f);
@@ -109,13 +110,14 @@ namespace Game {
 		GetEngine()->GetUpdatePass()->AddOperation(new CameraMovementOperation(this));
 	}
 
-	CameraMovement::CameraMovement(Engine::SpotLight* spotLight, Engine::Camera* reflectionCamera, Engine::Camera *refractionCamera) : Component()
+	CameraMovement::CameraMovement(Engine::SpotLight* spotLight, Engine::Camera* reflectionCamera, Engine::Camera *refractionCamera, Player *player) : Component()
 	{
 		this->spotLight = spotLight;
 		this->controller = nullptr;
 		this->camera = nullptr;
 		this->reflectionCamera = reflectionCamera;
 		this->refractionCamera = refractionCamera;
+		this->player = player;
 	}
 
 	void CameraMovement::Wire()

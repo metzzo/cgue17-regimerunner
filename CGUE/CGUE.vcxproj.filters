@@ -251,11 +251,11 @@
     <ClInclude Include="HeightFieldGeometry.h">
       <Filter>Header Files\Engine\Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Header Files\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="BoxGeometry.h">
       <Filter>Header Files\Engine\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

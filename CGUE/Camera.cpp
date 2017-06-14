@@ -423,4 +423,9 @@ namespace Engine {
 	{
 		this->isRefraction = refraction;
 	}
+
+	float Camera::GetFar() const
+	{
+		return far;
+	}
 }

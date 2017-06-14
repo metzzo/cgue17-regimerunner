@@ -135,6 +135,7 @@ namespace Engine {
 		bool IsHudEnabled() const;
 		void SetAsReflectionCamera(bool reflection);
 		void SetAsRefractionCamera(bool refraction);
+		float GetFar() const;
 	};
 
 	extern const Camera CameraClass;
