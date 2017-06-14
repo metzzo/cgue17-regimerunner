@@ -43,17 +43,17 @@
     <Filter Include="Header Files\Engine\Resource">
       <UniqueIdentifier>{60771bac-1c9a-4381-80cd-e3045b537ca3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Engine\Component\Shape">
-      <UniqueIdentifier>{aec1afca-9c9e-4c73-bf2e-2cca470b73d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\Component\Shape">
-      <UniqueIdentifier>{c531926f-c584-4df0-8fde-640f13919e90}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Engine\Component\Light">
       <UniqueIdentifier>{dd3a069a-85f6-4ee6-9903-cec83d7a26f1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Engine\Component\Light">
       <UniqueIdentifier>{96aa4f1f-173d-47d1-87f8-9108e4a216ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Geometry">
+      <UniqueIdentifier>{c531926f-c584-4df0-8fde-640f13919e90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Geometry">
+      <UniqueIdentifier>{aec1afca-9c9e-4c73-bf2e-2cca470b73d3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -105,18 +105,6 @@
     <ClCompile Include="RigidBody.cpp">
       <Filter>Source Files\Engine\Component</Filter>
     </ClCompile>
-    <ClCompile Include="BaseShape.cpp">
-      <Filter>Source Files\Engine\Component\Shape</Filter>
-    </ClCompile>
-    <ClCompile Include="ConvexShape.cpp">
-      <Filter>Source Files\Engine\Component\Shape</Filter>
-    </ClCompile>
-    <ClCompile Include="CapsuleShape.cpp">
-      <Filter>Source Files\Engine\Component\Shape</Filter>
-    </ClCompile>
-    <ClCompile Include="HeightFieldShape.cpp">
-      <Filter>Source Files\Engine\Component\Shape</Filter>
-    </ClCompile>
     <ClCompile Include="CameraMovement.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
@@ -152,6 +140,18 @@
     </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="CapsuleGeometry.cpp">
+      <Filter>Source Files\Engine\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="HeightFieldGeometry.cpp">
+      <Filter>Source Files\Engine\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseGeometry.cpp">
+      <Filter>Source Files\Engine\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxGeometry.cpp">
+      <Filter>Source Files\Engine\Geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -203,18 +203,6 @@
     <ClInclude Include="RigidBody.h">
       <Filter>Header Files\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="BaseShape.h">
-      <Filter>Header Files\Engine\Component\Shape</Filter>
-    </ClInclude>
-    <ClInclude Include="CapsuleShape.h">
-      <Filter>Header Files\Engine\Component\Shape</Filter>
-    </ClInclude>
-    <ClInclude Include="ConvexShape.h">
-      <Filter>Header Files\Engine\Component\Shape</Filter>
-    </ClInclude>
-    <ClInclude Include="HeightFieldShape.h">
-      <Filter>Header Files\Engine\Component\Shape</Filter>
-    </ClInclude>
     <ClInclude Include="CameraMovement.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
@@ -248,14 +236,26 @@
     <ClInclude Include="Frustum.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Header Files\Game</Filter>
-    </ClInclude>
     <ClInclude Include="WaterSurface.h">
       <Filter>Header Files\Engine\Component</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseGeometry.h">
+      <Filter>Header Files\Engine\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="CapsuleGeometry.h">
+      <Filter>Header Files\Engine\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="HeightFieldGeometry.h">
+      <Filter>Header Files\Engine\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxGeometry.h">
+      <Filter>Header Files\Engine\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

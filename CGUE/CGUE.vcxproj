@@ -122,19 +122,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BaseGeometry.cpp" />
     <ClCompile Include="BaseLight.cpp" />
-    <ClCompile Include="BaseShape.cpp" />
     <ClCompile Include="BaseResource.cpp" />
+    <ClCompile Include="BoxGeometry.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CapsuleShape.cpp" />
-    <ClCompile Include="ConvexShape.cpp" />
+    <ClCompile Include="CapsuleGeometry.cpp" />
     <ClCompile Include="CameraMovement.cpp" />
     <ClCompile Include="DepthPass.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="GameEngine.cpp" />
-    <ClCompile Include="HeightFieldShape.cpp" />
+    <ClCompile Include="HeightFieldGeometry.cpp" />
     <ClCompile Include="HeightMapResource.cpp" />
     <ClCompile Include="HelicopterBehaviour.cpp" />
     <ClCompile Include="main.cpp" />
@@ -160,11 +160,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseLight.h" />
-    <ClInclude Include="BaseShape.h" />
+    <ClInclude Include="BaseGeometry.h" />
     <ClInclude Include="BaseResource.h" />
+    <ClInclude Include="BoxGeometry.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="CapsuleShape.h" />
-    <ClInclude Include="ConvexShape.h" />
+    <ClInclude Include="CapsuleGeometry.h" />
     <ClInclude Include="CameraMovement.h" />
     <ClInclude Include="DepthPass.h" />
     <ClInclude Include="DirectionalLight.h" />
@@ -172,7 +172,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="GameEngine.h" />
-    <ClInclude Include="HeightFieldShape.h" />
+    <ClInclude Include="HeightFieldGeometry.h" />
     <ClInclude Include="HeightMapResource.h" />
     <ClInclude Include="HelicopterBehaviour.h" />
     <ClInclude Include="Model.h" />

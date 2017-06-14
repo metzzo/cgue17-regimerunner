@@ -2,6 +2,8 @@
 #include "Component.h"
 #include "Operation.h"
 #include <PxRigidActor.h>
+#include "BaseGeometry.h"
+#include <vector>
 
 using namespace physx;
 
@@ -16,24 +18,22 @@ namespace Engine {
 		float dynamicFriction;
 		float restitution;
 		float density;
-		PxGeometry* geometry;
-		PxTransform localPose;
-		float mass;
+		std::vector<BaseGeometry*> geometries;
 	public:
 		RigidBody();
 		~RigidBody();
 
 		void TransformationUpdated() override;
+		void Init() override;
 
 		void SetStaticness(bool staticness);
 		bool IsStatic() const;
 		PxRigidActor *GetActor() const;
-		void SetGeometry(PxGeometry* geometry);
 		void SetMaterial(float staticFriction, float dynamicFriction, float restitution);
 		void SetDensity(float density);
-		void SetLocalPose(PxTransform transform);
 		float GetDensity() const;
-		PxShape* GetShape() const;
+
+		void AddGeometry(BaseGeometry *geometry);
 
 		void Refresh();
 	};

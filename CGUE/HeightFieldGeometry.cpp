@@ -1,22 +1,23 @@
-#include "HeightFieldShape.h"
+#include "HeightFieldGeometry.h"
 #include "TextureResource.h"
 #include <iostream>
 #include "PxPhysicsAPI.h"
 #include "GameEngine.h"
+#include "RigidBody.h"
 
 namespace Engine {
-	HeightFieldShape::HeightFieldShape(TextureResource *resource, vec3 size)
+	HeightFieldGeometry::HeightFieldGeometry(TextureResource *resource, vec3 size)
 	{
 		this->resource = resource;
 		this->size = size;
 	}
 
 
-	HeightFieldShape::~HeightFieldShape()
+	HeightFieldGeometry::~HeightFieldGeometry()
 	{
 	}
 
-	void HeightFieldShape::Init()
+	PxGeometry *HeightFieldGeometry::MakeGeometry(RigidBody* rigidBody)
 	{
 		this->resource->Init();
 
@@ -36,10 +37,9 @@ namespace Engine {
 		hfDesc.samples.data = samples;
 		hfDesc.samples.stride = sizeof(PxHeightFieldSample);
 
-		auto heightField = GetEngine()->GetCooking()->createHeightField(hfDesc,
-			GetEngine()->GetPhysics()->getPhysicsInsertionCallback());
-			
-		// 
-		rigidBody->SetGeometry(new PxHeightFieldGeometry(heightField, PxMeshGeometryFlags(), size.y/255.0f, size.x/float(resource->GetWidth()), size.z/float(resource->GetHeight())));
+		auto heightField = rigidBody->GetEngine()->GetCooking()->createHeightField(hfDesc,
+			rigidBody->GetEngine()->GetPhysics()->getPhysicsInsertionCallback());
+
+		return new PxHeightFieldGeometry(heightField, PxMeshGeometryFlags(), size.y / 255.0f, size.x / float(resource->GetWidth()), size.z / float(resource->GetHeight()));
 	}
 }

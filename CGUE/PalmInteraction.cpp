@@ -7,7 +7,7 @@
 #include "GameEngine.h"
 #include "glm/gtc/matrix_transform.inl"
 #include "RigidBody.h"
-#include "CapsuleShape.h"
+#include "CapsuleGeometry.h"
 #include "Component.h"
 #include "Camera.h"
 

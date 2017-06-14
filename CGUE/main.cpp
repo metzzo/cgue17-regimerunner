@@ -4,15 +4,13 @@
 #include "Transformation.h"
 #include "Entity.h"
 #include "Camera.h"
-#include "Transformation.h"
 #include "glm/gtc/matrix_transform.inl"
 #include "CameraMovement.h"
 #include "SpotLight.h"
 #include "Model.h"
 #include "ModelResource.h"
-#include "ConvexShape.h"
-#include "CapsuleShape.h"
-#include "HeightFieldShape.h"
+#include "CapsuleGeometry.h"
+#include "HeightFieldGeometry.h"
 #include "PalmInteraction.h"
 #include <random>
 #include "HelicopterBehaviour.h"
@@ -21,6 +19,7 @@
 #include "SpriteResource.h"
 #include "WaterSurface.h"
 #include "Player.h"
+#include "BoxGeometry.h"
 
 using namespace Engine;
 
@@ -35,14 +34,21 @@ void PlacePalms(Entity *child, ModelResource *palmResource, HeightMapResource *m
 			palm->Add(new Model(palmResource));
 			palm->Add(new Game::PalmInteraction(x + (rand() % 40 - 20), z + (rand() % 40 - 20), map));
 
-			auto shape = new Engine::CapsuleShape(4, 30);
-			palm->Add(shape);
-
-			auto rigidBody = new Engine::RigidBody();
-			auto transform = PxTransform();
+			auto trunk = new Engine::CapsuleGeometry(4, 30);
+			auto transform = physx::PxTransform();
 			transform.q = PxQuat(PxHalfPi, PxVec3(0, 0, 1));
 			transform.p = PxVec3(0, 30, 0);
-			rigidBody->SetLocalPose(transform);
+			trunk->SetLocalPose(transform);
+
+			auto woods = new Engine::BoxGeometry(vec3(50, 2, 50));
+			transform = physx::PxTransform();
+			transform.q = PxQuat(0, PxVec3(0, 0, 1));
+			transform.p = PxVec3(0, 60, 0);
+			woods->SetLocalPose(transform);
+
+			auto rigidBody = new Engine::RigidBody();
+			rigidBody->AddGeometry(trunk);
+			rigidBody->AddGeometry(woods);
 			rigidBody->SetStaticness(true);
 			rigidBody->SetDensity(50);
 			rigidBody->SetMaterial(0.5, 0.5, 0.5);
@@ -189,8 +195,9 @@ int main(int argc, char **argv)
 	rigidBody->SetStaticness(true);
 	rigidBody->SetMaterial(0.5, 0.5, 0.5);
 	rigidBody->SetDensity(10);
+	rigidBody->AddGeometry(new HeightFieldGeometry(mapResource->GetHeightMap(), mapSize));
 	map->Add(rigidBody);
-	map->Add(new HeightFieldShape(mapResource->GetHeightMap(), mapSize));
+
 
 	
 	//auto hudTest = engine->GetRootEntity()->CreateChild();

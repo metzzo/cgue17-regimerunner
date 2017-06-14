@@ -13,12 +13,10 @@ namespace Engine {
 		actor = nullptr;
 		physicsMaterial = nullptr;
 		shape = nullptr;
-		geometry = nullptr;
 		staticFriction = 0;
 		dynamicFriction = 0;
 		restitution = 0;
 		density = 10;
-		localPose = PxTransform(PxIdentity);
 	}
 
 
@@ -29,6 +27,49 @@ namespace Engine {
 	void RigidBody::TransformationUpdated()
 	{
 
+	}
+
+	void RigidBody::Init()
+	{
+		if (this->actor != nullptr)
+		{
+			GetEngine()->GetPhysicsScene()->removeActor(*this->actor);
+			this->actor->release();
+		}
+
+		if (physicsMaterial == nullptr)
+		{
+			this->physicsMaterial = GetEngine()->GetPhysics()->createMaterial(staticFriction, dynamicFriction, restitution);
+		}
+
+		PxRigidDynamic* body = nullptr;
+		if (IsStatic())
+		{
+			this->actor = GetEngine()->GetPhysics()->createRigidStatic(physx::PxTransform(GetTransformation()->GetPhysicMatrix()));
+		}
+		else
+		{
+			body = GetEngine()->GetPhysics()->createRigidDynamic(physx::PxTransform(GetTransformation()->GetPhysicMatrix()));
+			this->actor = body;
+		}
+		this->actor->userData = this;
+
+		for (auto& geometry : geometries)
+		{
+			auto g = geometry->GetGeometry(this);
+
+			this->shape = GetActor()->createShape(*g, *physicsMaterial);
+			this->shape->setLocalPose(geometry->GetLocalPose());
+		}
+
+
+		if (body)
+		{
+
+			PxRigidBodyExt::updateMassAndInertia(*body, density);
+		}
+
+		GetEngine()->GetPhysicsScene()->addActor(*this->actor);
 	}
 
 	void RigidBody::SetStaticness(bool staticness)
@@ -45,46 +86,7 @@ namespace Engine {
 	{
 		return actor;
 	}
-
-	void RigidBody::SetGeometry(PxGeometry* geometry)
-	{
-		this->geometry = geometry;
-
-		if (this->actor != nullptr)
-		{
-			GetEngine()->GetPhysicsScene()->removeActor(*this->actor);
-			this->actor->release();
-		}
-
-		if (physicsMaterial == nullptr)
-		{
-			this->physicsMaterial = GetEngine()->GetPhysics()->createMaterial(staticFriction, dynamicFriction, restitution);
-		}
-
-		PxRigidDynamic* body = nullptr;
-		if (IsStatic())
-		{
-			this->actor = GetEngine()->GetPhysics()->createRigidStatic(PxTransform(GetTransformation()->GetPhysicMatrix()));
-		}
-		else
-		{
-			body = GetEngine()->GetPhysics()->createRigidDynamic(PxTransform(GetTransformation()->GetPhysicMatrix()));
-			this->actor = body;
-		}
-		this->actor->userData = this;
-
-		this->shape = GetActor()->createShape(*geometry, *physicsMaterial);
-		this->shape->setLocalPose(localPose);
-
-		if (body)
-		{
-
-			PxRigidBodyExt::updateMassAndInertia(*body, density);
-		}
-
-		GetEngine()->GetPhysicsScene()->addActor(*this->actor);
-	}
-
+	
 	void RigidBody::SetMaterial(float staticFriction, float dynamicFriction, float restitution)
 	{
 		this->staticFriction = staticFriction;
@@ -103,24 +105,18 @@ namespace Engine {
 		this->density = density;
 	}
 
-	void RigidBody::SetLocalPose(PxTransform transform)
-	{
-		this->localPose = transform;
-	}
-
 	float RigidBody::GetDensity() const
 	{
 		return density;
 	}
 
-	PxShape* RigidBody::GetShape() const
+	void RigidBody::AddGeometry(BaseGeometry* geometry)
 	{
-		return this->shape;
+		this->geometries.push_back(geometry);
 	}
 
 	void RigidBody::Refresh()
 	{
-		assert(this->geometry != nullptr);
-		SetGeometry(this->geometry);
+		Init();
 	}
 }

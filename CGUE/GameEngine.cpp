@@ -383,7 +383,7 @@ namespace Engine {
 		SDL_GL_SwapWindow(this->mainwindow);
 	}
 
-	void GameEngine::UpdatePhysics()
+	void GameEngine::UpdatePhysics() const
 	{
 		if (deltaTime == 0)
 		{
@@ -393,7 +393,7 @@ namespace Engine {
 		scene->fetchResults(true);
 
 		PxU32 nbActiveActors;
-		PxActor** activeActors = scene->getActiveActors(nbActiveActors);
+		auto activeActors = scene->getActiveActors(nbActiveActors);
 
 		// update each render object with the new transform
 		for (PxU32 i = 0; i < nbActiveActors; ++i)
@@ -403,8 +403,7 @@ namespace Engine {
 				continue;
 			}
 
-			RigidBody* rigidBody = static_cast<RigidBody*>(activeActors[i]->userData);
-			auto shape = rigidBody->GetShape();
+			auto rigidBody = static_cast<RigidBody*>(activeActors[i]->userData);
 			auto actor = rigidBody->GetActor();
 			rigidBody->GetTransformation()->UpdatePhysicsMatrix(actor->getGlobalPose());
 		}

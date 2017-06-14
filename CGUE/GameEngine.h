@@ -71,7 +71,7 @@ namespace Engine {
 		virtual void DeInit();
 		virtual void Render();
 
-		void UpdatePhysics();
+		void UpdatePhysics() const;
 	public:
 		GameEngine(int width, int height, string programName);
 		virtual ~GameEngine();
