@@ -57,8 +57,8 @@ uniform float waveOffset;
 uniform float texOffset;
 
 vec2 texProjCoord;
-float dblDispTiling = 2.0;
-float normalTiling = 2.0;
+float dblDispTiling = 50.0;
+float normalTiling = 50.0;
 
 struct SpotLight {
 	vec3 position;
@@ -236,7 +236,7 @@ vec3 renderWater() {
 	vec2 reflectTexCoords = vec2(ndc.x, -ndc.y);
 
 	vec2 distortedTexCoords = texture(displaceSampler, vec2(fs_in.TexCoords.x + (waveOffset/10), fs_in.TexCoords.y)).rg*0.1;
-	distortedTexCoords = TexCoords + vec2(distortedTexCoords.x, distortedTexCoords.y+(waveOffset/10));
+	distortedTexCoords += TexCoords + vec2(distortedTexCoords.x, distortedTexCoords.y+(waveOffset/10));
 	vec2 distortion = (texture(displaceSampler, distortedTexCoords).rg * 2.0 - 1.0) * waveStrength;
 	reflectTexCoords += distortion;
 	reflectTexCoords.x = clamp(reflectTexCoords.x, 0.001, 0.999);
