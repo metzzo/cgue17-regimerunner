@@ -269,7 +269,7 @@ vec3 renderWater() {
 		vec3 reflectDir = reflect(-lightDir, normal);
 		float spec = pow(max(dot(viewDir, reflectDir), 0.0), shineDamper);
 		// combine results
-		vec3 specular = dirLights[i].specular * spec;    
+		vec3 specular = dirLights[i].specular * (spec + 0.1);    
 		result += specular;
 	}
 
