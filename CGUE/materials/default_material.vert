@@ -31,7 +31,7 @@ uniform bool enableClipping;
 uniform vec3 eyeTanSpace;
 uniform vec3 lightTanSpace;
 
-const float tiling = 6.0;
+const float tiling = 18.0;
 
 void main()
 {
