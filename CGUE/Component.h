@@ -1,4 +1,5 @@
 #pragma once
+#include <extensions/PxFixedJoint.h>
 
 namespace Engine {
 	class Entity;

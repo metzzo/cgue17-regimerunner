@@ -34,6 +34,7 @@ namespace Engine {
 		float GetDensity() const;
 
 		void AddGeometry(BaseGeometry *geometry);
+		std::vector<BaseGeometry*>& GetGeometries();
 
 		void Refresh();
 	};

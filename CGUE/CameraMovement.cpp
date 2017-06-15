@@ -14,6 +14,8 @@
 #include "Player.h"
 
 namespace Game {
+	const CameraMovement CameraMovementClass;
+
 	void CameraMovementOperation::Execute() {
 		auto component = static_cast<CameraMovement*>(this->GetComponent());
 		auto engine = this->GetComponent()->GetEngine();
@@ -120,8 +122,17 @@ namespace Game {
 		this->player = player;
 	}
 
+	CameraMovement::CameraMovement()
+	{
+	}
+
 	void CameraMovement::Wire()
 	{
 		WIRE_COMPONENT(this->camera, Engine::CameraClass);
+	}
+
+	PxController* CameraMovement::GetController() const
+	{
+		return controller;
 	}
 }

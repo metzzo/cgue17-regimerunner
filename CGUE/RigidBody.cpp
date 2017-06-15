@@ -115,6 +115,11 @@ namespace Engine {
 		this->geometries.push_back(geometry);
 	}
 
+	vector<BaseGeometry*>& RigidBody::GetGeometries()
+	{
+		return this->geometries;
+	}
+
 	void RigidBody::Refresh()
 	{
 		Init();

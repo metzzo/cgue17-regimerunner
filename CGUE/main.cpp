@@ -65,17 +65,17 @@ HeightMapResource *PlaceMap(Entity *child)
 	return mapResource;
 }
 
-void PlacePalm(Entity *child, vec3 pos, ModelResource *palmResource, HeightMapResource *map)
+void PlacePalm(Entity *child, vec3 pos, ModelResource *palmResource, HeightMapResource *map, Game::Player *player)
 {
 	auto palm = child->CreateChild();
 	palm->Add(new Model(palmResource));
-	palm->Add(new Game::PalmInteraction());
+	palm->Add(new Game::PalmInteraction(player));
 	palm->GetTransformation()->Translate(pos);
 
 	auto trunk = new Engine::CapsuleGeometry(4, 30);
 	auto transform = physx::PxTransform();
 	transform.q = PxQuat(PxHalfPi, PxVec3(0, 0, 1));
-	transform.p = PxVec3(0, 30, 0);
+	transform.p = PxVec3(0, 25, 0);
 	trunk->SetLocalPose(transform);
 
 	auto leaves = new Engine::BoxGeometry(vec3(50, 4, 50));
@@ -272,7 +272,7 @@ int main(int argc, char **argv)
 			if (r == 255 && g == 0 && b == 0)
 			{
 				// place palm
-				PlacePalm(engine->GetRootEntity(), pos, palmResource, mapResource);
+				PlacePalm(engine->GetRootEntity(), pos, palmResource, mapResource, playerComponent);
 			} else if (r == 255 && g == 255 && b == 0)
 			{
 				// start location

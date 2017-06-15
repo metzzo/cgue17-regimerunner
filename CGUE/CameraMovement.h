@@ -41,8 +41,11 @@ namespace Game {
 		Player *player;
 	public:
 		explicit CameraMovement(Engine::SpotLight *spotLight, Engine::Camera *reflectionCamera, Engine::Camera *refractionCamera, Player *player);
+		CameraMovement();
 
 		void Init() override;
 		void Wire() override;
+		PxController *GetController() const;
 	};
+	extern const CameraMovement CameraMovementClass;
 }

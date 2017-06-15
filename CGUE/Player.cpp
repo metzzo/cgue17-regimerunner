@@ -3,6 +3,8 @@
 #include "GameEngine.h"
 #include "RenderPass.h"
 #include <iostream>
+#include "Entity.h"
+#include "RigidBody.h"
 
 namespace Game {
 	const Player PlayerClass;
@@ -37,6 +39,11 @@ namespace Game {
 		return Engine::AABox(pos - half, pos.x + half.x, pos.y + half.y, pos.z + half.z);
 	}
 
+	physx::PxActor* Player::GetActor() const
+	{
+		return cameraMovement->GetController()->getActor();
+	}
+
 	physx::PxF32 Player::GetHeight()
 	{
 		return 8.0f;
@@ -51,6 +58,11 @@ namespace Game {
 	{
 
 		GetEngine()->GetUpdatePass()->AddOperation(new PlayerOperation(this));
+	}
+
+	void Player::Wire()
+	{
+		WIRE_COMPONENT(this->cameraMovement, CameraMovementClass);
 	}
 
 	void Player::HelicopterHit()
