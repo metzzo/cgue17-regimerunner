@@ -148,13 +148,12 @@ namespace Engine {
 					break;
 				case SDL_KEYDOWN:
 					if (e.key.repeat == 0) {
-						this->keyStatesOld[e.key.keysym.scancode] = this->keyStates[e.key.keysym.scancode];
+						this->keyStatesOld[e.key.keysym.scancode] = true;
 						this->keyStates[e.key.keysym.scancode] = true;
 					}
 					break;
 				case SDL_KEYUP:
 					if (e.key.repeat == 0) {
-						this->keyStatesOld[e.key.keysym.scancode] = this->keyStates[e.key.keysym.scancode];
 						this->keyStates[e.key.keysym.scancode] = false;
 					}
 					break;
@@ -162,7 +161,6 @@ namespace Engine {
 					this->mouseXRel = e.motion.xrel;
 					this->mouseYRel = e.motion.yrel;
 					break;
-
 				default:
 					break;
 				}
@@ -184,89 +182,105 @@ namespace Engine {
 				cout << "F9: " << "Enable/Disable blending" << endl;
 			}
 
-			if (!this->KeyDownLastFrame(SDL_SCANCODE_F2) && this->KeyDown(SDL_SCANCODE_F2)) {
+			if (this->KeyDownLastFrame(SDL_SCANCODE_F2)) {
 				if (!this->showFPSEnabled) {
 					this->showFPSEnabled = true;
+					this->keyStatesOld[SDL_SCANCODE_F2] = false;
 				}
 				else {
 					this->showFPSEnabled = false;
+					this->keyStatesOld[SDL_SCANCODE_F2] = false;
 				}
 			}
 
-			if (!this->KeyDownLastFrame(SDL_SCANCODE_F3) && this->KeyDown(SDL_SCANCODE_F3)) {
+			if (this->KeyDownLastFrame(SDL_SCANCODE_F3)) {
 
 				if (!this->wireFrameEnabled) {
 					cout << "F3: " << "Enabling Wireframe" << endl;
 					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 					this->wireFrameEnabled = true;
+					this->keyStatesOld[SDL_SCANCODE_F3] = false;
 				}
 				else {
 					cout << "F3: " << "Disabling Wireframe" << endl;
 					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 					this->wireFrameEnabled = false;
+					this->keyStatesOld[SDL_SCANCODE_F3] = false;
 				}
 			}
 
-			if (!this->KeyDownLastFrame(SDL_SCANCODE_F4) && this->KeyDown(SDL_SCANCODE_F4)) {
+			if (this->KeyDownLastFrame(SDL_SCANCODE_F4)) {
 				if (!this->textureSamplingQuality) {
 					cout << "F4: " << "Setting Texture Sampling Quality to GL_LINEAR" << endl;
 					this->textureSamplingQuality = true;
+					this->keyStatesOld[SDL_SCANCODE_F4] = false;
+
 				}
 				else {
 					cout << "F4: " << "Setting Texture Sampling Quality to GL_NEAREST" << endl;
 					this->textureSamplingQuality = false;
+					this->keyStatesOld[SDL_SCANCODE_F4] = false;
 				}
 			}
 
-			if (!this->KeyDownLastFrame(SDL_SCANCODE_F5) && this->KeyDown(SDL_SCANCODE_F5)) {
+			if (this->KeyDownLastFrame(SDL_SCANCODE_F5)) {
 				this->mipMappingQuality += 1;
 				if (this->mipMappingQuality == 5) {
 					this->mipMappingQuality = 0;
 				}
 				cout << "F5: Setting Mip Map Level to: " << this->mipMappingQuality << endl;
+				this->keyStatesOld[SDL_SCANCODE_F5] = false;
 			}
 
-			if (!this->KeyDownLastFrame(SDL_SCANCODE_F6) && this->KeyDown(SDL_SCANCODE_F6)) {
+			if (this->KeyDownLastFrame(SDL_SCANCODE_F6)) {
 				if (!this->waterEnabled) {
 					cout << "F6: " << "Enabling Water" << endl;
 					this->waterEnabled = true;
+					this->keyStatesOld[SDL_SCANCODE_F6] = false;
 				}
 				else {
 					cout << "F6: " << "Disabling Water" << endl;
 					this->waterEnabled = false;
+					this->keyStatesOld[SDL_SCANCODE_F6] = false;
 				}
 			}
 
-			if (!this->KeyDownLastFrame(SDL_SCANCODE_F7) && this->KeyDown(SDL_SCANCODE_F7)) {
+			if (this->KeyDownLastFrame(SDL_SCANCODE_F7)) {
 				if (!this->physicsEnabled) {
 					cout << "F7: " << "Enabling shadows" << endl;
 					this->physicsEnabled = true;
+					this->keyStatesOld[SDL_SCANCODE_F7] = false;
 				}
 				else {
 					cout << "F7: " << "Disabling shadows" << endl;
 					this->physicsEnabled = false;
+					this->keyStatesOld[SDL_SCANCODE_F7] = false;
 				}
 			}
 
-			if (!this->KeyDownLastFrame(SDL_SCANCODE_F8) && this->KeyDown(SDL_SCANCODE_F8)) {
+			if (this->KeyDownLastFrame(SDL_SCANCODE_F8)) {
 				if (!this->frustumCullingEnabled) {
 					cout << "F8: " << "Enabling Frustum Culling" << endl;
 					this->frustumCullingEnabled = true;
+					this->keyStatesOld[SDL_SCANCODE_F8] = false;
 				}
 				else {
 					cout << "F8: " << "Disabling Frustum Culling" << endl;
 					this->frustumCullingEnabled = false;
+					this->keyStatesOld[SDL_SCANCODE_F8] = false;
 				}
 			}
 
-			if (!this->KeyDownLastFrame(SDL_SCANCODE_F9) && this->KeyDown(SDL_SCANCODE_F9)) {
+			if (this->KeyDownLastFrame(SDL_SCANCODE_F9)) {
 				if (!this->blendingEnabled) {
 					cout << "F9: " << "Enabling Blending" << endl;
 					this->blendingEnabled = true;
+					this->keyStatesOld[SDL_SCANCODE_F9] = false;
 				}
 				else {
 					cout << "F9: " << "Disabling Blending" << endl;
 					this->blendingEnabled = false;
+					this->keyStatesOld[SDL_SCANCODE_F9] = false;
 				}
 			}
 
