@@ -35,7 +35,7 @@ namespace Game {
 		auto component = static_cast<HelicopterBehaviour*>(this->GetComponent());
 		auto dt = component->GetEngine()->GetDeltaTime();
 
-		auto speed = 10.0f;
+		auto speed = 2.0f;
 		if (!component->broken) {
 
 			auto pos = component->GetTransformation()->GetAbsolutePosition();

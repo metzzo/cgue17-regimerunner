@@ -23,8 +23,7 @@ namespace Engine {
 	
 	GLenum glCheckError_(const char *file, int line);
 #define glCheckError() glCheckError_(__FILE__, __LINE__);
-//#define DEBUG_OGL(X) X; glCheckError_(__FILE__, __LINE__); 
-#define DEBUG_OGL(X) X;
+#define DEBUG_OGL(X) X; glCheckError_(__FILE__, __LINE__); 
 
 	class GameEngine
 	{

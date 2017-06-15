@@ -163,7 +163,20 @@ void PlaceHeli(
 	if (broken)
 	{
 		spotLight->GetCamera()->SetLookAtVector(heli->GetTransformation()->GetAbsolutePosition() + vec3(0, -1, 2.5));
-		heli->GetTransformation()->Rotate(30, vec3(0, 0, 1));
+		heli->GetTransformation()->Translate(vec3(0, 4, 0));
+		heli->GetTransformation()->Rotate(-30, vec3(0, 0, 1));
+
+		auto rigidBody = new Engine::RigidBody();
+		auto geometry = new BoxGeometry(vec3(20, 60, 60));
+		auto transform = physx::PxTransform();
+		transform.q = PxQuat(0, PxVec3(0, 0, 1));
+		transform.p = PxVec3(0, 0, 0);
+		geometry->SetLocalPose(transform);
+		rigidBody->AddGeometry(geometry);
+		rigidBody->SetStaticness(true);
+		rigidBody->SetDensity(50);
+		rigidBody->SetMaterial(0.5, 0.5, 0.5);
+		heli->Add(rigidBody);
 	} else
 	{
 		heliModel->GetTransformation()->Translate(vec3(0, 12, 0));
@@ -172,7 +185,7 @@ void PlaceHeli(
 
 int main(int argc, char **argv)
 {
-	auto engine = new GameEngine(1440, 800, string("CGUE"));
+	auto engine = new GameEngine(1440, 800, string("Regime Runner"));
 
 	auto palmResource = new ModelResource("objects/palm/palmtree.obj");
 	auto heliResource = new ModelResource("objects/heli2/body.obj");
@@ -189,7 +202,7 @@ int main(int argc, char **argv)
 	dirLight->SetDiffuse(vec3(0.2f, 0.2f, 0.2f));
 	dirLight->SetLookAtVector(vec3(0, 0, 0));/**/
 
-	auto camera = new Camera(80.0f, 0.1f, 100.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
+	auto camera = new Camera(80.0f, 0.1f, 250.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
 	camera->SetHudProjectionMatrix(glm::ortho(0.0f, GLfloat(engine->GetScreenWidth()), GLfloat(engine->GetScreenHeight()), 0.0f, -1.0f, 1.0f));
 	auto player = engine->GetRootEntity()->CreateChild();
 	auto playerComponent = new Game::Player();
@@ -250,9 +263,11 @@ int main(int argc, char **argv)
 				continue;
 			}
 
-			auto pos = vec3(x/float(objectMap->GetWidth())*mapResource->GetSize().x, 
-				mapResource->GetHeightAt(x,y), 
-				y/float(objectMap->GetHeight())*mapResource->GetSize().z);
+			auto pos = vec3(
+				x/float(objectMap->GetWidth())*mapResource->GetSize().x, 
+				mapResource->GetHeightAt(x*(mapResource->GetSize().x / objectMap->GetWidth()),y*(mapResource->GetSize().z / objectMap->GetHeight())),
+				y/float(objectMap->GetHeight())*mapResource->GetSize().z
+			);
 
 			if (r == 255 && g == 0 && b == 0)
 			{
