@@ -9,7 +9,7 @@
 #include <sstream>
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
-
+#include <iostream>
 
 namespace Engine {
 	void LightInfo::AssignUniforms(GLuint programId, string name, int lightId, BaseLight *light)
@@ -155,6 +155,13 @@ namespace Engine {
 			DEBUG_OGL(glUniform3fv(spotLightInfos[lightId].positionUniform, 1, &lightPos[0]));
 			DEBUG_OGL(glUniform3fv(spotLightInfos[lightId].directionUniform, 1, &dir[0]));
 
+			if (gameEngine->IsShadowsEnabled() == true) {
+				DEBUG_OGL(glUniform1i(spotLightInfos[lightId].shadowCastingUniform, false));
+			}
+			else {
+				DEBUG_OGL(glUniform1i(spotLightInfos[lightId].shadowCastingUniform, true));
+			}
+
 			if (light->IsShadowCasting())
 			{
 				auto lightSpaceMatrix = light->GetCamera()->GetProjectionMatrix() * light->GetCamera()->GetViewMatrix();
@@ -163,6 +170,16 @@ namespace Engine {
 
 				DEBUG_OGL(glUniform1i(shadowMapUniform[shadowMapIndex],  shadowMapIndex));
 
+				DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + shadowMapIndex));
+				DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, light->GetCamera()->GetTextureId()));
+
+				shadowMapIndex++;
+			}
+			else {
+				auto lightSpaceMatrix = light->GetCamera()->GetProjectionMatrix() * light->GetCamera()->GetViewMatrix();
+				DEBUG_OGL(glUniformMatrix4fv(spotLightInfos[lightId].spaceMatrixUniform, 1, GL_FALSE, &lightSpaceMatrix[0][0]));
+
+				DEBUG_OGL(glUniform1i(shadowMapUniform[shadowMapIndex], shadowMapIndex));
 				DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + shadowMapIndex));
 				DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, light->GetCamera()->GetTextureId()));
 

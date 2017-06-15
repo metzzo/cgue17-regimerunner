@@ -75,7 +75,7 @@ namespace Engine {
 		bool textureSamplingQuality;
 		int mipMappingQuality;
 		bool waterEnabled;
-		bool physicsEnabled;
+		bool shadowsEnabled;
 		bool frustumCullingEnabled;
 		
 
@@ -121,7 +121,7 @@ namespace Engine {
 		int GetMipMappingQuality();
 		void SetMipMappingQuality(int x);
 		bool IsWaterEnabled();
-		bool IsPhysicsEnabled();
+		bool IsShadowsEnabled();
 		bool IsCullingEnabled();
 		bool IsBlendingEnabled();
 

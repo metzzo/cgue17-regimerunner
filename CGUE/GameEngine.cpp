@@ -6,6 +6,7 @@
 #include "glew/glew.h"
 #include <string>
 #include <SDL_image.h>
+#include <SDL_audio.h>
 #include "Pass.h"
 #include "RenderPass.h"
 #include "DepthPass.h"
@@ -84,7 +85,7 @@ namespace Engine {
 		this->wireFrameEnabled = false;
 		this->textureSamplingQuality = true;
 		this->waterEnabled = true;
-		this->physicsEnabled = true;
+		this->shadowsEnabled = true;
 		this->frustumCullingEnabled = true;
 
 		this->renderPass = new RenderPass(this);
@@ -166,7 +167,7 @@ namespace Engine {
 				}
 			}
 
-			if (!this->KeyDownLastFrame(SDL_SCANCODE_F1) && this->KeyDown(SDL_SCANCODE_F1)) {
+			if ( this->KeyDown(SDL_SCANCODE_F1)) {
 				cout << "Help? " << "Here is some help (F1) " << endl;
 				cout << "WASD: " << "Walk around" << endl;
 				cout << "Space: " << "Jump!" << endl;
@@ -177,9 +178,10 @@ namespace Engine {
 				cout << "F4: " << "Texture Sampling quality " << endl;
 				cout << "F5: " << "Mip mapping quality" << endl;
 				cout << "F6: " << "Enable/Disable water" << endl;
-				cout << "F7: " << "Stop Physics" << endl;
+				cout << "F7: " << "Enable/Disable shadows" << endl;
 				cout << "F8: " << "Enable/Disable view frustum culling " << endl;
 				cout << "F9: " << "Enable/Disable blending" << endl;
+				this->keyStatesOld[SDL_SCANCODE_F1] = false;
 			}
 
 			if (this->KeyDownLastFrame(SDL_SCANCODE_F2)) {
@@ -246,14 +248,14 @@ namespace Engine {
 			}
 
 			if (this->KeyDownLastFrame(SDL_SCANCODE_F7)) {
-				if (!this->physicsEnabled) {
+				if (!this->shadowsEnabled) {
 					cout << "F7: " << "Enabling shadows" << endl;
-					this->physicsEnabled = true;
+					this->shadowsEnabled = true;
 					this->keyStatesOld[SDL_SCANCODE_F7] = false;
 				}
 				else {
 					cout << "F7: " << "Disabling shadows" << endl;
-					this->physicsEnabled = false;
+					this->shadowsEnabled = false;
 					this->keyStatesOld[SDL_SCANCODE_F7] = false;
 				}
 			}
@@ -303,10 +305,8 @@ namespace Engine {
 				initComponents.clear();
 			}
 
-			if (this->physicsEnabled) {
-				UpdatePhysics();
-			}
-			
+			UpdatePhysics();
+
 			GetUpdatePass()->DoPass();
 			this->lastTime = newTime;
 
@@ -397,9 +397,9 @@ namespace Engine {
 		return this->waterEnabled;
 	}
 
-	bool GameEngine::IsPhysicsEnabled()
+	bool GameEngine::IsShadowsEnabled()
 	{
-		return this->physicsEnabled;
+		return this->shadowsEnabled;
 	}
 
 	bool GameEngine::IsCullingEnabled()
@@ -459,7 +459,7 @@ namespace Engine {
 
 	void GameEngine::Init()
 	{
-		if (SDL_Init(SDL_INIT_VIDEO) < 0)
+		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 		{
 			RaiseEngineError("Unable to initialize SDL: " + string(SDL_GetError()));
 		}
