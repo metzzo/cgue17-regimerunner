@@ -25,7 +25,7 @@ namespace Engine {
 	};
 
 
-	const int MAIN_CAMERA_PRIORITY = 1000;
+	const int MAIN_CAMERA_PRIORITY = -1000;
 
 	class CameraRenderOperation : public Operation
 	{
@@ -91,6 +91,7 @@ namespace Engine {
 
 		bool isReflection;
 		bool isRefraction;
+		bool updatedTransformation;
 	public:
 		mat4x4 viewMatrix;
 

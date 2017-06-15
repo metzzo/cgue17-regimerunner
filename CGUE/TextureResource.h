@@ -31,5 +31,6 @@ namespace Engine {
 		void Save(string filename) const;
 
 		TextureResource *CutoutTexture(int x, int y, int width, int height);
+		void GetRgb(int x, int y, GLubyte *r, GLubyte* g, GLubyte* b);
 	};
 }

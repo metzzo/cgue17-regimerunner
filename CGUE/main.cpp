@@ -21,20 +21,26 @@
 #include "Player.h"
 #include "BoxGeometry.h"
 #include <iostream>
+#include <map>
 
 using namespace Engine;
 
-void PlaceMap(Entity *child)
+HeightMapResource *PlaceMap(Entity *child)
 {
-
-	auto chunkSize = vec3(256, 128, 256);
+	auto mapSize = vec3(256 * 8.0f, 128, 256 * 8.0f);
 	auto sandTex = new TextureResource("textures/sandtext.jpg");
 	auto grassTex = new TextureResource("textures/grasstext.jpg");
 	auto stoneTex = new TextureResource("textures/stonetext.jpg");
 
 	auto res = new TextureResource("textures/heightmap.png", false);
-	res->Load();
-	cout << "Heightmap Loaded" << endl;
+	res->Init();
+
+	auto mapResource = new HeightMapResource(res, mapSize, 4096, 4096);
+	mapResource->AddTexture(sandTex, 0, 0.3);
+	mapResource->AddTexture(grassTex, 0.15, 0.5);
+	mapResource->AddTexture(stoneTex, 0.3, 1.0);
+
+	child->CreateChild()->Add(new Model(mapResource));
 
 	auto tileWidth = res->GetWidth() / 8;
 	auto tileHeight = res->GetHeight() / 8;
@@ -43,83 +49,48 @@ void PlaceMap(Entity *child)
 	{
 		for (auto y = 0;  y < res->GetHeight(); y += tileHeight)
 		{
-			auto tmpX = x - 2;
-			if (tmpX < 0)
-			{
-				tmpX = 0;
-			}
-			auto tmpY = y - 2;
-			if (tmpY < 0)
-			{
-				tmpY = 0;
-			}
-			auto tmpWidth = tileWidth + 2;
-			if (tmpWidth >= res->GetWidth())
-			{
-				tmpWidth = res->GetWidth() - 2;
-			}
-			auto tmpHeight = tileHeight + 2;
-			if (tmpHeight >= res->GetHeight())
-			{
-				tmpHeight = res->GetHeight() - 2;
-			}
+			auto newRes = res->CutoutTexture(x, y, tileWidth, tileHeight);
 
-
-			auto newRes = res->CutoutTexture(tmpX, tmpY, tmpWidth, tmpHeight);
-			newRes->SetFilename("textures/tiles/tile_" + to_string(x) + "_" + to_string(y));
-
-			auto mapResource = new HeightMapResource(newRes, chunkSize, 64, 64);
-			mapResource->AddTexture(sandTex, 0, 0.3);
-			mapResource->AddTexture(grassTex, 0.15, 0.5);
-			mapResource->AddTexture(stoneTex, 0.3, 1.0);
-
-			auto map = child->CreateChild();
-			map->GetTransformation()->Translate(vec3(x / float(tileWidth)*chunkSize.x, 0, y / float(tileHeight)*chunkSize.z));
-			map->Add(new Model(mapResource));
+			auto collisionMap = child->CreateChild();
+			collisionMap->GetTransformation()->Translate(vec3(x / float(res->GetWidth())*mapSize.x, 0, y / float(res->GetHeight())*mapSize.z));
 
 			auto rigidBody = new RigidBody();
 			rigidBody->SetStaticness(true);
 			rigidBody->SetMaterial(0.5, 0.5, 0.5);
 			rigidBody->SetDensity(10);
-			rigidBody->AddGeometry(new HeightFieldGeometry(mapResource->GetHeightMap(), chunkSize));
-			map->Add(rigidBody);
-
+			rigidBody->AddGeometry(new HeightFieldGeometry(newRes, vec3(mapSize.x/8.0f, mapSize.y, mapSize.z/8.0f)));
+			collisionMap->Add(rigidBody);
 		}
 	}
+	return mapResource;
 }
-/*
-void PlacePalms(Entity *child, ModelResource *palmResource, HeightMapResource *map)
+
+void PlacePalm(Entity *child, vec3 pos, ModelResource *palmResource, HeightMapResource *map)
 {
-	auto mapSize = map->GetSize();
-	for (auto x = 32; x < mapSize.x; x += 96)
-	{
-		for (auto z = 32; z < mapSize.z; z += 96)
-		{
-			auto palm = child->CreateChild();
-			palm->Add(new Model(palmResource));
-			palm->Add(new Game::PalmInteraction(x + (rand() % 40 - 20), z + (rand() % 40 - 20), map));
+	auto palm = child->CreateChild();
+	palm->Add(new Model(palmResource));
+	palm->Add(new Game::PalmInteraction());
+	palm->GetTransformation()->Translate(pos);
 
-			auto trunk = new Engine::CapsuleGeometry(4, 30);
-			auto transform = physx::PxTransform();
-			transform.q = PxQuat(PxHalfPi, PxVec3(0, 0, 1));
-			transform.p = PxVec3(0, 30, 0);
-			trunk->SetLocalPose(transform);
+	auto trunk = new Engine::CapsuleGeometry(4, 30);
+	auto transform = physx::PxTransform();
+	transform.q = PxQuat(PxHalfPi, PxVec3(0, 0, 1));
+	transform.p = PxVec3(0, 30, 0);
+	trunk->SetLocalPose(transform);
 
-			auto leaves = new Engine::BoxGeometry(vec3(50, 4, 50));
-			transform = physx::PxTransform();
-			transform.q = PxQuat(0, PxVec3(0, 0, 1));
-			transform.p = PxVec3(0, 60, 0);
-			leaves->SetLocalPose(transform);
+	auto leaves = new Engine::BoxGeometry(vec3(50, 4, 50));
+	transform = physx::PxTransform();
+	transform.q = PxQuat(0, PxVec3(0, 0, 1));
+	transform.p = PxVec3(0, 60, 0);
+	leaves->SetLocalPose(transform);
 
-			auto rigidBody = new Engine::RigidBody();
-			rigidBody->AddGeometry(trunk);
-			rigidBody->AddGeometry(leaves);
-			rigidBody->SetStaticness(true);
-			rigidBody->SetDensity(50);
-			rigidBody->SetMaterial(0.5, 0.5, 0.5);
-			palm->Add(rigidBody);
-		}
-	}
+	auto rigidBody = new Engine::RigidBody();
+	rigidBody->AddGeometry(trunk);
+	rigidBody->AddGeometry(leaves);
+	rigidBody->SetStaticness(true);
+	rigidBody->SetDensity(50);
+	rigidBody->SetMaterial(0.5, 0.5, 0.5);
+	palm->Add(rigidBody);
 }
 
 void PlaceHeli(
@@ -159,10 +130,13 @@ void PlaceHeli(
 
 	heli->GetTransformation()->Translate(pos);
 
-	auto viewCamera = new Camera(20.0f, 1.0f, 300.0f, 512, 512);
-	//viewCamera->RenderingEnabled(false);
-	viewCamera->SetCameraMode(CM_REFRACTION);
-	heli->CreateChild()->Add(viewCamera);
+	Camera *viewCamera = nullptr;
+	if (!broken) {
+		viewCamera = new Camera(20.0f, 1.0f, 300.0f, 512, 512);
+		viewCamera->RenderingEnabled(false);
+		//viewCamera->SetCameraMode(CM_REFRACTION);
+		heli->CreateChild()->Add(viewCamera);
+	}
 
 	heli->Add(new Game::HelicopterBehaviour(
 		heliMainRotor->GetTransformation(), 
@@ -194,7 +168,7 @@ void PlaceHeli(
 	{
 		heliModel->GetTransformation()->Translate(vec3(0, 12, 0));
 	}
-}*/
+}
 
 int main(int argc, char **argv)
 {
@@ -215,10 +189,9 @@ int main(int argc, char **argv)
 	dirLight->SetDiffuse(vec3(0.2f, 0.2f, 0.2f));
 	dirLight->SetLookAtVector(vec3(0, 0, 0));/**/
 
-	auto camera = new Camera(80.0f, 0.1f, 500.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
+	auto camera = new Camera(80.0f, 0.1f, 100.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
 	camera->SetHudProjectionMatrix(glm::ortho(0.0f, GLfloat(engine->GetScreenWidth()), GLfloat(engine->GetScreenHeight()), 0.0f, -1.0f, 1.0f));
 	auto player = engine->GetRootEntity()->CreateChild();
-	player->GetTransformation()->Translate(vec3(100, 200, 100));
 	auto playerComponent = new Game::Player();
 	player->Add(playerComponent);
 	player->Add(camera);
@@ -260,14 +233,53 @@ int main(int argc, char **argv)
 	engine->SetMainCamera(camera);
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 
+	auto mapResource = PlaceMap(engine->GetRootEntity());
 
-	//PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(256, 185, 256), false, mapResource, playerComponent);
-	//PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(32, 185, 32), false, mapResource, playerComponent);
+	auto objectMap = new TextureResource("textures/objectmap.png", false);
+	objectMap->Init();
+
+	for (auto x = 0;  x < objectMap->GetWidth(); x++)
+	{
+		for (auto y = 0;  y < objectMap->GetHeight(); y++)
+		{
+			GLubyte r, g, b;
+			objectMap->GetRgb(x, y, &r, &g, &b);
+
+			if (r == 0 && g == 0 && b == 0)
+			{
+				continue;
+			}
+
+			auto pos = vec3(x/float(objectMap->GetWidth())*mapResource->GetSize().x, 
+				mapResource->GetHeightAt(x,y), 
+				y/float(objectMap->GetHeight())*mapResource->GetSize().z);
+
+			if (r == 255 && g == 0 && b == 0)
+			{
+				// place palm
+				PlacePalm(engine->GetRootEntity(), pos, palmResource, mapResource);
+			} else if (r == 255 && g == 255 && b == 0)
+			{
+				// start location
+				player->GetTransformation()->Translate(pos+vec3(0,20,0));
+			} else if (r == 0 && g == 0 && b == 255)
+			{
+				// broken heli
+				PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, pos, true, mapResource, playerComponent);
+			} else if (r == 0 && g == 255 && b == 0)
+			{
+				// normal heli
+				PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, pos, false, mapResource, playerComponent);
+			} else
+			{
+				RaiseEngineError("Unknown object placed");
+			}
+		}
+	}
+
 	//PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(60, 26, 60), true, mapResource, playerComponent);
 
-	//PlacePalms(engine->GetRootEntity(), palmResource, mapResource);
 	
-	PlaceMap(engine->GetRootEntity());
 
 	
 	//auto hudTest = engine->GetRootEntity()->CreateChild();

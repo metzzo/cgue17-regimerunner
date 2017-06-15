@@ -53,7 +53,6 @@ namespace Engine {
 		this->WaterNormalMapUniform = -2;
 		this->WaterUVDVMapUniform = -2;
 		this->WaterReflectionUniform = -2;
-		this->EyeTanSpaceUniform =-2;
 		this->LightTanSpaceUniform = -2;
 		this->waveOffsetUniform = -2;
 		this->texOffsetUniform = -2;
@@ -70,6 +69,12 @@ namespace Engine {
 
 		this->reflectionTexture = -1;
 		this->refractionTexture = -1;
+		this->constUniformsDirty = true;
+
+		this->renderTypeUniform = -2;
+		this->WaterRefractionUniform = -2;
+		this->blood = 0.0f;
+
 	}
 
 
@@ -118,10 +123,20 @@ namespace Engine {
 		DEBUG_OGL(glUniform1i(glGetUniformLocation(programId, "numDirLights"), this->directionalLight != nullptr ? 1 : 0));
 	}
 
+	void RenderPass::RefreshConstantUniforms() const
+	{
+		auto cam = gameEngine->GetMainCamera();
+
+		DEBUG_OGL(glUniform1f(this->bloodUniform, blood));
+		DEBUG_OGL(glUniform1i(this->materialDiffuseUniform, 0));
+		DEBUG_OGL(glUniform1i(this->materialSpecularUniform, 0));
+		DEBUG_OGL(glUniform1f(this->materialShininessUniform, 64.0f)); // TODO: Get Shininess from model
+
+
+	}
+
 	void RenderPass::BeforePass()
 	{
-
-		// TODO: handle case where no light exists
 		auto cam = gameEngine->GetMainCamera();
 		DEBUG_OGL(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 		glCullFace(GL_BACK);
@@ -140,10 +155,22 @@ namespace Engine {
 			this->lightsDirty = false;
 		}
 
-		DEBUG_OGL(glUniform1f(this->bloodUniform, blood));
-		DEBUG_OGL(glUniform1i(this->materialDiffuseUniform, 0));
-		DEBUG_OGL(glUniform1i(this->materialSpecularUniform, 0));
-		DEBUG_OGL(glUniform1f(this->materialShininessUniform, 64.0f)); // TODO: Get Shininess from model
+		if (this->constUniformsDirty)
+		{
+			this->RefreshConstantUniforms();
+
+			this->constUniformsDirty = false;
+		}
+
+		auto projection = cam->GetProjectionMatrix();
+		auto hudProjection = cam->GetHudProjectionMatrix();
+
+		DEBUG_OGL(glUniform1i(this->enableClippingUniform, cam->IsClippingEnabled()));
+		DEBUG_OGL(glUniform4fv(this->clippingPlaneUniform, 1, &cam->GetClippingPlane()[0]));
+
+		DEBUG_OGL(glUniformMatrix4fv(this->projectionUniform, 1, GL_FALSE, &projection[0][0]));
+		DEBUG_OGL(glUniformMatrix4fv(this->hudProjectionUniform, 1, GL_FALSE, &hudProjection[0][0]));
+
 
 		auto lightId = 0;
 		auto shadowMapIndex = 0;
@@ -173,9 +200,6 @@ namespace Engine {
 		}
 		this->numShadowMaps = shadowMapIndex;
 
-		DEBUG_OGL(glUniform1i(this->enableClippingUniform, cam->IsClippingEnabled()));
-		DEBUG_OGL(glUniform4fv(this->clippingPlaneUniform, 1, &cam->GetClippingPlane()[0]));
-
 
 		// REFLECTION TEXTURE FROM SECOND CAMERA;
 		if (reflectionTexture != -1) {
@@ -190,8 +214,6 @@ namespace Engine {
 			DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, refractionTexture));
 		}
 
-		DEBUG_OGL(glUniform3fv(this->EyeTanSpaceUniform,1, glm::value_ptr(glm::vec3(cam->GetTransformation()->GetAbsolutePosition()))));
-
 		if (directionalLight != nullptr)
 		{
 			auto lightPos = directionalLight->GetTransformation()->GetAbsolutePosition();
@@ -200,13 +222,9 @@ namespace Engine {
 			DEBUG_OGL(glUniform3fv(directionalLightInfo.directionUniform, 1, &dir[0]));
 		}
 
-		auto projection = cam->GetProjectionMatrix();
-		auto hudProjection = cam->GetHudProjectionMatrix();
 		auto view = cam->GetViewMatrix();
 		auto viewPos = cam->GetTransformation()->GetAbsolutePosition();
 
-		DEBUG_OGL(glUniformMatrix4fv(this->projectionUniform, 1, GL_FALSE, &projection[0][0]));
-		DEBUG_OGL(glUniformMatrix4fv(this->hudProjectionUniform, 1, GL_FALSE, &hudProjection[0][0]));
 		DEBUG_OGL(glUniformMatrix4fv(this->viewUniform, 1, GL_FALSE, &view[0][0]));
 
 		DEBUG_OGL(glUniform3fv(this->viewPosUniform, 1, &viewPos[0]));
@@ -240,7 +258,6 @@ namespace Engine {
 		this->WaterUVDVMapUniform = glGetUniformLocation(programId, "displaceSampler");
 		this->WaterReflectionUniform = glGetUniformLocation(programId, "reflectSampler");
 		this->WaterRefractionUniform = glGetUniformLocation(programId, "refractSampler");
-		this->EyeTanSpaceUniform = glGetUniformLocation(programId, "eyeTanSpace");
 		this->LightTanSpaceUniform = glGetUniformLocation(programId, "lightTanSpace");
 
 		this->waveOffsetUniform = glGetUniformLocation(programId, "waveOffset");
@@ -270,6 +287,7 @@ namespace Engine {
 	void RenderPass::SetBlood(float blood)
 	{
 		this->blood = blood;
+		constUniformsDirty = true;
 	}
 
 	GLint RenderPass::GetDiffuseUniform(int number) const

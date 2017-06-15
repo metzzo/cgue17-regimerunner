@@ -100,7 +100,12 @@ namespace Engine {
 
 	void *TextureResource::GetPixels() const
 	{
-		return this->sdlImage->pixels;
+		if (this->sdlImage != nullptr) {
+			return this->sdlImage->pixels;
+		} else
+		{
+			return nullptr;
+		}
 	}
 
 	int TextureResource::GetBytesPerPixel() const
@@ -133,5 +138,14 @@ namespace Engine {
 			}
 		}
 		return new TextureResource(newPixels, width, height, GetFileName(), numBytes, false);
+	}
+
+	void TextureResource::GetRgb(int x, int y, GLubyte* r, GLubyte* g, GLubyte* b)
+	{
+		auto numBytes = GetBytesPerPixel();
+		auto pixels = static_cast<GLubyte*>(GetPixels());
+		r[0] = pixels[numBytes*(x*GetHeight() + y) + 0];
+		g[0] = pixels[numBytes*(x*GetHeight() + y) + 1];
+		b[0] = pixels[numBytes*(x*GetHeight() + y) + 2];
 	}
 }

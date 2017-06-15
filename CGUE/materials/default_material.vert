@@ -28,8 +28,8 @@ uniform mat4 model;
 uniform vec4 clippingPlane;
 uniform bool enableClipping;
 
-uniform vec3 eyeTanSpace;
 uniform vec3 lightTanSpace;
+uniform vec3 viewPos;
 
 const float tiling = 18.0;
 
@@ -52,7 +52,7 @@ void main()
     if(renderType == RT_WATER) {
         vs_out.Normal = transpose(inverse(mat3(model))) * normal;
         vs_out.TexCoords = texCoords;	
-		eyeDirection = eyeTanSpace - vs_out.FragPos; 
+		eyeDirection = viewPos - vs_out.FragPos; 
 
 		vec4 clipPosition = projection * view * model * vec4(position, 1.0f);
 		clipTexProjCoord = clipPosition;	
@@ -60,7 +60,7 @@ void main()
 		TexCoords = vec2(vs_out.TexCoords[0]/2.0 + 0.5, vs_out.TexCoords[0]/2.0 + 0.5) * tiling;
 
 		vec4 worldPosition = model * vec4(position, 1.0f);
-		eyeDirection = eyeTanSpace - worldPosition.xyz;
+		eyeDirection = viewPos - worldPosition.xyz;
 
 		fromLightVector = worldPosition.xyz - lightTanSpace;
 

@@ -17,6 +17,14 @@ namespace Engine {
 	{
 		auto component = static_cast<Camera*>(this->GetComponent());
 
+		if (component->updatedTransformation)
+		{
+
+			auto pos = component->GetTransformation()->GetAbsolutePosition();
+			component->viewMatrix = lookAt(pos, component->lookAtVector, component->upVector);
+			component->frustumChanged = true;
+		}
+
 		auto oldMainCamera = component->GetEngine()->GetMainCamera();
 		component->GetEngine()->SetMainCamera(component);
 
@@ -74,7 +82,7 @@ namespace Engine {
 		this->projectionMatrix = perspective(radians(fov), ratio, near, far);
 		this->hudEnabled = true;
 		this->clippingEnabled = false;
-		this->cameraMode = CM_NORMAL;
+		this->cameraMode = CM_NORMAL; 
 
 		auto tang = float(tan(0.5*radians(fov)));
 		nh = near*tang;
@@ -303,9 +311,7 @@ namespace Engine {
 
 	void Camera::TransformationUpdated()
 	{
-		auto pos = GetTransformation()->GetAbsolutePosition();
-		this->viewMatrix = lookAt(pos, lookAtVector, upVector);
-		this->frustumChanged = true;
+		updatedTransformation = true;
 	}
 
 	void Camera::RefreshFrustum()

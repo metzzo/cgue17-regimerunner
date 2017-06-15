@@ -1,5 +1,6 @@
 #pragma once
 #include "Pass.h"
+#include "Camera.h"
 
 
 namespace Engine {
@@ -8,6 +9,7 @@ namespace Engine {
 	class DepthPass : public Pass
 	{
 		Shader* shader;
+		GLuint mvpUniform;
 	public:
 		explicit DepthPass(GameEngine *gameEngine);
 		~DepthPass();

@@ -8,6 +8,7 @@ namespace Engine {
 	DepthPass::DepthPass(GameEngine* gameEngine) : Pass(gameEngine)
 	{
 		this->shader = nullptr;
+		this->mvpUniform = -2;
 	}
 
 	DepthPass::~DepthPass()
@@ -43,12 +44,14 @@ namespace Engine {
 	{
 		this->shader = new Shader("materials/depth_material.vert", "materials/depth_material.frag");
 		this->shader->Init();
+
+		mvpUniform = glGetUniformLocation(this->shader->GetProgramId(), "MVP");
 	}
 
 	void DepthPass::SetDrawingTransform(Transformation* transformation) const
 	{
 		auto mvp = gameEngine->GetMainCamera()->GetProjectionMatrix() * gameEngine->GetMainCamera()->GetViewMatrix() * transformation->GetAbsoluteMatrix();
 
-		DEBUG_OGL(glUniformMatrix4fv(glGetUniformLocation(this->shader->GetProgramId(), "MVP"), 1, GL_FALSE, &mvp[0][0]));
+		DEBUG_OGL(glUniformMatrix4fv(mvpUniform, 1, GL_FALSE, &mvp[0][0]));
 	}
 }

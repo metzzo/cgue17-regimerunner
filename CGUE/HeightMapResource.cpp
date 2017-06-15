@@ -14,6 +14,11 @@ namespace Engine {
 		this->pixels = nullptr;
 		this->texWidth = texWidth;
 		this->texHeight = texHeight;
+
+		if (heightMap->GetPixels())
+		{
+			this->pixels = static_cast<GLubyte*>(heightMap->GetPixels());
+		}
 	}
 
 	HeightMapResource::~HeightMapResource()
@@ -23,7 +28,6 @@ namespace Engine {
 	void HeightMapResource::Load()
 	{
 		this->heightMap->Init();
-		
 		this->pixels = static_cast<GLubyte*>(heightMap->GetPixels());
 
 		vector< vector< glm::dvec3> > vertexData(heightMap->GetHeight(), vector<glm::dvec3>(heightMap->GetWidth()));
@@ -144,9 +148,10 @@ namespace Engine {
 			mesh->indices.push_back(mesh->restartIndex);
 		}
 
-		TextureResource *terrainTex;
+		TextureResource *terrainTex = nullptr;
 		ifstream f((filename + ".tex.bmp").c_str());
-		if (!f.good())
+		ifstream f2((filename + ".tex.png").c_str());
+		if (!f.good() && !f2.good())
 		{
 			// generate texture
 			for (auto& tex : this->textures)
@@ -212,8 +217,16 @@ namespace Engine {
 		} 
 		else
 		{
-			f.close();
-			terrainTex = new TextureResource(filename + ".tex.bmp");
+			if (f.good())
+			{
+				f.close();
+				terrainTex = new TextureResource(filename + ".tex.bmp");
+			}
+			if (f2.good())
+			{
+				f2.close();
+				terrainTex = new TextureResource(filename + ".tex.png");
+			}
 		}
 		terrainTex->Init();
 		mesh->diffuseTexture.push_back(terrainTex);

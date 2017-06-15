@@ -55,7 +55,6 @@ namespace Engine {
 		GLint WaterUVDVMapUniform;
 		GLint WaterReflectionUniform;
 		GLint WaterRefractionUniform;
-		GLint EyeTanSpaceUniform;
 		GLint LightTanSpaceUniform;
 		GLint waveOffsetUniform;
 		GLint texOffsetUniform;
@@ -70,6 +69,7 @@ namespace Engine {
 		GLint bloodUniform;
 
 		bool lightsDirty;
+		bool constUniformsDirty;
 		int numShadowMaps;
 
 		GLint reflectionTexture;
@@ -82,6 +82,7 @@ namespace Engine {
 		void DirtyLights();
 
 		void RefreshLights();
+		void RefreshConstantUniforms() const;
 
 		void BeforePass() override;
 		void AfterPass() override;

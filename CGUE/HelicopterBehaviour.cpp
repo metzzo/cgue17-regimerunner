@@ -53,7 +53,7 @@ namespace Game {
 				}
 			}
 			auto translation = vec3(0, float(cumHeight) - pos.y + 100, 0);
-			cout << component->state << endl;
+			//cout << component->state << endl;
 			switch(component->state)
 			{
 			case HMS_GOTO_CENTER:
@@ -131,7 +131,7 @@ namespace Game {
 						Player *player = nullptr;
 						rigidBody->GetEntity()->WireUp(reinterpret_cast<Engine::Component**>(&player), PlayerClass.GetClassName(), false);
 						if (player != nullptr) {*/
-							cout << "Helicopter sees you" << endl;
+							//cout << "Helicopter sees you" << endl;
 						//}
 					}
 				}
@@ -140,7 +140,7 @@ namespace Game {
 			{
 				component->spotLightTimer = 0; // dt * 0.00001;
 
-				cout << "Helicopter does not see you" << endl;
+				//cout << "Helicopter does not see you" << endl;
 			}
 
 			speed = 100.0f;

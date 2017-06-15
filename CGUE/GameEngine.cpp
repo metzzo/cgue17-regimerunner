@@ -117,6 +117,7 @@ namespace Engine {
 			this->mouseYRel = 0;
 			auto newTime = SDL_GetTicks();
 			this->deltaTime = newTime - this->lastTime;
+			this->lastTime = newTime;
 
 			SDL_Event e;
 			while (SDL_PollEvent(&e) != 0)
@@ -163,9 +164,9 @@ namespace Engine {
 
 			UpdatePhysics();
 			GetUpdatePass()->DoPass();
-			this->lastTime = newTime;
 
 			this->Render();
+
 		}
 		this->DeInit();
 	}
@@ -324,7 +325,7 @@ namespace Engine {
 			RaiseEngineError("Glew init error: " + to_string(error));
 		}
 
-		SDL_GL_SetSwapInterval(1);
+		SDL_GL_SetSwapInterval(0);
 
 		cout << "Using OpenGL Version: " << glGetString(GL_VERSION) << endl;
 
