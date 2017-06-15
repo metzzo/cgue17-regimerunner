@@ -44,6 +44,7 @@ namespace Engine {
 		int mouseXRel;
 		int mouseYRel;
 		bool keyStates[322];
+		bool keyStatesOld[322];
 
 		vector<Component*> initComponents;
 
@@ -67,6 +68,17 @@ namespace Engine {
 		PxControllerManager* manager;
 		bool started;
 
+		// Experimenting with OpenGL vars
+		bool showFPSEnabled;
+		bool wireFrameEnabled;
+		bool blendingEnabled;
+		bool textureSamplingQuality;
+		int mipMappingQuality;
+		bool waterEnabled;
+		bool physicsEnabled;
+		bool frustumCullingEnabled;
+		
+
 		virtual void Init();
 		virtual void DeInit();
 		virtual void Render();
@@ -81,6 +93,7 @@ namespace Engine {
 		bool IsStarted() const;
 
 		bool KeyDown(int keyCode);
+		bool KeyDownLastFrame(int keyCode);
 
 		RenderPass *GetRenderPass() const;
 		DepthPass *GetDepthPass() const;
@@ -103,6 +116,15 @@ namespace Engine {
 		PxScene *GetPhysicsScene() const;
 		PxControllerManager *GetControllerManager() const;
 		void AddInitComponent(Component* component);
+
+		bool GetTextureSamplingQuality();
+		int GetMipMappingQuality();
+		void SetMipMappingQuality(int x);
+		bool IsWaterEnabled();
+		bool IsPhysicsEnabled();
+		bool IsCullingEnabled();
+		bool IsBlendingEnabled();
+
 	};
 
 }

@@ -13,6 +13,7 @@
 #include "glm/glm.hpp"
 #include "Component.h"
 #include "glm/gtx/transform.hpp"
+#include "Timer.h";
 
 
 namespace Engine {
@@ -72,11 +73,19 @@ namespace Engine {
 		this->utilityCamera = nullptr;
 
 		memset(this->keyStates, 0, sizeof this->keyStates);
+		memset(this->keyStatesOld, 0, sizeof this->keyStates);
 
 		this->foundation = nullptr;
 		this->dispatcher = nullptr;
 		this->scene = nullptr;
 		this->physics = nullptr;
+
+		this->showFPSEnabled = false;
+		this->wireFrameEnabled = false;
+		this->textureSamplingQuality = true;
+		this->waterEnabled = true;
+		this->physicsEnabled = true;
+		this->frustumCullingEnabled = true;
 
 		this->renderPass = new RenderPass(this);
 		this->updatePass = new Pass(this);
@@ -111,12 +120,22 @@ namespace Engine {
 		
 		this->started = true;
 		this->lastTime = SDL_GetTicks();
+		
+
 		while(!cancelled && !KeyDown(SDL_SCANCODE_ESCAPE))
 		{
 			this->mouseXRel = 0;
 			this->mouseYRel = 0;
 			auto newTime = SDL_GetTicks();
 			this->deltaTime = newTime - this->lastTime;
+
+			if (this->showFPSEnabled) {
+				if (newTime > 1000) {
+					//int fps = 1 / (1 / deltaTime);
+					double frames = 1000 / deltaTime;
+					cout << "FPS: " << frames << endl;
+				}
+			}
 
 			SDL_Event e;
 			while (SDL_PollEvent(&e) != 0)
@@ -129,23 +148,128 @@ namespace Engine {
 					break;
 				case SDL_KEYDOWN:
 					if (e.key.repeat == 0) {
+						this->keyStatesOld[e.key.keysym.scancode] = this->keyStates[e.key.keysym.scancode];
 						this->keyStates[e.key.keysym.scancode] = true;
 					}
 					break;
 				case SDL_KEYUP:
 					if (e.key.repeat == 0) {
+						this->keyStatesOld[e.key.keysym.scancode] = this->keyStates[e.key.keysym.scancode];
 						this->keyStates[e.key.keysym.scancode] = false;
 					}
 					break;
 				case SDL_MOUSEMOTION:
 					this->mouseXRel = e.motion.xrel;
 					this->mouseYRel = e.motion.yrel;
-
 					break;
+
 				default:
 					break;
 				}
 			}
+
+			if (!this->KeyDownLastFrame(SDL_SCANCODE_F1) && this->KeyDown(SDL_SCANCODE_F1)) {
+				cout << "Help? " << "Here is some help (F1) " << endl;
+				cout << "WASD: " << "Walk around" << endl;
+				cout << "Space: " << "Jump!" << endl;
+				cout << "E: " << "Chop a palm" << endl;
+				cout << "F1: " << "Call for help! " << endl;
+				cout << "F2: " << "Show FPS" << endl;
+				cout << "F3: " << "Wireframe on/of" << endl;
+				cout << "F4: " << "Texture Sampling quality " << endl;
+				cout << "F5: " << "Mip mapping quality" << endl;
+				cout << "F6: " << "Enable/Disable water" << endl;
+				cout << "F7: " << "Stop Physics" << endl;
+				cout << "F8: " << "Enable/Disable view frustum culling " << endl;
+				cout << "F9: " << "Enable/Disable blending" << endl;
+			}
+
+			if (!this->KeyDownLastFrame(SDL_SCANCODE_F2) && this->KeyDown(SDL_SCANCODE_F2)) {
+				if (!this->showFPSEnabled) {
+					this->showFPSEnabled = true;
+				}
+				else {
+					this->showFPSEnabled = false;
+				}
+			}
+
+			if (!this->KeyDownLastFrame(SDL_SCANCODE_F3) && this->KeyDown(SDL_SCANCODE_F3)) {
+
+				if (!this->wireFrameEnabled) {
+					cout << "F3: " << "Enabling Wireframe" << endl;
+					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+					this->wireFrameEnabled = true;
+				}
+				else {
+					cout << "F3: " << "Disabling Wireframe" << endl;
+					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					this->wireFrameEnabled = false;
+				}
+			}
+
+			if (!this->KeyDownLastFrame(SDL_SCANCODE_F4) && this->KeyDown(SDL_SCANCODE_F4)) {
+				if (!this->textureSamplingQuality) {
+					cout << "F4: " << "Setting Texture Sampling Quality to GL_LINEAR" << endl;
+					this->textureSamplingQuality = true;
+				}
+				else {
+					cout << "F4: " << "Setting Texture Sampling Quality to GL_NEAREST" << endl;
+					this->textureSamplingQuality = false;
+				}
+			}
+
+			if (!this->KeyDownLastFrame(SDL_SCANCODE_F5) && this->KeyDown(SDL_SCANCODE_F5)) {
+				this->mipMappingQuality += 1;
+				if (this->mipMappingQuality == 5) {
+					this->mipMappingQuality = 0;
+				}
+				cout << "F5: Setting Mip Map Level to: " << this->mipMappingQuality << endl;
+			}
+
+			if (!this->KeyDownLastFrame(SDL_SCANCODE_F6) && this->KeyDown(SDL_SCANCODE_F6)) {
+				if (!this->waterEnabled) {
+					cout << "F6: " << "Enabling Water" << endl;
+					this->waterEnabled = true;
+				}
+				else {
+					cout << "F6: " << "Disabling Water" << endl;
+					this->waterEnabled = false;
+				}
+			}
+
+			if (!this->KeyDownLastFrame(SDL_SCANCODE_F7) && this->KeyDown(SDL_SCANCODE_F7)) {
+				if (!this->physicsEnabled) {
+					cout << "F7: " << "Enabling shadows" << endl;
+					this->physicsEnabled = true;
+				}
+				else {
+					cout << "F7: " << "Disabling shadows" << endl;
+					this->physicsEnabled = false;
+				}
+			}
+
+			if (!this->KeyDownLastFrame(SDL_SCANCODE_F8) && this->KeyDown(SDL_SCANCODE_F8)) {
+				if (!this->frustumCullingEnabled) {
+					cout << "F8: " << "Enabling Frustum Culling" << endl;
+					this->frustumCullingEnabled = true;
+				}
+				else {
+					cout << "F8: " << "Disabling Frustum Culling" << endl;
+					this->frustumCullingEnabled = false;
+				}
+			}
+
+			if (!this->KeyDownLastFrame(SDL_SCANCODE_F9) && this->KeyDown(SDL_SCANCODE_F9)) {
+				if (!this->blendingEnabled) {
+					cout << "F9: " << "Enabling Blending" << endl;
+					this->blendingEnabled = true;
+				}
+				else {
+					cout << "F9: " << "Disabling Blending" << endl;
+					this->blendingEnabled = false;
+				}
+			}
+
 
 			if (initComponents.size() > 0)
 			{
@@ -161,7 +285,10 @@ namespace Engine {
 				initComponents.clear();
 			}
 
-			UpdatePhysics();
+			if (this->physicsEnabled) {
+				UpdatePhysics();
+			}
+			
 			GetUpdatePass()->DoPass();
 			this->lastTime = newTime;
 
@@ -232,6 +359,41 @@ namespace Engine {
 		this->initComponents.push_back(component);
 	}
 
+	bool GameEngine::GetTextureSamplingQuality()
+	{
+		return this->textureSamplingQuality;
+	}
+
+	int GameEngine::GetMipMappingQuality()
+	{
+		return this->mipMappingQuality;
+	}
+
+	void GameEngine::SetMipMappingQuality(int x)
+	{
+		this->mipMappingQuality = x;
+	}
+
+	bool GameEngine::IsWaterEnabled()
+	{
+		return this->waterEnabled;
+	}
+
+	bool GameEngine::IsPhysicsEnabled()
+	{
+		return this->physicsEnabled;
+	}
+
+	bool GameEngine::IsCullingEnabled()
+	{
+		return this->frustumCullingEnabled;
+	}
+
+	bool GameEngine::IsBlendingEnabled()
+	{
+		return this->blendingEnabled;
+	}
+
 	bool GameEngine::IsStarted() const
 	{
 		return started;
@@ -240,6 +402,11 @@ namespace Engine {
 	bool GameEngine::KeyDown(int keyCode)
 	{
 		return this->keyStates[keyCode];
+	}
+
+	bool GameEngine::KeyDownLastFrame(int keyCode)
+	{
+		return this->keyStatesOld[keyCode];
 	}
 
 	RenderPass* GameEngine::GetRenderPass() const

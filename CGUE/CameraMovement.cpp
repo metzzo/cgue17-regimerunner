@@ -32,7 +32,7 @@ namespace Game {
 		auto pos = vec3(physicsPos.x, physicsPos.y, physicsPos.z);
 
 		if (pos != camerapos) {
-			cout << pos.x << " " << pos.y << " " << pos.z << endl;
+			//cout << pos.x << " " << pos.y << " " << pos.z << endl;
 			component->GetTransformation()->SetRelativeMatrix(translate(mat4(), pos));
 		}
 
