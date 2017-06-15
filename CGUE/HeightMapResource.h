@@ -22,15 +22,15 @@ namespace Engine {
 		int texWidth;
 		int texHeight;
 	public:
-		explicit HeightMapResource(string filename, vec3 size, int texWidth, int texHeight);
+		explicit HeightMapResource(TextureResource *resource, vec3 size, int texWidth, int texHeight);
 		~HeightMapResource();
 
 
 		void Load() override;
-		void AddTexture(TextureResource *tex, float min, float max);
+		void AddTexture(TextureResource *tex, double min, double max);
 
 		vec3 GetSize() const;
-		float GetHeightAt(int x, int z) const;
+		double GetHeightAt(int x, int z) const;
 
 		TextureResource *GetHeightMap() const;
 	};

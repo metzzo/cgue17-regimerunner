@@ -28,4 +28,9 @@ namespace Engine {
 	{
 		return filename;
 	}
+
+	void BaseResource::SetFilename(std::string filename)
+	{
+		this->filename = filename;
+	}
 }

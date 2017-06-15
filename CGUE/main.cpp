@@ -20,9 +20,74 @@
 #include "WaterSurface.h"
 #include "Player.h"
 #include "BoxGeometry.h"
+#include <iostream>
 
 using namespace Engine;
 
+void PlaceMap(Entity *child)
+{
+
+	auto chunkSize = vec3(256, 128, 256);
+	auto sandTex = new TextureResource("textures/sandtext.jpg");
+	auto grassTex = new TextureResource("textures/grasstext.jpg");
+	auto stoneTex = new TextureResource("textures/stonetext.jpg");
+
+	auto res = new TextureResource("textures/heightmap.png", false);
+	res->Load();
+	cout << "Heightmap Loaded" << endl;
+
+	auto tileWidth = res->GetWidth() / 8;
+	auto tileHeight = res->GetHeight() / 8;
+
+ 	for (auto x = 0;  x < res->GetWidth(); x += tileWidth)
+	{
+		for (auto y = 0;  y < res->GetHeight(); y += tileHeight)
+		{
+			auto tmpX = x - 2;
+			if (tmpX < 0)
+			{
+				tmpX = 0;
+			}
+			auto tmpY = y - 2;
+			if (tmpY < 0)
+			{
+				tmpY = 0;
+			}
+			auto tmpWidth = tileWidth + 2;
+			if (tmpWidth >= res->GetWidth())
+			{
+				tmpWidth = res->GetWidth() - 2;
+			}
+			auto tmpHeight = tileHeight + 2;
+			if (tmpHeight >= res->GetHeight())
+			{
+				tmpHeight = res->GetHeight() - 2;
+			}
+
+
+			auto newRes = res->CutoutTexture(tmpX, tmpY, tmpWidth, tmpHeight);
+			newRes->SetFilename("textures/tiles/tile_" + to_string(x) + "_" + to_string(y));
+
+			auto mapResource = new HeightMapResource(newRes, chunkSize, 64, 64);
+			mapResource->AddTexture(sandTex, 0, 0.3);
+			mapResource->AddTexture(grassTex, 0.15, 0.5);
+			mapResource->AddTexture(stoneTex, 0.3, 1.0);
+
+			auto map = child->CreateChild();
+			map->GetTransformation()->Translate(vec3(x / float(tileWidth)*chunkSize.x, 0, y / float(tileHeight)*chunkSize.z));
+			map->Add(new Model(mapResource));
+
+			auto rigidBody = new RigidBody();
+			rigidBody->SetStaticness(true);
+			rigidBody->SetMaterial(0.5, 0.5, 0.5);
+			rigidBody->SetDensity(10);
+			rigidBody->AddGeometry(new HeightFieldGeometry(mapResource->GetHeightMap(), chunkSize));
+			map->Add(rigidBody);
+
+		}
+	}
+}
+/*
 void PlacePalms(Entity *child, ModelResource *palmResource, HeightMapResource *map)
 {
 	auto mapSize = map->GetSize();
@@ -106,12 +171,12 @@ void PlaceHeli(
 		heightMap, 
 		player,
 		viewCamera));
-	/*
-	auto hudTest = engine->GetRootEntity()->CreateChild();
-	hudTest->GetTransformation()->Scale(vec3(1, 1, 1));
-	hudTest->GetTransformation()->Translate(vec3(500, 500, 0));
-	auto spriteResource = new SpriteResource(viewCamera);
-	hudTest->Add(new Model(spriteResource));*/
+	
+	//auto hudTest = engine->GetRootEntity()->CreateChild();
+	//hudTest->GetTransformation()->Scale(vec3(1, 1, 1));
+	//hudTest->GetTransformation()->Translate(vec3(500, 500, 0));
+	//auto spriteResource = new SpriteResource(viewCamera);
+	//hudTest->Add(new Model(spriteResource));
 
 	auto spotLight = broken ? new SpotLight(15.0f, 20.0f) : new SpotLight(80.0f, 1.0f, 1000.0f, 512, 19.0f, 20.0f);
 	spotLight->SetAmbient(vec3(0, 0, 0));
@@ -129,23 +194,18 @@ void PlaceHeli(
 	{
 		heliModel->GetTransformation()->Translate(vec3(0, 12, 0));
 	}
-}
+}*/
 
 int main(int argc, char **argv)
 {
 	auto engine = new GameEngine(1440, 800, string("CGUE"));
-	auto mapSize = vec3(512, 128, 512);
-	auto mapResource = new HeightMapResource("textures/heightmap.png", mapSize, 2048, 2048);
-	mapResource->AddTexture(new TextureResource("textures/sandtext.jpg"), 0, 0.3);
-	mapResource->AddTexture(new TextureResource("textures/grasstext.jpg"), 0.15, 0.5);
-	mapResource->AddTexture(new TextureResource("textures/stonetext.jpg"), 0.3, 1.0);
 
 	auto palmResource = new ModelResource("objects/palm/palmtree.obj");
 	auto heliResource = new ModelResource("objects/heli2/body.obj");
 	auto heliMainRotorResource = new ModelResource("objects/heli2/main_rotor.obj");
 	auto heliSideRotorResource = new ModelResource("objects/heli2/side_rotor.obj");
 
-	/*
+	///*
 	auto dirLight = new DirectionalLight();
 	auto dirLightEntity = engine->GetRootEntity()->CreateChild();
 	dirLightEntity->Add(dirLight);
@@ -158,6 +218,7 @@ int main(int argc, char **argv)
 	auto camera = new Camera(80.0f, 0.1f, 500.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
 	camera->SetHudProjectionMatrix(glm::ortho(0.0f, GLfloat(engine->GetScreenWidth()), GLfloat(engine->GetScreenHeight()), 0.0f, -1.0f, 1.0f));
 	auto player = engine->GetRootEntity()->CreateChild();
+	player->GetTransformation()->Translate(vec3(100, 200, 100));
 	auto playerComponent = new Game::Player();
 	player->Add(playerComponent);
 	player->Add(camera);
@@ -197,26 +258,16 @@ int main(int argc, char **argv)
 	player->Add(new Game::CameraMovement(spotLight,reflectionCamera, refractionCamera, playerComponent));
 
 	engine->SetMainCamera(camera);
-	camera->GetTransformation()->Translate(vec3(116.0, 60.0, 141.0));
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
 
 
-	PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(256, 185, 256), false, mapResource, playerComponent);
+	//PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(256, 185, 256), false, mapResource, playerComponent);
 	//PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(32, 185, 32), false, mapResource, playerComponent);
-	PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(60, 26, 60), true, mapResource, playerComponent);
+	//PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, vec3(60, 26, 60), true, mapResource, playerComponent);
 
-	PlacePalms(engine->GetRootEntity(), palmResource, mapResource);
-
-	auto map = engine->GetRootEntity()->CreateChild();
-	map->Add(new Model(mapResource));
-
-	auto rigidBody = new RigidBody();
-	rigidBody->SetStaticness(true);
-	rigidBody->SetMaterial(0.5, 0.5, 0.5);
-	rigidBody->SetDensity(10);
-	rigidBody->AddGeometry(new HeightFieldGeometry(mapResource->GetHeightMap(), mapSize));
-	map->Add(rigidBody);
-
+	//PlacePalms(engine->GetRootEntity(), palmResource, mapResource);
+	
+	PlaceMap(engine->GetRootEntity());
 
 	
 	//auto hudTest = engine->GetRootEntity()->CreateChild();

@@ -5,6 +5,7 @@ namespace Engine
 	BaseGeometry::BaseGeometry()
 	{
 		geometry = nullptr;
+		localPose = physx::PxTransform(PxIdentity);
 	}
 
 	BaseGeometry::~BaseGeometry()

@@ -39,7 +39,7 @@ namespace Game {
 		if (!component->broken) {
 
 			auto pos = component->GetTransformation()->GetAbsolutePosition();
-			auto cumHeight = 0.0f;
+			auto cumHeight = 0.0;
 			for (auto x = -16; x < 16; x += 4)
 			{
 				for (auto z = -16; z < 16; z += 4)

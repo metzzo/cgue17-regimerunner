@@ -5,9 +5,10 @@
 
 
 namespace Engine {
-	HeightMapResource::HeightMapResource(string filename, vec3 size, int texWidth, int texHeight) : RenderableResource(filename)
+	HeightMapResource::HeightMapResource(TextureResource *resource, vec3 size, int texWidth, int texHeight) : RenderableResource(filename)
 	{
-		this->heightMap = new TextureResource(filename);
+		this->heightMap = resource;
+		this->filename = resource->GetFileName();
 		this->mesh = nullptr;
 		this->size = size;
 		this->pixels = nullptr;
@@ -25,21 +26,21 @@ namespace Engine {
 		
 		this->pixels = static_cast<GLubyte*>(heightMap->GetPixels());
 
-		vector< vector< glm::vec3> > vertexData(heightMap->GetHeight(), vector<glm::vec3>(heightMap->GetWidth()));
+		vector< vector< glm::dvec3> > vertexData(heightMap->GetHeight(), vector<glm::dvec3>(heightMap->GetWidth()));
 		vector< vector< glm::vec2> > coordsData(heightMap->GetHeight(), vector<glm::vec2>(heightMap->GetWidth()));
 
 		for (auto y = 0; y < heightMap->GetHeight(); y++)
 		{
 			for (auto x = 0; x < heightMap->GetWidth(); x++)
 			{
-				auto scaleC = float(x) / float(heightMap->GetWidth() - 1);
-				auto scaleR = float(y) / float(heightMap->GetHeight() - 1);
+				auto scaleC = double(x) / double(heightMap->GetWidth() - 1);
+				auto scaleR = double(y) / double(heightMap->GetHeight() - 1);
 
 
 				auto pixel = pixels[heightMap->GetBytesPerPixel()*(x*heightMap->GetHeight() + y)];
-				auto height = float(pixel) / 255.0f;
+				auto height = double(pixel) / 255.0;
 
-				vertexData[y][x] = vec3(scaleC, height, scaleR);
+				vertexData[y][x] = dvec3(scaleC, height, scaleR);
 				coordsData[y][x] = vec2(1 - scaleC, 1 - scaleR);
 			}
 		}
@@ -158,10 +159,10 @@ namespace Engine {
 			{
 				for (auto y = 0;  y < texHeight; y++)
 				{
-					auto hX = int(float(x) / texWidth*heightMap->GetWidth());
-					auto hY = int(float(y) / texHeight*heightMap->GetHeight());
+					auto hX = int(double(x) / texWidth*heightMap->GetWidth());
+					auto hY = int(double(y) / texHeight*heightMap->GetHeight());
 
-					auto pixel = float(pixels[heightMap->GetBytesPerPixel()*(hX*heightMap->GetHeight() + hY)]) / 255.0f;
+					auto pixel = double(pixels[heightMap->GetBytesPerPixel()*(hX*heightMap->GetHeight() + hY)]) / 255.0f;
 
 					for (auto texIndex = 0; texIndex < this->textures.size(); texIndex++)
 					{
@@ -220,7 +221,7 @@ namespace Engine {
 		this->meshes.push_back(mesh);
 	}
 
-	void HeightMapResource::AddTexture(TextureResource* tex, float min, float max)
+	void HeightMapResource::AddTexture(TextureResource* tex, double min, double max)
 	{
 		HeightMapTexture hTex;
 		hTex.texture = tex;
@@ -234,12 +235,12 @@ namespace Engine {
 		return size;
 	}
 
-	float HeightMapResource::GetHeightAt(int x, int z) const
+	double HeightMapResource::GetHeightAt(int x, int z) const
 	{
 		if (x >= 0 && z >= 0 && x < size.x && z < size.z) {
-			auto xPos = int(float(x) / size.x * heightMap->GetWidth());
-			auto zPos = int(float(z) / size.z * heightMap->GetHeight());
-			return float(pixels[heightMap->GetBytesPerPixel()*(xPos*heightMap->GetHeight() + zPos)]) / 255.0f * size.y;
+			auto xPos = int(double(x) / size.x * heightMap->GetWidth());
+			auto zPos = int(double(z) / size.z * heightMap->GetHeight());
+			return double(pixels[heightMap->GetBytesPerPixel()*(xPos*heightMap->GetHeight() + zPos)]) / 255.0f * size.y;
 		} else
 		{
 			return -1;

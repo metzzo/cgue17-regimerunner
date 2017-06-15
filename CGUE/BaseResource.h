@@ -15,6 +15,7 @@ namespace Engine {
 		virtual void Load() = 0;
 
 		std::string& GetFileName();
+		void SetFilename(std::string filename);
 	};
 }
 
