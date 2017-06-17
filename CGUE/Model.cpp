@@ -132,7 +132,7 @@ namespace Engine {
 
 			DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), mesh->renderType));
 
-			if (component->alpha != 1.0f)
+			if (component->alpha != 1.0f && component->GetEngine()->IsBlendingEnabled())
 			{
 				glEnable(GL_BLEND);
 				glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -142,7 +142,7 @@ namespace Engine {
 			DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
 
 
-			if (component->alpha != 1.0f)
+			if (component->alpha != 1.0f && component->GetEngine()->IsBlendingEnabled())
 			{
 				glDisable(GL_BLEND);
 			}
