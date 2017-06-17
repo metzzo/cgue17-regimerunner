@@ -23,7 +23,7 @@ namespace Game {
 	{
 
 		auto component = static_cast<HelicopterBehaviour*>(this->GetComponent());
-		component->state = HelicopterMovementState(rand() % 5);
+		component->state = HelicopterMovementState(component->GetEngine()->IsHelicopterCalled() ? 0 : rand() % 5);
 		component->start = SDL_GetTicks();
 		component->duration = 2000 + rand() % 5000;
 	}
@@ -39,8 +39,8 @@ namespace Game {
 		if (!component->broken) {
 
 			auto pos = component->GetTransformation()->GetAbsolutePosition();
-			auto cumHeight = 0.0;
-			for (auto x = -16; x < 16; x += 4)
+			auto cumHeight = component->heightMap->GetHeightAt(pos.x, pos.z);
+			/*for (auto x = -16; x < 16; x += 4)
 			{
 				for (auto z = -16; z < 16; z += 4)
 				{
@@ -51,8 +51,8 @@ namespace Game {
 					}
 					cumHeight = max(cumHeight, height);
 				}
-			}
-			auto translation = vec3(0, float(cumHeight) - pos.y + 100, 0);
+			}*/
+			auto translation = vec3(0, float(cumHeight) - pos.y + 140, 0);
 			//cout << component->state << endl;
 			switch(component->state)
 			{

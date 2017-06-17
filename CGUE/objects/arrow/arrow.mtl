@@ -1,0 +1,13 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl Standard
+Ns 94.117647
+Ka 0.000000 0.000000 0.000000
+Kd 0.137255 1.000000 0.000000
+Ks 0.041961 0.028235 0.028235
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd arrowtex.png

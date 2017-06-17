@@ -9,7 +9,7 @@ namespace Engine {
 	class DepthPass : public Pass
 	{
 		Shader* shader;
-		GLuint mvpUniform;
+		GLint mvpUniform;
 	public:
 		explicit DepthPass(GameEngine *gameEngine);
 		~DepthPass();
