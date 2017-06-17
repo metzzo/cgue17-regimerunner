@@ -19,7 +19,7 @@ namespace Engine {
 		auto component = static_cast<Model*>(this->GetComponent());
 		auto cam = component->GetEngine()->GetMainCamera();
 
-		if (mesh->renderType != RT_SPRITE && component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE && component->GetEngine()->IsCullingEnabled() || 
+		if (mesh->renderType != RT_SPRITE && cam->BoxInFrustum(component->boxes[id]) == F_OUTSIDE && component->GetEngine()->IsCullingEnabled() || 
 			(mesh->renderType == RT_SPRITE && !cam->IsHudEnabled()))
 		{
 			return;
@@ -118,7 +118,6 @@ namespace Engine {
 
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));
 		DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
-		DEBUG_OGL(glBindVertexArray(0));
 
 		if (mesh->restartIndex != -1)
 		{
@@ -132,7 +131,7 @@ namespace Engine {
 	{
 		auto component = static_cast<Model*>(this->GetComponent());
 
-		if (component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE)
+		if (component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE && component->GetEngine()->IsCullingEnabled())
 		{
 			return;
 		}
@@ -149,7 +148,6 @@ namespace Engine {
 
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));
 		DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
-		DEBUG_OGL(glBindVertexArray(0));
 
 		if (mesh->restartIndex != -1)
 		{

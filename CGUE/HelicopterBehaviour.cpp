@@ -23,7 +23,7 @@ namespace Game {
 	{
 
 		auto component = static_cast<HelicopterBehaviour*>(this->GetComponent());
-		component->state = HelicopterMovementState(rand() % 5);
+		component->state = HelicopterMovementState(rand() % 5 > 2 ? 0 : rand() % 5);
 		component->start = SDL_GetTicks();
 		component->duration = 2000 + rand() % 5000;
 	}

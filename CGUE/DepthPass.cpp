@@ -37,6 +37,7 @@ namespace Engine {
 
 		glCullFace(GL_BACK);
 
+		DEBUG_OGL(glBindVertexArray(0));
 		//glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 
