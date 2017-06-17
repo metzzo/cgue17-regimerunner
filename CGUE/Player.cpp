@@ -6,6 +6,12 @@
 #include "Entity.h"
 #include "RigidBody.h"
 #include "WoodInteraction.h"
+#include "SpriteResource.h"
+#include "Model.h"
+#include "TextureResource.h"
+#include "ModelResource.h"
+
+using namespace Engine;
 
 namespace Game {
 	const Player PlayerClass;
@@ -15,6 +21,33 @@ namespace Game {
 		auto component = static_cast<Player*>(this->GetComponent());
 
 		component->blood -= component->GetEngine()->GetDeltaTime()*0.00005f;
+
+		if (component->hasEnoughWoodGathered() == true) {
+			if (component->displayedScreen() == false) {
+				component->win();
+				auto hudTest = component->GetEngine()->GetRootEntity()->CreateChild();
+				hudTest->GetTransformation()->Translate(vec3(component->GetEngine()->GetMainCamera()->GetWidth() / 2, component->GetEngine()->GetMainCamera()->GetHeight() / 2, 0));
+				auto spriteResource = new SpriteResource(new TextureResource("textures/win.jpg"));
+				hudTest->Add(new Model(spriteResource));
+			}
+		}
+
+		if (component->blood > 0.3) {
+			if (component->displayedScreen() == false) {
+				component->lose();
+				auto hudTest = component->GetEngine()->GetRootEntity()->CreateChild();
+				hudTest->GetTransformation()->Translate(vec3(component->GetEngine()->GetMainCamera()->GetWidth()/2, component->GetEngine()->GetMainCamera()->GetHeight()/2, 0));
+				auto spriteResource = new SpriteResource(new TextureResource("textures/lost.jpg"));
+				hudTest->Add(new Model(spriteResource));
+			}
+		}
+
+		/*
+		if(player -> enough wood) {
+		
+		}		
+		*/
+
 		if (component->blood < 0)
 		{
 			component->blood = 0.0f;
@@ -27,6 +60,12 @@ namespace Game {
 	{
 		this->blood = 0.0f;
 		this->wood = nullptr;
+		this->won = false;
+		this->lost = false;
+		this->gatheredWood = 0;
+		// are set to true to prevent adding numerous winning and lost screens
+		this->displayedLostScreen = false;
+		this->displayedWinScreen = false;
 	}
 
 
@@ -87,5 +126,37 @@ namespace Game {
 		}
 
 		GetEngine()->GetRenderPass()->SetBlood(blood);
+	}
+
+	void Player::lose() {
+		this->lost = true;
+		this->displayedLostScreen = true;
+	}
+
+	void Player::win() {
+		this->won = true;
+		this->displayedWinScreen = true;
+	}
+
+	bool Player::hasLost() {
+		return this->lost;
+	}
+
+	bool Player::hasWon() {
+		return this->won;
+	}
+
+	bool Player::displayedScreen() {
+		if (this->displayedLostScreen || this->displayedWinScreen) return true;
+		return false;
+	}
+
+	void Player::increaseGatheredWood() {
+		this->gatheredWood++;
+	}
+
+	bool Player::hasEnoughWoodGathered() {
+		if (this->gatheredWood > 7) return true;
+		return false;
 	}
 }

@@ -5,6 +5,11 @@
 #include "Operation.h"
 #include <PxActor.h>
 #include "CameraMovement.h"
+#include "SpriteResource.h"
+#include "Model.h"
+#include "TextureResource.h"
+#include "ModelResource.h"
+
 
 namespace Game {
 	class WoodInteraction;
@@ -26,6 +31,11 @@ namespace Game {
 		friend PlayerOperation;
 
 		double blood;
+		bool lost;
+		bool displayedLostScreen;
+		bool won;
+		bool displayedWinScreen;
+		int gatheredWood;
 		CameraMovement *cameraMovement;
 		WoodInteraction *wood;
 	public:
@@ -42,6 +52,16 @@ namespace Game {
 		void Init() override;
 		void Wire() override;
 		void HelicopterHit();
+
+
+		void lose();
+		void win();
+		bool hasLost();
+		bool hasWon();
+		bool displayedScreen();
+		bool hasEnoughWoodGathered();
+		void increaseGatheredWood();
+
 	};
 	extern const Player PlayerClass;
 }
