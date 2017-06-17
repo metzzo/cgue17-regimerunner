@@ -22,6 +22,7 @@
 #include "BoxGeometry.h"
 #include <iostream>
 #include <map>
+#include "CollectingPlaceBehaviour.h"
 
 using namespace Engine;
 
@@ -103,15 +104,6 @@ void PlaceHeli(
 	HeightMapResource *heightMap,
 	Game::Player *player)
 {
-	auto engine = child->GetEngine();
-
-	std::random_device rd;
-	std::mt19937 eng(rd());
-	uniform_int_distribution<> distr(1, 600);
-
-	auto x = distr(eng)*1.0f;
-	auto z = distr(eng)*1.0f;
-
 	auto heli = child->CreateChild();
 	auto heliModel = heli->CreateChild();
 
@@ -183,6 +175,24 @@ void PlaceHeli(
 	}
 }
 
+void PlaceCollectingPlace(
+	Entity* entity, 
+	ModelResource* collectingPlaceResource, 
+	vec3 pos, 
+	HeightMapResource* mapResource,
+	Game::Player* player)
+{
+	auto model = new Model(collectingPlaceResource);
+	model->SetAlpha(0.25);
+
+	auto place = entity->CreateChild();
+	place->Add(model);
+	place->GetTransformation()->Translate(pos + vec3(0,10, 0));
+	place->GetTransformation()->Scale(vec3(10, 10, 10));
+	place->Add(new Game::CollectingPlaceBehaviour(player));
+
+}
+
 int main(int argc, char **argv)
 {
 	auto engine = new GameEngine(1440, 800, string("Regime Runner"));
@@ -191,6 +201,7 @@ int main(int argc, char **argv)
 	auto heliResource = new ModelResource("objects/heli2/body.obj");
 	auto heliMainRotorResource = new ModelResource("objects/heli2/main_rotor.obj");
 	auto heliSideRotorResource = new ModelResource("objects/heli2/side_rotor.obj");
+	auto collectingPlaceResource = new ModelResource("objects/arrow/arrow.obj");
 
 	///*
 	auto dirLight = new DirectionalLight();
@@ -291,6 +302,9 @@ int main(int argc, char **argv)
 			{
 				// normal heli
 				PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, pos, false, mapResource, playerComponent);
+			} else if (r == 0 && g ==255 && b == 255)
+			{
+				PlaceCollectingPlace(engine->GetRootEntity(), collectingPlaceResource, pos, mapResource, playerComponent);
 			} else
 			{
 				RaiseEngineError("Unknown object placed");

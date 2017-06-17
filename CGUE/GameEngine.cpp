@@ -85,7 +85,7 @@ namespace Engine {
 		this->wireFrameEnabled = false;
 		this->textureSamplingQuality = true;
 		this->waterEnabled = true;
-		this->shadowsEnabled = true;
+		this->callHelicopter = false;
 		this->frustumCullingEnabled = true;
 		this->switchMipMappingQuality = false;
 		this->switchTextureSamplingQuality = false;
@@ -183,7 +183,7 @@ namespace Engine {
 				cout << "F4: " << "Texture Sampling quality " << endl;
 				cout << "F5: " << "Mip mapping quality" << endl;
 				cout << "F6: " << "Enable/Disable water" << endl;
-				cout << "F7: " << "Enable/Disable shadows" << endl;
+				cout << "F7: " << "Call/Uncall Helicopter" << endl;
 				cout << "F8: " << "Enable/Disable view frustum culling " << endl;
 				cout << "F9: " << "Enable/Disable blending" << endl;
 				this->keyStatesOld[SDL_SCANCODE_F1] = false;
@@ -256,14 +256,14 @@ namespace Engine {
 			}
 
 			if (this->KeyDownLastFrame(SDL_SCANCODE_F7)) {
-				if (!this->shadowsEnabled) {
-					cout << "F7: " << "Enabling shadows" << endl;
-					this->shadowsEnabled = true;
+				if (!this->callHelicopter) {
+					cout << "F7: " << "Call Helicopter" << endl;
+					this->callHelicopter = true;
 					this->keyStatesOld[SDL_SCANCODE_F7] = false;
 				}
 				else {
-					cout << "F7: " << "Disabling shadows" << endl;
-					this->shadowsEnabled = false;
+					cout << "F7: " << "Uncall Helicopter" << endl;
+					this->callHelicopter = false;
 					this->keyStatesOld[SDL_SCANCODE_F7] = false;
 				}
 			}
@@ -285,14 +285,10 @@ namespace Engine {
 				if (!this->blendingEnabled) {
 					cout << "F9: " << "Enabling Blending" << endl;
 					this->blendingEnabled = true;
-					glEnable(GL_BLEND);
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 					this->keyStatesOld[SDL_SCANCODE_F9] = false;
 				}
 				else {
 					cout << "F9: " << "Disabling Blending" << endl;
-					glDisable(GL_BLEND);
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 					this->blendingEnabled = false;
 					this->keyStatesOld[SDL_SCANCODE_F9] = false;
 				}
@@ -385,12 +381,12 @@ namespace Engine {
 		this->initComponents.push_back(component);
 	}
 
-	bool GameEngine::GetTextureSamplingQuality()
+	bool GameEngine::GetTextureSamplingQuality() const
 	{
 		return this->textureSamplingQuality;
 	}
 
-	int GameEngine::GetMipMappingQuality()
+	int GameEngine::GetMipMappingQuality() const
 	{
 		return this->mipMappingQuality;
 	}
@@ -400,22 +396,22 @@ namespace Engine {
 		this->mipMappingQuality = x;
 	}
 
-	bool GameEngine::IsWaterEnabled()
+	bool GameEngine::IsWaterEnabled() const
 	{
 		return this->waterEnabled;
 	}
 
-	bool GameEngine::IsShadowsEnabled()
+	bool GameEngine::IsHelicopterCalled() const
 	{
-		return this->shadowsEnabled;
+		return this->callHelicopter;
 	}
 
-	bool GameEngine::IsCullingEnabled()
+	bool GameEngine::IsCullingEnabled() const
 	{
 		return this->frustumCullingEnabled;
 	}
 
-	bool GameEngine::IsBlendingEnabled()
+	bool GameEngine::IsBlendingEnabled() const
 	{
 		return this->blendingEnabled;
 	}

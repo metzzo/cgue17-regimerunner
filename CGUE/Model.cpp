@@ -19,7 +19,8 @@ namespace Engine {
 		auto component = static_cast<Model*>(this->GetComponent());
 		auto cam = component->GetEngine()->GetMainCamera();
 
-		if (mesh->renderType != RT_SPRITE && component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE && component->GetEngine()->IsCullingEnabled() || 
+		if (!component->cullingEnabled ||
+			(mesh->renderType != RT_SPRITE && cam->BoxInFrustum(component->boxes[id]) == F_OUTSIDE && component->GetEngine()->IsCullingEnabled()) ||
 			(mesh->renderType == RT_SPRITE && !cam->IsHudEnabled()))
 		{
 			return;
@@ -28,11 +29,12 @@ namespace Engine {
 		auto pass = static_cast<RenderPass*>(this->GetPass());
 
 		pass->SetDrawingTransform(component->GetTransformation());
-		
+
 		auto currentTexture = pass->GetNumShadowMaps();
 		glActiveTexture(GL_TEXTURE0 + currentTexture);
 		glUniform1i(pass->GetDiffuseUniform(0), currentTexture);
 		glBindTexture(GL_TEXTURE_2D, mesh->diffuseTexture[0]->GetTextureId());
+
 
 		if (component->GetEngine()->TextureSamplingSwitched() == true) {
 			if (component->GetEngine()->GetTextureSamplingQuality()) {
@@ -43,7 +45,6 @@ namespace Engine {
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			}
-			//component->GetEngine()->DoSwitchTextureSamplingQuality();
 		}
 
 		if (component->GetEngine()->MipMappingSwitched() == true) {
@@ -67,78 +68,84 @@ namespace Engine {
 			else if (component->GetEngine()->GetMipMappingQuality() == 4) {
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 			}
-
-			//component->GetEngine()->DoSwitchMipMappingQuality();
 		}
 
 
-		if (mesh->specularTexture.size() == 1)
-		{
-			currentTexture++;
-			glActiveTexture(GL_TEXTURE0 + currentTexture);
-			glUniform1i(pass->GetSpecularUniform(0), currentTexture);
-			glBindTexture(GL_TEXTURE_2D, mesh->specularTexture[0]->GetTextureId());
+			if (mesh->specularTexture.size() == 1)
+			{
+				currentTexture++;
+				glActiveTexture(GL_TEXTURE0 + currentTexture);
+				glUniform1i(pass->GetSpecularUniform(0), currentTexture);
+				glBindTexture(GL_TEXTURE_2D, mesh->specularTexture[0]->GetTextureId());
 
-			if (component->GetEngine()->TextureSamplingSwitched() == true) {
-				if (component->GetEngine()->GetTextureSamplingQuality()) {
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				if (component->GetEngine()->TextureSamplingSwitched() == true) {
+					if (component->GetEngine()->GetTextureSamplingQuality()) {
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+					}
+					else {
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+					}
 				}
-				else {
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+				if (component->GetEngine()->MipMappingSwitched() == true) {
+					if (component->GetEngine()->GetMipMappingQuality() == 0) {
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+					}
+
+					else if (component->GetEngine()->GetMipMappingQuality() == 1) {
+						glGenerateMipmap(GL_TEXTURE_2D);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+					}
+
+					else if (component->GetEngine()->GetMipMappingQuality() == 2) {
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+					}
+
+					else if (component->GetEngine()->GetMipMappingQuality() == 3) {
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+					}
+
+					else if (component->GetEngine()->GetMipMappingQuality() == 4) {
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+					}
 				}
-				//component->GetEngine()->DoSwitchTextureSamplingQuality();
 			}
 
-			if (component->GetEngine()->MipMappingSwitched() == true) {
-				if (component->GetEngine()->GetMipMappingQuality() == 0) {
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				}
-
-				else if (component->GetEngine()->GetMipMappingQuality() == 1) {
-					glGenerateMipmap(GL_TEXTURE_2D);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-				}
-
-				else if (component->GetEngine()->GetMipMappingQuality() == 2) {
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-				}
-
-				else if (component->GetEngine()->GetMipMappingQuality() == 3) {
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-				}
-
-				else if (component->GetEngine()->GetMipMappingQuality() == 4) {
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-				}
-
-				//component->GetEngine()->DoSwitchMipMappingQuality();
+			else {
+				glUniform1i(pass->GetSpecularUniform(0), currentTexture);
 			}
 
+			if (mesh->restartIndex != -1)
+			{
+				DEBUG_OGL(glEnable(GL_PRIMITIVE_RESTART));
+				DEBUG_OGL(glPrimitiveRestartIndex(mesh->restartIndex));
+			}
 
-		} else
-		{
-			glUniform1i(pass->GetSpecularUniform(0), currentTexture);
+			DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), mesh->renderType));
+
+			if (component->alpha != 1.0f)
+			{
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			}
+
+			DEBUG_OGL(glBindVertexArray(mesh->VAO));
+			DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
+
+
+			if (component->alpha != 1.0f)
+			{
+				glDisable(GL_BLEND);
+			}
+
+			if (mesh->restartIndex != -1)
+			{
+				DEBUG_OGL(glDisable(GL_PRIMITIVE_RESTART));
+			}
 		}
-
-		if (mesh->restartIndex != -1)
-		{
-			DEBUG_OGL(glEnable(GL_PRIMITIVE_RESTART));
-			DEBUG_OGL(glPrimitiveRestartIndex(mesh->restartIndex));
-		}
-
-		DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), mesh->renderType));
-
-		DEBUG_OGL(glBindVertexArray(mesh->VAO));
-		DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
-		DEBUG_OGL(glBindVertexArray(0));
-
-		if (mesh->restartIndex != -1)
-		{
-			DEBUG_OGL(glDisable(GL_PRIMITIVE_RESTART));
-		}
-	}
+	
 
 
 
@@ -146,7 +153,9 @@ namespace Engine {
 	{
 		auto component = static_cast<Model*>(this->GetComponent());
 
-		if (component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE)
+		if (!component->cullingEnabled || 
+			component->alpha != 1.0f ||
+			(component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE && component->GetEngine()->IsCullingEnabled()))
 		{
 			return;
 		}
@@ -163,7 +172,6 @@ namespace Engine {
 
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));
 		DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
-		DEBUG_OGL(glBindVertexArray(0));
 
 		if (mesh->restartIndex != -1)
 		{
@@ -190,6 +198,11 @@ namespace Engine {
 
 			i++;
 		}
+	}
+
+	void Model::SetAlpha(float alpha)
+	{
+		this->alpha = alpha;
 	}
 
 	void Model::Init()
@@ -222,23 +235,34 @@ namespace Engine {
 	Model::Model()
 	{
 		this->resource = nullptr;
+
 		this->skyBox = false;
 	}
 
 	Model::Model(RenderableResource* resource,bool skybox) {
 		this->resource = resource;
 		this->skyBox = true;
+		this->cullingEnabled = true;
+		this->alpha = 1.0f;
+
 	}
 
 	Model::Model(RenderableResource* resource)
 	{
 		this->resource = resource;
 		this->skyBox = false;
+		this->cullingEnabled = true;
+		this->alpha = 1.0f;
 	}
 
 	Model::~Model()
 	{
 
+	}
+
+	void Model::SetCullingEnabled(bool cullingEnabled)
+	{
+		this->cullingEnabled = cullingEnabled;
 	}
 
 	RenderableResource* Model::GetResource() const

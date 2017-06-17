@@ -50,17 +50,22 @@ namespace Engine {
 		bool skyBox;
 		RenderableResource* resource;
 		std::vector<AABox> boxes;
+		bool cullingEnabled;
+		float alpha;
 	public:
 		Model();
 		explicit Model(RenderableResource *resource);
 		Model(RenderableResource *resource,bool isSkyBox);
 		~Model();
 
+		void SetCullingEnabled(bool cullingEnabled);
+
 		RenderableResource *GetResource() const;
 
 		void Init() override;
 		void Wire() override;
 		void TransformationUpdated() override;
+		void SetAlpha(float alpha);
 	};
 
 	extern const Model ModelClass;

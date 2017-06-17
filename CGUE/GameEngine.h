@@ -75,7 +75,7 @@ namespace Engine {
 		bool textureSamplingQuality;
 		int mipMappingQuality;
 		bool waterEnabled;
-		bool shadowsEnabled;
+		bool callHelicopter;
 		bool frustumCullingEnabled;
 		bool switchTextureSamplingQuality;
 		bool switchMipMappingQuality;
@@ -118,13 +118,14 @@ namespace Engine {
 		PxControllerManager *GetControllerManager() const;
 		void AddInitComponent(Component* component);
 
-		bool GetTextureSamplingQuality();
-		int GetMipMappingQuality();
+		bool GetTextureSamplingQuality() const;
+		int GetMipMappingQuality() const;
 		void SetMipMappingQuality(int x);
-		bool IsWaterEnabled();
-		bool IsShadowsEnabled();
-		bool IsCullingEnabled();
-		bool IsBlendingEnabled();
+
+		bool IsWaterEnabled() const;
+		bool IsHelicopterCalled() const;
+		bool IsCullingEnabled() const;
+		bool IsBlendingEnabled() const;
 		bool MipMappingSwitched();
 		bool TextureSamplingSwitched();
 		void DoSwitchMipMappingQuality();
