@@ -23,6 +23,7 @@ namespace Engine {
 			auto pos = component->GetTransformation()->GetAbsolutePosition();
 			component->viewMatrix = lookAt(pos, component->lookAtVector, component->upVector);
 			component->frustumChanged = true;
+			component->updatedTransformation = false;
 		}
 
 		auto oldMainCamera = component->GetEngine()->GetMainCamera();
@@ -83,6 +84,13 @@ namespace Engine {
 		this->hudEnabled = true;
 		this->clippingEnabled = false;
 		this->cameraMode = CM_NORMAL; 
+		this->depthTexture = -1;
+		this->depthBuffer = -1;
+		this->isRefraction = false;
+		this->isReflection = false;
+		this->updatedTransformation = false;
+
+
 
 		auto tang = float(tan(0.5*radians(fov)));
 		nh = near*tang;

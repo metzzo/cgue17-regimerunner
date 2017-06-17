@@ -3,13 +3,14 @@
 #include "HeightMapResource.h"
 #include "RigidBody.h"
 #include "Player.h"
+#include "Model.h"
 
 namespace Game {
 
-	class PalmInteractionOperation : public Engine::Operation {
+	class WoodInteractionOperation : public Engine::Operation {
 		physx::PxDistanceJoint* joint;
 	public:
-		explicit PalmInteractionOperation(Engine::Component* component) : Operation(component) {
+		explicit WoodInteractionOperation(Engine::Component* component) : Operation(component) {
 			this->joint = nullptr;
 		}
 
@@ -17,15 +18,16 @@ namespace Game {
 
 	};
 
-	class PalmInteraction : public Engine::Component {
-		friend PalmInteractionOperation;
+	class WoodInteraction : public Engine::Component {
+		friend WoodInteractionOperation;
 
 		Engine::RigidBody *rigidBody;
 		Player* player;
+		Engine::Model *model;
 	public:
 		void Init() override;
 		void Wire() override;
-		explicit PalmInteraction(Player *player);
+		explicit WoodInteraction(Player *player);
 	};
 
 }

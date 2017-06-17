@@ -108,9 +108,6 @@
     <ClCompile Include="CameraMovement.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="PalmInteraction.cpp">
-      <Filter>Source Files\Game</Filter>
-    </ClCompile>
     <ClCompile Include="HelicopterBehaviour.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
@@ -154,6 +151,9 @@
       <Filter>Source Files\Engine\Geometry</Filter>
     </ClCompile>
     <ClCompile Include="CollectingPlaceBehaviour.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="WoodInteraction.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
   </ItemGroup>
@@ -209,9 +209,6 @@
     <ClInclude Include="CameraMovement.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="PalmInteraction.h">
-      <Filter>Header Files\Game</Filter>
-    </ClInclude>
     <ClInclude Include="HelicopterBehaviour.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
@@ -261,6 +258,9 @@
       <Filter>Header Files\Game</Filter>
     </ClInclude>
     <ClInclude Include="CollectingPlaceBehaviour.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="WoodInteraction.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
   </ItemGroup>

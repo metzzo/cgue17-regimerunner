@@ -19,9 +19,16 @@ namespace Engine {
 		auto component = static_cast<Model*>(this->GetComponent());
 		auto cam = component->GetEngine()->GetMainCamera();
 
-		if (!component->cullingEnabled || 
-			(mesh->renderType != RT_SPRITE && cam->BoxInFrustum(component->boxes[id]) == F_OUTSIDE && component->GetEngine()->IsCullingEnabled()) || 
-			(mesh->renderType == RT_SPRITE && !cam->IsHudEnabled()))
+		if (
+			(
+				component->cullingEnabled &&
+				mesh->renderType != RT_SPRITE && 
+				cam->BoxInFrustum(component->boxes[id]) == F_OUTSIDE && 
+				component->GetEngine()->IsCullingEnabled()
+			) || 
+			(
+				mesh->renderType == RT_SPRITE && !cam->IsHudEnabled()
+			))
 		{
 			return;
 		}
@@ -144,9 +151,13 @@ namespace Engine {
 	{
 		auto component = static_cast<Model*>(this->GetComponent());
 
-		if (!component->cullingEnabled || 
+		if (
 			component->alpha != 1.0f ||
-			(component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE && component->GetEngine()->IsCullingEnabled()))
+			(
+				component->cullingEnabled && 
+				component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE && 
+				component->GetEngine()->IsCullingEnabled()
+			))
 		{
 			return;
 		}

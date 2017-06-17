@@ -6,11 +6,9 @@
 #include <PxActor.h>
 #include "CameraMovement.h"
 
-namespace Engine {
-	class RigidBody;
-}
-
 namespace Game {
+	class WoodInteraction;
+
 	class PlayerOperation : public Engine::Operation
 	{
 
@@ -29,13 +27,17 @@ namespace Game {
 
 		double blood;
 		CameraMovement *cameraMovement;
+		WoodInteraction *wood;
 	public:
 		Player();
 		~Player();
 		Engine::AABox GetAABB() const;
 		physx::PxActor *GetActor() const;
+		WoodInteraction *GetWood() const;
 		static physx::PxF32 GetHeight();
 		static physx::PxF32 GetRadius();
+
+		void SetWood(WoodInteraction *wood);
 
 		void Init() override;
 		void Wire() override;

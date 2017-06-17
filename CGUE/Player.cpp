@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Entity.h"
 #include "RigidBody.h"
+#include "WoodInteraction.h"
 
 namespace Game {
 	const Player PlayerClass;
@@ -25,6 +26,7 @@ namespace Game {
 	Player::Player()
 	{
 		this->blood = 0.0f;
+		this->wood = nullptr;
 	}
 
 
@@ -44,6 +46,11 @@ namespace Game {
 		return cameraMovement->GetController()->getActor();
 	}
 
+	WoodInteraction* Player::GetWood() const
+	{
+		return this->wood;
+	}
+
 	physx::PxF32 Player::GetHeight()
 	{
 		return 8.0f;
@@ -52,6 +59,11 @@ namespace Game {
 	physx::PxF32 Player::GetRadius()
 	{
 		return 1.0f;
+	}
+
+	void Player::SetWood(WoodInteraction* wood)
+	{
+		this->wood = wood;
 	}
 
 	void Player::Init()

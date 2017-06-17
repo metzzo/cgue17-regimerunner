@@ -158,7 +158,7 @@
     <ClCompile Include="TextureResource.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transformation.cpp" />
-    <ClCompile Include="PalmInteraction.cpp" />
+    <ClCompile Include="WoodInteraction.cpp" />
     <ClCompile Include="WaterSurface.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -197,7 +197,7 @@
     <ClInclude Include="TextureResource.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Transformation.h" />
-    <ClInclude Include="PalmInteraction.h" />
+    <ClInclude Include="WoodInteraction.h" />
     <ClInclude Include="WaterSurface.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

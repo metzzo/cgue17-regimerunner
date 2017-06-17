@@ -11,7 +11,7 @@
 #include "ModelResource.h"
 #include "CapsuleGeometry.h"
 #include "HeightFieldGeometry.h"
-#include "PalmInteraction.h"
+#include "WoodInteraction.h"
 #include <random>
 #include "HelicopterBehaviour.h"
 #include "HeightMapResource.h"
@@ -70,7 +70,6 @@ void PlacePalm(Entity *child, vec3 pos, ModelResource *palmResource, HeightMapRe
 {
 	auto palm = child->CreateChild();
 	palm->Add(new Model(palmResource));
-	palm->Add(new Game::PalmInteraction(player));
 	palm->GetTransformation()->Translate(pos);
 
 	auto trunk = new Engine::CapsuleGeometry(4, 30);
@@ -193,6 +192,43 @@ void PlaceCollectingPlace(
 
 }
 
+void PlaceStone(Entity* entity, ModelResource* stone_resource, const vec3& pos)
+{
+	auto stone = entity->CreateChild();
+	stone->Add(new Model(stone_resource));
+	stone->GetTransformation()->Translate(pos);
+	stone->GetTransformation()->Rotate(rand() % 360, vec3(0,1,0));
+	auto s = 5 + 10.0f/(1 + rand() % 10);
+	stone->GetTransformation()->Scale(vec3(s, s, s));
+}
+
+void PlaceWood(Entity* entity, ModelResource* woodResource, Game::Player *player, const vec3& pos)
+{
+	auto wood = entity->CreateChild();
+	wood->Add(new Model(woodResource));
+	wood->GetTransformation()->Translate(pos);
+	wood->GetTransformation()->Rotate(90, vec3(0, 1, 0));
+
+
+	auto box = new Engine::BoxGeometry(vec3(100, 6, 6));
+	auto transform = physx::PxTransform();
+	transform.q = PxQuat(PxIdentity);
+	transform.p = PxVec3(0, 0, 0);
+	box->SetLocalPose(transform);
+
+	auto rigidBody = new Engine::RigidBody();
+	rigidBody->AddGeometry(box);
+	rigidBody->SetStaticness(true);
+	rigidBody->SetDensity(50);
+	rigidBody->SetMaterial(0.5, 0.5, 0.5);
+	wood->Add(rigidBody);
+
+
+	wood->Add(new Game::WoodInteraction(player));
+}
+
+
+
 int main(int argc, char **argv)
 {
 	auto engine = new GameEngine(1440, 800, string("Regime Runner"));
@@ -202,6 +238,8 @@ int main(int argc, char **argv)
 	auto heliMainRotorResource = new ModelResource("objects/heli2/main_rotor.obj");
 	auto heliSideRotorResource = new ModelResource("objects/heli2/side_rotor.obj");
 	auto collectingPlaceResource = new ModelResource("objects/arrow/arrow.obj");
+	auto stoneResource = new ModelResource("objects/rock/rock.obj");
+	auto woodResource = new ModelResource("objects/wood/wood.obj");
 
 	///*
 	auto dirLight = new DirectionalLight();
@@ -299,6 +337,12 @@ int main(int argc, char **argv)
 			} else if (r == 0 && g ==255 && b == 255)
 			{
 				PlaceCollectingPlace(engine->GetRootEntity(), collectingPlaceResource, pos, mapResource, playerComponent);
+			} else if (r == 255 && g == 0 && b == 255)
+			{
+				PlaceStone(engine->GetRootEntity(), stoneResource, pos);
+			} else if (r == 255 && g == 255 && b == 255)
+			{
+				PlaceWood(engine->GetRootEntity(), woodResource, playerComponent, pos);
 			} else
 			{
 				RaiseEngineError("Unknown object placed");

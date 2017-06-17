@@ -39,7 +39,7 @@ namespace Engine {
 		DEBUG_OGL(glUniform1i(pass->GetWaterNormalMapUniform(), MAX_NUM_SHADOW_MAPS));
 		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, component->GetNormalMap()->GetTextureId()));
 
-		if (component->GetEngine()->GetMipMappingQuality() == 0) {
+		/*if (component->GetEngine()->GetMipMappingQuality() == 0) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		}
 
@@ -67,13 +67,13 @@ namespace Engine {
 
 		if (component->GetEngine()->GetMipMappingQuality() == 4) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		}
+		}*/
 
 		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + MAX_NUM_SHADOW_MAPS + 1));
 		DEBUG_OGL(glUniform1i(pass->GetWaterUVDVMapUniform(), MAX_NUM_SHADOW_MAPS + 1));
 		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, component->GetDuDv()->GetTextureId()));
 
-		if (component->GetEngine()->GetMipMappingQuality() == 0) {
+		/*if (component->GetEngine()->GetMipMappingQuality() == 0) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		}
 
@@ -101,11 +101,10 @@ namespace Engine {
 
 		if (component->GetEngine()->GetMipMappingQuality() == 4) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		}
+		}*/
 
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));
 		DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
-		DEBUG_OGL(glBindVertexArray(0));
 
 		float texOffset = component->getTexAlpha();
 		float waveOffset = component->getWaveAlpha();
