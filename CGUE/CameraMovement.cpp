@@ -77,6 +77,8 @@ namespace Game {
 				cameraFront * static_cast<float>(keyUp - keyDown) +
 				glm::normalize(glm::cross(cameraFront, cam->GetUpVector())) * static_cast<float>(keyRight - keyLeft)
 			);
+
+			//component->skybox->GetTransformation()->Translate(vec3(direction.x, direction.y, direction.z));
 		}
 
 		if (keySpace && !jumpPress)
@@ -112,7 +114,7 @@ namespace Game {
 		GetEngine()->GetUpdatePass()->AddOperation(new CameraMovementOperation(this));
 	}
 
-	CameraMovement::CameraMovement(Engine::SpotLight* spotLight, Engine::Camera* reflectionCamera, Engine::Camera *refractionCamera, Player *player) : Component()
+	CameraMovement::CameraMovement(Engine::SpotLight* spotLight, Engine::Camera* reflectionCamera, Engine::Camera *refractionCamera, Player *player, Engine::Entity *skybox) : Component()
 	{
 		this->spotLight = spotLight;
 		this->controller = nullptr;
@@ -120,6 +122,7 @@ namespace Game {
 		this->reflectionCamera = reflectionCamera;
 		this->refractionCamera = refractionCamera;
 		this->player = player;
+		this->skybox = skybox;
 	}
 
 	CameraMovement::CameraMovement()

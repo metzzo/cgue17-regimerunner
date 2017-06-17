@@ -47,7 +47,7 @@ namespace Engine {
 	{
 		friend MeshRenderOperation;
 		friend DepthRenderOperation;
-
+		bool skyBox;
 		RenderableResource* resource;
 		std::vector<AABox> boxes;
 		bool cullingEnabled;
@@ -55,6 +55,7 @@ namespace Engine {
 	public:
 		Model();
 		explicit Model(RenderableResource *resource);
+		Model(RenderableResource *resource,bool isSkyBox);
 		~Model();
 
 		void SetCullingEnabled(bool cullingEnabled);

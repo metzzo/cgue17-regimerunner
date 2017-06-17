@@ -4,6 +4,7 @@ out vec4 FragColor;
 #define RT_MESH 0
 #define RT_HUD 1
 #define RT_WATER 2
+#define RT_SKYBOX 3
 uniform int renderType;
 uniform float blood;
 
@@ -304,6 +305,13 @@ vec3 renderWater() {
 	return outgoing;
 }
 
+vec3 renderSkyBox() {
+
+	vec3 ambient = vec3(texture(material.diffuse, fs_in.TexCoords));
+	
+	return ambient;
+}
+
 void main()
 {    
     // properties    
@@ -318,6 +326,9 @@ void main()
 			break;
 		case RT_WATER:
 			result = renderWater();
+			break;
+		case RT_SKYBOX:
+			result = renderSkyBox();
 			break;
 		default:
 			result = vec3(0,1,0);

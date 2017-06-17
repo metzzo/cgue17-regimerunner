@@ -1,0 +1,48 @@
+﻿
+newmtl Material~0
+Kd 0 0 0
+Ka 0 0 0 
+Ks 0 0 0 
+d 1
+
+newmtl skybox_foresthills_back
+Kd 0 0 0
+Ka 0 0 0 
+Ks 0 0 0 
+d 1
+map_Kd sky1.jpg
+
+newmtl skybox_foresthills_bottom
+Kd 0 0 0
+Ka 0 0 0 
+Ks 0 0 0  
+d 1
+map_Kd sky1.jpg
+
+newmtl skybox_foresthills_front
+Kd 0 0 0
+Ka 0 0 0 
+Ks 0 0 0 
+d 1
+map_Kd sky1.jpg
+
+newmtl skybox_foresthills_top
+Kd 0 0 0
+Ka 0 0 0 
+Ks 0 0 0  
+d 1
+map_Kd sky1.jpg
+
+newmtl skybox_foresthills_left
+Kd 0 0 0
+Ka 0 0 0 
+Ks 0 0 0 
+d 1
+map_Kd sky1.jpg
+
+newmtl skybox_foresthills_right
+Kd 0 0 0
+Ka 0 0 0 
+Ks 0 0 0 
+d 1
+map_Kd sky1.jpg

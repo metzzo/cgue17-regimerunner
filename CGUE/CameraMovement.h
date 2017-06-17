@@ -3,6 +3,7 @@
 #include "PxPhysicsAPI.h"
 #include "SpotLight.h"
 #include "Camera.h"
+#include "Entity.h"
 
 using namespace physx;
 
@@ -38,9 +39,10 @@ namespace Game {
 		Engine::Camera *reflectionCamera;
 		Engine::Camera *refractionCamera;
 		Engine::SpotLight* spotLight;
+		Engine::Entity *skybox;
 		Player *player;
 	public:
-		explicit CameraMovement(Engine::SpotLight *spotLight, Engine::Camera *reflectionCamera, Engine::Camera *refractionCamera, Player *player);
+		explicit CameraMovement(Engine::SpotLight *spotLight, Engine::Camera *reflectionCamera, Engine::Camera *refractionCamera, Player *player, Engine::Entity *skybox);
 		CameraMovement();
 
 		void Init() override;

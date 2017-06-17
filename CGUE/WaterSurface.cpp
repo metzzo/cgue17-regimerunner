@@ -34,77 +34,93 @@ namespace Engine {
 			DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), RT_MODEL));
 		}
 
-	
+
 		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + MAX_NUM_SHADOW_MAPS));
 		DEBUG_OGL(glUniform1i(pass->GetWaterNormalMapUniform(), MAX_NUM_SHADOW_MAPS));
 		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, component->GetNormalMap()->GetTextureId()));
 
-		/*if (component->GetEngine()->GetMipMappingQuality() == 0) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		if (component->GetEngine()->TextureSamplingSwitched() == true) {
+			if (component->GetEngine()->GetTextureSamplingQuality()) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			}
+			else {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			}
+			//component->GetEngine()->DoSwitchTextureSamplingQuality();
 		}
 
-		if (component->GetEngine()->GetTextureSamplingQuality()) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-		else {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		}
+		if (component->GetEngine()->MipMappingSwitched() == true) {
+			if (component->GetEngine()->GetMipMappingQuality() == 0) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			}
 
-		if (component->GetEngine()->GetMipMappingQuality() == 1) {
-			glGenerateMipmap(GL_TEXTURE_2D);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-		}
+			else if (component->GetEngine()->GetMipMappingQuality() == 1) {
+				glGenerateMipmap(GL_TEXTURE_2D);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+			}
 
-		if (component->GetEngine()->GetMipMappingQuality() == 2) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-		}
+			else if (component->GetEngine()->GetMipMappingQuality() == 2) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+			}
 
-		if (component->GetEngine()->GetMipMappingQuality() == 3) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-		}
+			else if (component->GetEngine()->GetMipMappingQuality() == 3) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+			}
 
-		if (component->GetEngine()->GetMipMappingQuality() == 4) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		}*/
+			else if (component->GetEngine()->GetMipMappingQuality() == 4) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			}
+
+			//component->GetEngine()->DoSwitchMipMappingQuality();
+		}
 
 		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + MAX_NUM_SHADOW_MAPS + 1));
 		DEBUG_OGL(glUniform1i(pass->GetWaterUVDVMapUniform(), MAX_NUM_SHADOW_MAPS + 1));
 		DEBUG_OGL(glBindTexture(GL_TEXTURE_2D, component->GetDuDv()->GetTextureId()));
 
-		/*if (component->GetEngine()->GetMipMappingQuality() == 0) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		if (component->GetEngine()->TextureSamplingSwitched() == true) {
+			if (component->GetEngine()->GetTextureSamplingQuality()) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			}
+			else {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			}
+			//component->GetEngine()->DoSwitchTextureSamplingQuality();
 		}
 
-		if (component->GetEngine()->GetTextureSamplingQuality()) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-		else {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		}
+		if (component->GetEngine()->MipMappingSwitched() == true) {
+			if (component->GetEngine()->GetMipMappingQuality() == 0) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			}
 
-		if (component->GetEngine()->GetMipMappingQuality() == 1) {
-			glGenerateMipmap(GL_TEXTURE_2D);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-		}
+			else if (component->GetEngine()->GetMipMappingQuality() == 1) {
+				glGenerateMipmap(GL_TEXTURE_2D);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+			}
 
-		if (component->GetEngine()->GetMipMappingQuality() == 2) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-		}
+			else if (component->GetEngine()->GetMipMappingQuality() == 2) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+			}
 
-		if (component->GetEngine()->GetMipMappingQuality() == 3) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-		}
+			else if (component->GetEngine()->GetMipMappingQuality() == 3) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+			}
 
-		if (component->GetEngine()->GetMipMappingQuality() == 4) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		}*/
+			else if (component->GetEngine()->GetMipMappingQuality() == 4) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			}
+
+			//component->GetEngine()->DoSwitchMipMappingQuality();
+		}
 
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));
 		DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
+		DEBUG_OGL(glBindVertexArray(0));
 
 		float texOffset = component->getTexAlpha();
 		float waveOffset = component->getWaveAlpha();

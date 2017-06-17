@@ -26,7 +26,8 @@ namespace Engine {
 	{
 		RT_MODEL = 0,
 		RT_SPRITE = 1,
-		RT_WATER = 2
+		RT_WATER = 2,
+		RT_SKYBOX = 3
 	};
 
 	class Mesh

@@ -77,7 +77,8 @@ namespace Engine {
 		bool waterEnabled;
 		bool callHelicopter;
 		bool frustumCullingEnabled;
-		
+		bool switchTextureSamplingQuality;
+		bool switchMipMappingQuality;
 
 		virtual void Init();
 		virtual void DeInit();
@@ -120,10 +121,15 @@ namespace Engine {
 		bool GetTextureSamplingQuality() const;
 		int GetMipMappingQuality() const;
 		void SetMipMappingQuality(int x);
+
 		bool IsWaterEnabled() const;
 		bool IsHelicopterCalled() const;
 		bool IsCullingEnabled() const;
 		bool IsBlendingEnabled() const;
+		bool MipMappingSwitched();
+		bool TextureSamplingSwitched();
+		void DoSwitchMipMappingQuality();
+		void DoSwitchTextureSamplingQuality();
 
 	};
 
