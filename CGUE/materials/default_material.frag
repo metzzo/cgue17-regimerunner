@@ -86,7 +86,7 @@ uniform SpotLight spotLights[MAX_NR_SPOT_LIGHTS];
 uniform int numSpotLights;
 uniform vec3 viewPos;
 
-const float waveStrength = 0.05;
+const float waveStrength = 0.02;
 const float shineDamper = 20.0;
 const float reflectivity = 0.08;
 
@@ -237,8 +237,8 @@ vec3 renderWater() {
 	vec2 refractTexCoords = vec2(ndc.x, ndc.y);
 	vec2 reflectTexCoords = vec2(ndc.x, -ndc.y);
 
-	vec2 distortedTexCoords = texture(displaceSampler, vec2(fs_in.TexCoords.x + (waveOffset/10), fs_in.TexCoords.y)).rg*0.1;
-	distortedTexCoords += TexCoords + vec2(distortedTexCoords.x, distortedTexCoords.y+(waveOffset/10));
+	vec2 distortedTexCoords = texture(displaceSampler, vec2(fs_in.TexCoords.x + waveOffset, fs_in.TexCoords.y)).rg*0.1;
+	distortedTexCoords += TexCoords + vec2(distortedTexCoords.x, distortedTexCoords.y+waveOffset);
 	vec2 distortion = (texture(displaceSampler, distortedTexCoords).rg * 2.0 - 1.0) * waveStrength;
 	reflectTexCoords += distortion;
 	reflectTexCoords.x = clamp(reflectTexCoords.x, 0.001, 0.999);

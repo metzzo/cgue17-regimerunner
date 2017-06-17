@@ -24,6 +24,7 @@ namespace Engine {
 		HeightMapResource* resource;
 		TextureResource* normalmap;
 		TextureResource* dudv;
+		float movefactor;
 
 	public:
 

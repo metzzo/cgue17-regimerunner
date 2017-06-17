@@ -125,7 +125,7 @@ namespace Engine {
 		float texOffset = component->getTexAlpha();
 		float waveOffset = component->getWaveAlpha();
 
-		DEBUG_OGL(glUniform1f(pass->GetWaveOffsetUniform(), waveOffset));
+		DEBUG_OGL(glUniform1f(pass->GetWaveOffsetUniform(), waveOffset/1000));
 		DEBUG_OGL(glUniform1f(pass->GetTexOffsetUniform(), texOffset));
 
 
@@ -165,6 +165,8 @@ namespace Engine {
 		
 		this->texOffset = new Timer(true,20.0);
 		this->waveOffset = new Timer(true,18.0);
+
+		this->movefactor = 0;
 	}
 
 	WaterSurface::~WaterSurface() {
@@ -191,7 +193,8 @@ namespace Engine {
 	}
 
 	float WaterSurface::getWaveAlpha() {
-		return this->waveOffset->GetAlpha();
+		this->movefactor += 0.003 * this->GetEngine()->GetDeltaTime();
+		return this->movefactor;
 	}
 
 }
