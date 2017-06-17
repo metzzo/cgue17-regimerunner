@@ -117,8 +117,20 @@ namespace Engine {
 
 		DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), mesh->renderType));
 
+		if (component->alpha != 1.0f)
+		{
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		}
+
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));
 		DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
+
+
+		if (component->alpha != 1.0f)
+		{
+			glDisable(GL_BLEND);
+		}
 
 		if (mesh->restartIndex != -1)
 		{
@@ -133,6 +145,7 @@ namespace Engine {
 		auto component = static_cast<Model*>(this->GetComponent());
 
 		if (!component->cullingEnabled || 
+			component->alpha != 1.0f ||
 			(component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE && component->GetEngine()->IsCullingEnabled()))
 		{
 			return;
@@ -178,6 +191,11 @@ namespace Engine {
 		}
 	}
 
+	void Model::SetAlpha(float alpha)
+	{
+		this->alpha = alpha;
+	}
+
 	void Model::Init()
 	{
 		if (this->resource != nullptr) 
@@ -205,12 +223,14 @@ namespace Engine {
 	{
 		this->resource = nullptr;
 		this->cullingEnabled = true;
+		this->alpha = 1.0f;
 	}
 
 	Model::Model(RenderableResource* resource)
 	{
 		this->resource = resource;
 		this->cullingEnabled = true;
+		this->alpha = 1.0f;
 	}
 
 	Model::~Model()

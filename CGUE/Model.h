@@ -51,6 +51,7 @@ namespace Engine {
 		RenderableResource* resource;
 		std::vector<AABox> boxes;
 		bool cullingEnabled;
+		float alpha;
 	public:
 		Model();
 		explicit Model(RenderableResource *resource);
@@ -63,6 +64,7 @@ namespace Engine {
 		void Init() override;
 		void Wire() override;
 		void TransformationUpdated() override;
+		void SetAlpha(float alpha);
 	};
 
 	extern const Model ModelClass;

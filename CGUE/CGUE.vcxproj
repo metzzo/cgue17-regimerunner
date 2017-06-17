@@ -134,6 +134,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CapsuleGeometry.cpp" />
     <ClCompile Include="CameraMovement.cpp" />
+    <ClCompile Include="CollectingPlaceBehaviour.cpp" />
     <ClCompile Include="DepthPass.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="Entity.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CapsuleGeometry.h" />
     <ClInclude Include="CameraMovement.h" />
+    <ClInclude Include="CollectingPlaceBehaviour.h" />
     <ClInclude Include="DepthPass.h" />
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Entity.h" />

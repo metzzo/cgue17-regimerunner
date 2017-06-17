@@ -278,14 +278,10 @@ namespace Engine {
 				if (!this->blendingEnabled) {
 					cout << "F9: " << "Enabling Blending" << endl;
 					this->blendingEnabled = true;
-					glEnable(GL_BLEND);
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 					this->keyStatesOld[SDL_SCANCODE_F9] = false;
 				}
 				else {
 					cout << "F9: " << "Disabling Blending" << endl;
-					glDisable(GL_BLEND);
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 					this->blendingEnabled = false;
 					this->keyStatesOld[SDL_SCANCODE_F9] = false;
 				}
