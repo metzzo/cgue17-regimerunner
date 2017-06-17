@@ -34,34 +34,41 @@ namespace Engine {
 		glUniform1i(pass->GetDiffuseUniform(0), currentTexture);
 		glBindTexture(GL_TEXTURE_2D, mesh->diffuseTexture[0]->GetTextureId());
 
-		if (component->GetEngine()->GetMipMappingQuality() == 0) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		if (component->GetEngine()->TextureSamplingSwitched() == true) {
+			if (component->GetEngine()->GetTextureSamplingQuality()) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			}
+			else {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			}
+			//component->GetEngine()->DoSwitchTextureSamplingQuality();
 		}
 
-		if (component->GetEngine()->GetTextureSamplingQuality()) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-		else {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		}
+		if (component->GetEngine()->MipMappingSwitched() == true) {
+			if (component->GetEngine()->GetMipMappingQuality() == 0) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			}
 
-		if (component->GetEngine()->GetMipMappingQuality() == 1) {
-			glGenerateMipmap(GL_TEXTURE_2D);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-		}
+			else if (component->GetEngine()->GetMipMappingQuality() == 1) {
+				glGenerateMipmap(GL_TEXTURE_2D);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+			}
 
-		if (component->GetEngine()->GetMipMappingQuality() == 2) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-		}
+			else if (component->GetEngine()->GetMipMappingQuality() == 2) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+			}
 
-		if (component->GetEngine()->GetMipMappingQuality() == 3) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-		}
+			else if (component->GetEngine()->GetMipMappingQuality() == 3) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+			}
 
-		if (component->GetEngine()->GetMipMappingQuality() == 4) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			else if (component->GetEngine()->GetMipMappingQuality() == 4) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			}
+
+			//component->GetEngine()->DoSwitchMipMappingQuality();
 		}
 
 
@@ -72,34 +79,41 @@ namespace Engine {
 			glUniform1i(pass->GetSpecularUniform(0), currentTexture);
 			glBindTexture(GL_TEXTURE_2D, mesh->specularTexture[0]->GetTextureId());
 
-			if (component->GetEngine()->GetMipMappingQuality() == 0) {
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			if (component->GetEngine()->TextureSamplingSwitched() == true) {
+				if (component->GetEngine()->GetTextureSamplingQuality()) {
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				}
+				else {
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				}
+				//component->GetEngine()->DoSwitchTextureSamplingQuality();
 			}
 
-			if (component->GetEngine()->GetTextureSamplingQuality()) {
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			}
-			else {
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			}
+			if (component->GetEngine()->MipMappingSwitched() == true) {
+				if (component->GetEngine()->GetMipMappingQuality() == 0) {
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				}
 
-			if (component->GetEngine()->GetMipMappingQuality() == 1) {
-				glGenerateMipmap(GL_TEXTURE_2D);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-			}
+				else if (component->GetEngine()->GetMipMappingQuality() == 1) {
+					glGenerateMipmap(GL_TEXTURE_2D);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+				}
 
-			if (component->GetEngine()->GetMipMappingQuality() == 2) {
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-			}
+				else if (component->GetEngine()->GetMipMappingQuality() == 2) {
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+				}
 
-			if (component->GetEngine()->GetMipMappingQuality() == 3) {
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-			}
+				else if (component->GetEngine()->GetMipMappingQuality() == 3) {
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+				}
 
-			if (component->GetEngine()->GetMipMappingQuality() == 4) {
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				else if (component->GetEngine()->GetMipMappingQuality() == 4) {
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				}
+
+				//component->GetEngine()->DoSwitchMipMappingQuality();
 			}
 
 
@@ -195,6 +209,10 @@ namespace Engine {
 				GetEngine()->GetDepthPass()->AddOperation(new DepthRenderOperation(id, mesh, this));
 			}
 
+			if (this->skyBox) {
+				mesh->renderType = RT_SKYBOX;
+			}
+
 			id++;
 		}
 
@@ -204,11 +222,18 @@ namespace Engine {
 	Model::Model()
 	{
 		this->resource = nullptr;
+		this->skyBox = false;
+	}
+
+	Model::Model(RenderableResource* resource,bool skybox) {
+		this->resource = resource;
+		this->skyBox = true;
 	}
 
 	Model::Model(RenderableResource* resource)
 	{
 		this->resource = resource;
+		this->skyBox = false;
 	}
 
 	Model::~Model()

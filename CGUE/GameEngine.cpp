@@ -87,6 +87,8 @@ namespace Engine {
 		this->waterEnabled = true;
 		this->shadowsEnabled = true;
 		this->frustumCullingEnabled = true;
+		this->switchMipMappingQuality = false;
+		this->switchTextureSamplingQuality = false;
 
 		this->renderPass = new RenderPass(this);
 		this->updatePass = new Pass(this);
@@ -157,6 +159,8 @@ namespace Engine {
 				case SDL_KEYUP:
 					if (e.key.repeat == 0) {
 						this->keyStates[e.key.keysym.scancode] = false;
+						this->DoSwitchTextureSamplingQuality();
+						this->DoSwitchMipMappingQuality();
 					}
 					break;
 				case SDL_MOUSEMOTION:
@@ -217,12 +221,14 @@ namespace Engine {
 					cout << "F4: " << "Setting Texture Sampling Quality to GL_LINEAR" << endl;
 					this->textureSamplingQuality = true;
 					this->keyStatesOld[SDL_SCANCODE_F4] = false;
+					this->DoSwitchTextureSamplingQuality();
 
 				}
 				else {
 					cout << "F4: " << "Setting Texture Sampling Quality to GL_NEAREST" << endl;
 					this->textureSamplingQuality = false;
 					this->keyStatesOld[SDL_SCANCODE_F4] = false;
+					this->DoSwitchTextureSamplingQuality();
 				}
 			}
 
@@ -233,6 +239,7 @@ namespace Engine {
 				}
 				cout << "F5: Setting Mip Map Level to: " << this->mipMappingQuality << endl;
 				this->keyStatesOld[SDL_SCANCODE_F5] = false;
+				this->DoSwitchMipMappingQuality();
 			}
 
 			if (this->KeyDownLastFrame(SDL_SCANCODE_F6)) {
@@ -412,6 +419,27 @@ namespace Engine {
 	{
 		return this->blendingEnabled;
 	}
+
+	bool GameEngine::MipMappingSwitched()
+	{
+		return this->switchMipMappingQuality;
+	}
+
+	bool GameEngine::TextureSamplingSwitched()
+	{
+		return this->switchTextureSamplingQuality;
+	}
+
+	void GameEngine::DoSwitchMipMappingQuality()
+	{
+		this->switchMipMappingQuality = !this->switchMipMappingQuality;
+	}
+
+	void GameEngine::DoSwitchTextureSamplingQuality()
+	{
+		this->switchTextureSamplingQuality = !this->switchTextureSamplingQuality;
+	}
+
 
 	bool GameEngine::IsStarted() const
 	{

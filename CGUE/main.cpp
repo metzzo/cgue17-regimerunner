@@ -202,14 +202,14 @@ int main(int argc, char **argv)
 	dirLight->SetDiffuse(vec3(0.2f, 0.2f, 0.2f));
 	dirLight->SetLookAtVector(vec3(0, 0, 0));/**/
 
-	auto camera = new Camera(80.0f, 0.1f, 250.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
+	auto camera = new Camera(80.0f, 0.1f, 700.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
 	camera->SetHudProjectionMatrix(glm::ortho(0.0f, GLfloat(engine->GetScreenWidth()), GLfloat(engine->GetScreenHeight()), 0.0f, -1.0f, 1.0f));
 	auto player = engine->GetRootEntity()->CreateChild();
 	auto playerComponent = new Game::Player();
 	player->Add(playerComponent);
 	player->Add(camera);
 
-	auto reflectionCamera = new Camera(80.0f, 0.1f, 500.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
+	auto reflectionCamera = new Camera(80.0f, 0.1f, 520.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
 	reflectionCamera->SetHudEnabled(false);
 	reflectionCamera->SetCameraMode(CM_REFLECTION);
 	reflectionCamera->SetAsReflectionCamera(true);
@@ -231,6 +231,10 @@ int main(int argc, char **argv)
 	auto water = new WaterSurface();
 	watersurface->Add(water);
 
+	//auto skybox = engine->GetRootEntity()->CreateChild();
+	auto skyboxmodel = new ModelResource("objects/skybox/skybox.obj");
+	auto skybox = player->CreateChild()->Add(new Model(skyboxmodel,true));
+
 	auto light = player->CreateChild();
 	light->GetTransformation()->Translate(vec3(0, 2.5, 0));
 
@@ -241,7 +245,7 @@ int main(int argc, char **argv)
 	spotLight->SetLinear(0.007f);
 	spotLight->SetQuadratic(0.002f);
 	light->Add(spotLight);
-	player->Add(new Game::CameraMovement(spotLight,reflectionCamera, refractionCamera, playerComponent));
+	player->Add(new Game::CameraMovement(spotLight,reflectionCamera, refractionCamera, playerComponent, nullptr));
 
 	engine->SetMainCamera(camera);
 	camera->SetLookAtVector(vec3(0.0, 0.0, 0.0));
@@ -277,6 +281,8 @@ int main(int argc, char **argv)
 			{
 				// start location
 				player->GetTransformation()->Translate(pos+vec3(0,20,0));
+				skybox->GetTransformation()->Translate(vec3(0, 0, -250));
+				skybox->GetTransformation()->Scale(vec3(280.0, 280.0, 280.0));
 			} else if (r == 0 && g == 0 && b == 255)
 			{
 				// broken heli

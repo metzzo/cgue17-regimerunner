@@ -77,7 +77,8 @@ namespace Engine {
 		bool waterEnabled;
 		bool shadowsEnabled;
 		bool frustumCullingEnabled;
-		
+		bool switchTextureSamplingQuality;
+		bool switchMipMappingQuality;
 
 		virtual void Init();
 		virtual void DeInit();
@@ -124,6 +125,10 @@ namespace Engine {
 		bool IsShadowsEnabled();
 		bool IsCullingEnabled();
 		bool IsBlendingEnabled();
+		bool MipMappingSwitched();
+		bool TextureSamplingSwitched();
+		void DoSwitchMipMappingQuality();
+		void DoSwitchTextureSamplingQuality();
 
 	};
 
