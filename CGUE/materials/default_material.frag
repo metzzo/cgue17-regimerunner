@@ -322,15 +322,21 @@ void main()
 	switch(renderType) {
 		case RT_MESH:
 			result = renderMesh();
+			result = mix(sky,result,visible);
+			result = mix(result,vec3(0.047, 0.2, 0.352),0.4);
 			break;
 		case RT_HUD:
 			result = renderHud();
 			break;
 		case RT_WATER:
 			result = renderWater();
+			result = mix(sky,result,visible*5);
+			result = mix(result,vec3(0.047, 0.2, 0.352),0.7);
 			break;
 		case RT_SKYBOX:
 			result = renderSkyBox();
+			result = mix(sky,result,visible);
+			result = mix(result,vec3(0.047, 0.2, 0.352),0.4);
 			break;
 		default:
 			result = vec3(0,1,0);
@@ -341,6 +347,4 @@ void main()
 	result.z = max(0.0, result.z - blood);
     
     FragColor = vec4(result, 1.0);
-	FragColor = mix(vec4(sky,1.0),FragColor,visible);
-	FragColor = mix(FragColor,vec4(0.125,0.270,0.411,1.0),0.2);
 }

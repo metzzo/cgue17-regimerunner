@@ -34,7 +34,7 @@ uniform vec3 viewPos;
 
 const float tiling = 18.0;
 const float density = 0.01;
-const float gradient = 1.2;
+const float gradient = 0.5;
 
 void main()
 {

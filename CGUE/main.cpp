@@ -258,7 +258,7 @@ int main(int argc, char **argv)
 	player->Add(playerComponent);
 	player->Add(camera);
 
-	auto reflectionCamera = new Camera(80.0f, 0.1f, 520.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
+	auto reflectionCamera = new Camera(80.0f, 0.1f, 700.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
 	reflectionCamera->SetHudEnabled(false);
 	reflectionCamera->SetCameraMode(CM_REFLECTION);
 	reflectionCamera->SetAsReflectionCamera(true);
@@ -267,7 +267,7 @@ int main(int argc, char **argv)
 	player->CreateChild()->Add(reflectionCamera);
 
 
-	auto refractionCamera = new Camera(80.0f, 0.1f, 500.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
+	auto refractionCamera = new Camera(80.0f, 0.1f, 700.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
 	refractionCamera->SetHudEnabled(false);
 	refractionCamera->SetCameraMode(CM_REFRACTION);
 	refractionCamera->SetAsRefractionCamera(true);
