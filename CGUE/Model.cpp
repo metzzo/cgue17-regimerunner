@@ -19,7 +19,8 @@ namespace Engine {
 		auto component = static_cast<Model*>(this->GetComponent());
 		auto cam = component->GetEngine()->GetMainCamera();
 
-		if (mesh->renderType != RT_SPRITE && cam->BoxInFrustum(component->boxes[id]) == F_OUTSIDE && component->GetEngine()->IsCullingEnabled() || 
+		if (!component->cullingEnabled || 
+			(mesh->renderType != RT_SPRITE && cam->BoxInFrustum(component->boxes[id]) == F_OUTSIDE && component->GetEngine()->IsCullingEnabled()) || 
 			(mesh->renderType == RT_SPRITE && !cam->IsHudEnabled()))
 		{
 			return;
@@ -34,7 +35,7 @@ namespace Engine {
 		glUniform1i(pass->GetDiffuseUniform(0), currentTexture);
 		glBindTexture(GL_TEXTURE_2D, mesh->diffuseTexture[0]->GetTextureId());
 
-		if (component->GetEngine()->GetMipMappingQuality() == 0) {
+		/*if (component->GetEngine()->GetMipMappingQuality() == 0) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		}
 
@@ -62,7 +63,7 @@ namespace Engine {
 
 		if (component->GetEngine()->GetMipMappingQuality() == 4) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		}
+		}*/
 
 
 		if (mesh->specularTexture.size() == 1)
@@ -72,7 +73,7 @@ namespace Engine {
 			glUniform1i(pass->GetSpecularUniform(0), currentTexture);
 			glBindTexture(GL_TEXTURE_2D, mesh->specularTexture[0]->GetTextureId());
 
-			if (component->GetEngine()->GetMipMappingQuality() == 0) {
+			/*if (component->GetEngine()->GetMipMappingQuality() == 0) {
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			}
 
@@ -100,7 +101,7 @@ namespace Engine {
 
 			if (component->GetEngine()->GetMipMappingQuality() == 4) {
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			}
+			}*/
 
 
 		} else
@@ -131,7 +132,8 @@ namespace Engine {
 	{
 		auto component = static_cast<Model*>(this->GetComponent());
 
-		if (component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE && component->GetEngine()->IsCullingEnabled())
+		if (!component->cullingEnabled || 
+			(component->GetEngine()->GetMainCamera()->BoxInFrustum(component->boxes[id]) == F_OUTSIDE && component->GetEngine()->IsCullingEnabled()))
 		{
 			return;
 		}
@@ -202,16 +204,23 @@ namespace Engine {
 	Model::Model()
 	{
 		this->resource = nullptr;
+		this->cullingEnabled = true;
 	}
 
 	Model::Model(RenderableResource* resource)
 	{
 		this->resource = resource;
+		this->cullingEnabled = true;
 	}
 
 	Model::~Model()
 	{
 
+	}
+
+	void Model::SetCullingEnabled(bool cullingEnabled)
+	{
+		this->cullingEnabled = cullingEnabled;
 	}
 
 	RenderableResource* Model::GetResource() const

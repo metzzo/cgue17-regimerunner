@@ -75,7 +75,7 @@ namespace Engine {
 		this->GetEntity()->Add(camera);
 
 		if (this->shadowCasting) {
-			camera->SetUpVector(vec3(0, -1, 0));
+			//camera->SetUpVector(vec3(0, -1, 0));
 			camera->SetCameraMode(CM_DEPTH);
 			camera->SetCameraPass(GetEngine()->GetDepthPass());
 

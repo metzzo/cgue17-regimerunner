@@ -50,10 +50,13 @@ namespace Engine {
 
 		RenderableResource* resource;
 		std::vector<AABox> boxes;
+		bool cullingEnabled;
 	public:
 		Model();
 		explicit Model(RenderableResource *resource);
 		~Model();
+
+		void SetCullingEnabled(bool cullingEnabled);
 
 		RenderableResource *GetResource() const;
 
