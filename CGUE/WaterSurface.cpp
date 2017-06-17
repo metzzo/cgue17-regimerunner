@@ -163,8 +163,8 @@ namespace Engine {
 		this->normalmap = new TextureResource("textures/normalMap.png");
 		this->dudv = new TextureResource("textures/dudvmap.jpg");
 		
-		this->texOffset = new Timer(true,20.0);
-		this->waveOffset = new Timer(true,18.0);
+		this->texOffset = nullptr;
+		this->waveOffset = nullptr;
 
 		this->movefactor = 0;
 	}
@@ -189,7 +189,7 @@ namespace Engine {
 	}
 
 	float WaterSurface::getTexAlpha() {
-		return this->texOffset->GetAlpha();
+		return 0;
 	}
 
 	float WaterSurface::getWaveAlpha() {

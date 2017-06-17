@@ -251,7 +251,7 @@ int main(int argc, char **argv)
 	dirLight->SetDiffuse(vec3(0.2f, 0.2f, 0.2f));
 	dirLight->SetLookAtVector(vec3(0, 0, 0));/**/
 
-	auto camera = new Camera(80.0f, 0.1f, 700.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
+	auto camera = new Camera(80.0f, 0.1f, 800.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
 	camera->SetHudProjectionMatrix(glm::ortho(0.0f, GLfloat(engine->GetScreenWidth()), GLfloat(engine->GetScreenHeight()), 0.0f, -1.0f, 1.0f));
 	auto player = engine->GetRootEntity()->CreateChild();
 	auto playerComponent = new Game::Player();

@@ -19,6 +19,7 @@ in vec4 clipTexProjCoord;
 in vec3 eyeDirection;
 in vec3 fromLightVector;
 in vec2 TexCoords;
+in float visible;
 
 struct Material {
     sampler2D diffuse;
@@ -89,6 +90,7 @@ uniform vec3 viewPos;
 const float waveStrength = 0.02;
 const float shineDamper = 20.0;
 const float reflectivity = 0.08;
+const vec3 sky = vec3(0.11,0.11,0.11);
 
 #define SHADOW_MAP(A,B,C,X) \
 	if (B == 0) { \
@@ -339,4 +341,6 @@ void main()
 	result.z = max(0.0, result.z - blood);
     
     FragColor = vec4(result, 1.0);
+	FragColor = mix(vec4(sky,1.0),FragColor,visible);
+	FragColor = mix(FragColor,vec4(0.125,0.270,0.411,1.0),0.2);
 }

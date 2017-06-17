@@ -19,6 +19,7 @@ out VS_OUT {
 out vec3 eyeDirection;
 out vec3 fromLightVector;
 out vec4 clipTexProjCoord;
+out float visible;
 
 uniform mat4 projection;
 uniform mat4 hudProjection;
@@ -32,10 +33,17 @@ uniform vec3 lightTanSpace;
 uniform vec3 viewPos;
 
 const float tiling = 18.0;
+const float density = 0.01;
+const float gradient = 1.2;
 
 void main()
 {
     vs_out.FragPos = vec3(model * vec4(position, 1.0));
+
+	vec4 posToCam = view * vec4(vs_out.FragPos,1.0);
+	float distance = length(posToCam.xyz);
+	visible = exp(-pow((distance*density),gradient));
+	visible = clamp(visible,0.0,1.0);
 	
 	if (enableClipping) {
 		gl_ClipDistance[0] = dot(vec4(vs_out.FragPos, 1.0), clippingPlane);
