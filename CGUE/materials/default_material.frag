@@ -310,8 +310,8 @@ vec3 renderWater() {
 vec3 renderSkyBox() {
 
 	vec3 ambient = vec3(texture(material.diffuse, fs_in.TexCoords));
-	
-	return ambient;
+	vec3 diffuse = vec3(texture(material.diffuse, fs_in.TexCoords));
+	return ambient + diffuse;
 }
 
 void main()
@@ -335,7 +335,7 @@ void main()
 			break;
 		case RT_SKYBOX:
 			result = renderSkyBox();
-			result = mix(sky,result,visible);
+			result = mix(sky,result,visible*2);
 			result = mix(result,vec3(0.047, 0.2, 0.352),0.4);
 			break;
 		default:
