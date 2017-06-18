@@ -36,7 +36,7 @@ namespace Game {
 		auto dt = component->GetEngine()->GetDeltaTime();
 
 		auto speed = 2.0f;
-		if (!component->broken) {
+		if (!component->broken && !component->player->hasWon()) {
 
 			auto pos = component->GetTransformation()->GetAbsolutePosition();
 			auto cumHeight = component->heightMap->GetHeightAt(pos.x, pos.z);

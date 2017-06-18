@@ -44,7 +44,9 @@ HeightMapResource *PlaceMap(Entity *child)
 	mapResource->AddTexture(grassTex, 0.4, 0.75);
 	mapResource->AddTexture(stoneTex, 0.6, 1.0);
 
-	child->CreateChild()->Add(new Model(mapResource));
+	auto model = new Model(mapResource);
+	model->SetCullingEnabled(false);
+	child->CreateChild()->Add(model);
 
 	auto tileWidth = res->GetWidth() / 8;
 	auto tileHeight = res->GetHeight() / 8;
@@ -73,7 +75,7 @@ void PlacePalm(Entity *child, vec3 pos, ModelResource *palmResource, HeightMapRe
 {
 	auto palm = child->CreateChild();
 	palm->Add(new Model(palmResource));
-	palm->GetTransformation()->Translate(pos);
+	palm->GetTransformation()->Translate(pos + vec3(0,-4, 0));
 
 	auto trunk = new Engine::CapsuleGeometry(4, 30);
 	auto transform = physx::PxTransform();
@@ -315,7 +317,9 @@ int main(int argc, char **argv)
 
 	//auto skybox = engine->GetRootEntity()->CreateChild();
 	auto skyboxmodel = new ModelResource("objects/skybox/skybox.obj");
-	auto skybox = player->CreateChild()->Add(new Model(skyboxmodel,true));
+	auto skyboxComponent = new Model(skyboxmodel, true);
+	skyboxComponent->SetCullingEnabled(false);
+	auto skybox = player->CreateChild()->Add(skyboxComponent);
 
 	auto light = player->CreateChild();
 	light->GetTransformation()->Translate(vec3(0, 2.5, 0));

@@ -74,8 +74,6 @@ namespace Engine {
 					max.z = pos.z;
 				}
 			}
-			box.setBox(min, max.x, max.y, max.z);
-
 		}
 
 		glGenVertexArrays(1, &this->VAO);
