@@ -315,7 +315,9 @@ namespace Engine {
 			GetUpdatePass()->DoPass();
 
 			this->Render();
-
+			if (KeyDown(SDL_SCANCODE_L)) {
+				SDL_Delay(rand() % 50);
+			}
 
 			this->keyStatesOld[SDL_SCANCODE_E] = false; // dirty me is dirty, this should definitely NOT be done like that
 
@@ -552,7 +554,7 @@ namespace Engine {
 
 		// init physics
 		this->physicsAccumulator = 0.0f;
-		this->physicsStepSize = 1.0f / 30.0f;
+		this->physicsStepSize = 1.0f / 30.0f * 0.1f;
 
 		this->foundation = PxCreateFoundation(PX_FOUNDATION_VERSION, this->allocator, this->errorCallback);
 
@@ -606,7 +608,7 @@ namespace Engine {
 		{
 			return;
 		}
-		scene->simulate(deltaTime*physicsStepSize*0.1f);
+		scene->simulate(deltaTime*this->physicsStepSize);
 		scene->fetchResults(true);
 
 		PxU32 nbActiveActors;

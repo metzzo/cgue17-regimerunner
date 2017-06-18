@@ -93,7 +93,7 @@ namespace Game {
 		}
 
 
-		auto direction = vec3(0.0f, -9.81f, 0.0f) + jump;
+		auto direction = vec3(0.0f, -9.81f/2, 0.0f) + jump;
 
 		if (component->player->hasLost() == false && component->player->hasWon() == false) {
 			if ((keyDown || keyUp || keyLeft || keyRight)) {
@@ -108,7 +108,7 @@ namespace Game {
 		if (keySpace && !jumpPress)
 		{
 			jumpPress = true;
- 			jump = vec3(0.0f, 9.81f, 0.0f)*1.5f;
+ 			jump = vec3(0.0f, 9.81f, 0.0f)*0.75f;
 		} else if (!keySpace && jumpPress)
 		{
 			jumpPress = false;
@@ -117,7 +117,7 @@ namespace Game {
 		jump *= 0.95;
 
 
-		component->controller->move(PxVec3(direction.x, direction.y, direction.z), 0.1f, engine->GetDeltaTime(), nullptr);
+		component->controller->move(PxVec3(direction.x, direction.y, direction.z)*engine->GetDeltaTime()*0.06, 0.1f, engine->GetDeltaTime(), nullptr);
 	}
 
 

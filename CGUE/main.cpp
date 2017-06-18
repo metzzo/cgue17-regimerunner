@@ -155,9 +155,11 @@ void PlaceHeli(
 
 	if (broken)
 	{
-		spotLight->GetCamera()->SetLookAtVector(heli->GetTransformation()->GetAbsolutePosition() + vec3(0, -1, 2.5));
-		heli->GetTransformation()->Translate(vec3(0, 4, 0));
+		spotLight->GetCamera()->SetLookAtVector(heli->GetTransformation()->GetAbsolutePosition() + vec3(10, 1, 0));
+		heli->GetTransformation()->Translate(vec3(0, 8, 0));
+		heli->GetTransformation()->Rotate(75 + 180, vec3(0, 1, 0));
 		heli->GetTransformation()->Rotate(-30, vec3(0, 0, 1));
+		heli->GetTransformation()->Rotate(-30, vec3(0, 1, 0));
 
 		auto rigidBody = new Engine::RigidBody();
 		auto geometry = new BoxGeometry(vec3(20, 60, 60));

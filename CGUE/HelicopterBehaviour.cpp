@@ -35,7 +35,7 @@ namespace Game {
 		auto component = static_cast<HelicopterBehaviour*>(this->GetComponent());
 		auto dt = component->GetEngine()->GetDeltaTime();
 
-		auto speed = 2.0f;
+		auto speed = 1.0f;
 		if (!component->broken && !component->player->hasWon()) {
 
 			auto pos = component->GetTransformation()->GetAbsolutePosition();
@@ -107,7 +107,7 @@ namespace Game {
 
 			auto spotLightPos = component->GetTransformation()->GetAbsolutePosition();
 			spotLightPos.y = 0;
-			auto spotLightDir = normalize(vec3(0, -1, 0.001)); //; vec3(cos(radians(component->spotLightTimer)) / 1.5f, -1, sin(radians(component->spotLightTimer)) / 1.5f);
+			auto spotLightDir = normalize(vec3(cos(radians(component->spotLightTimer)) / 2.0f, -1, 0.001)); //; vec3(cos(radians(component->spotLightTimer)) / 1.5f, -1, sin(radians(component->spotLightTimer)) / 1.5f);
 			component->spotLight->GetCamera()->SetLookAtVector(spotLightPos + spotLightDir);
 
 			// check if heli sees player
@@ -138,7 +138,7 @@ namespace Game {
 			}
 			else
 			{
-				component->spotLightTimer = 0; // dt * 0.00001;
+				component->spotLightTimer += dt * 0.01;
 
 				//cout << "Helicopter does not see you" << endl;
 			}
