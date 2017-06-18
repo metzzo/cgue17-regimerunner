@@ -30,6 +30,10 @@ namespace Game {
 		auto keySpace = engine->KeyDown(SDL_SCANCODE_Q) || component->GetEngine()->KeyDown(SDL_SCANCODE_SPACE);
 		auto camerapos = cam->GetTransformation()->GetAbsolutePosition();
 
+		if (engine->KeyDown(SDL_SCANCODE_RETURN)) {
+			component->player->leaveIntro();
+		}
+
 		// key
 		auto physicsPos = component->controller->getPosition();
 		auto pos = vec3(physicsPos.x, physicsPos.y, physicsPos.z);
@@ -95,7 +99,7 @@ namespace Game {
 
 		auto direction = vec3(0.0f, -9.81f/2, 0.0f) + jump;
 
-		if (component->player->hasLost() == false && component->player->hasWon() == false) {
+		if (component->player->hasLost() == false && component->player->hasWon() == false && component->player->isInIntro() == false) {
 			if ((keyDown || keyUp || keyLeft || keyRight)) {
 				auto cameraSpeed = 1.0f;
 				direction += cameraSpeed * (

@@ -22,6 +22,18 @@ namespace Game {
 
 		component->blood -= component->GetEngine()->GetDeltaTime()*0.00005f;
 
+		if (component->inIntro == true) {
+			if (component->introDisplayed == false) {
+				component->introDisplayed = true;
+				auto hudTest = component->GetEngine()->GetRootEntity()->CreateChild();
+				hudTest->GetTransformation()->Translate(vec3(component->GetEngine()->GetMainCamera()->GetWidth() / 2, component->GetEngine()->GetMainCamera()->GetHeight() - 200, 0));
+				auto spriteResource = new SpriteResource(new TextureResource("textures/intro1.png"));
+				hudTest->Add(new Model(spriteResource));
+				component->intro = hudTest;
+			}
+		
+		}
+
 		if (component->hasEnoughWoodGathered() == true) {
 			if (component->displayedScreen() == false) {
 				component->win();
@@ -32,7 +44,7 @@ namespace Game {
 			}
 		}
 
-		if (component->blood > 0.3) {
+		if (component->blood > 0.2) {
 			if (component->displayedScreen() == false) {
 				component->lose();
 				auto hudTest = component->GetEngine()->GetRootEntity()->CreateChild();
@@ -64,6 +76,8 @@ namespace Game {
 		this->wood = nullptr;
 		this->won = false;
 		this->lost = false;
+		this->inIntro = true;
+		this->introDisplayed = false;
 		this->gatheredWood = 0;
 		// are set to true to prevent adding numerous winning and lost screens
 		this->displayedLostScreen = false;
@@ -158,5 +172,14 @@ namespace Game {
 
 	bool Player::hasEnoughWoodGathered() {
 		return this->gatheredWood > 5;
+	}
+
+	bool Player::isInIntro() {
+		return this->inIntro;
+	}
+
+	void Player::leaveIntro() {
+		this->inIntro = false;
+		this->intro->GetTransformation()->Translate(vec3(10000,0,0));
 	}
 }

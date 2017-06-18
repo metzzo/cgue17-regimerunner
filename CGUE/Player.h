@@ -9,7 +9,7 @@
 #include "Model.h"
 #include "TextureResource.h"
 #include "ModelResource.h"
-
+#include "Entity.h"
 
 namespace Game {
 	class WoodInteraction;
@@ -35,9 +35,12 @@ namespace Game {
 		bool displayedLostScreen;
 		bool won;
 		bool displayedWinScreen;
+		bool introDisplayed;
+		bool inIntro;
 		int gatheredWood;
 		CameraMovement *cameraMovement;
 		WoodInteraction *wood;
+		Engine::Entity *intro;
 	public:
 		Player();
 		~Player();
@@ -61,6 +64,9 @@ namespace Game {
 		bool displayedScreen();
 		bool hasEnoughWoodGathered();
 		void increaseGatheredWood();
+
+		bool isInIntro();
+		void leaveIntro();
 
 	};
 	extern const Player PlayerClass;
