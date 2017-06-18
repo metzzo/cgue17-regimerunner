@@ -89,6 +89,7 @@ namespace Engine {
 		this->frustumCullingEnabled = true;
 		this->switchMipMappingQuality = false;
 		this->switchTextureSamplingQuality = false;
+		this->blendingEnabled = true;
 
 		this->renderPass = new RenderPass(this);
 		this->updatePass = new Pass(this);
@@ -528,6 +529,7 @@ namespace Engine {
 		checkSDLError(__LINE__);
 
 		SDL_SetWindowGrab(this->mainwindow, SDL_TRUE);
+		SDL_SetRelativeMouseMode(SDL_TRUE);
 		SDL_ShowCursor(SDL_DISABLE);
 
 		this->maincontext = SDL_GL_CreateContext(this->mainwindow);

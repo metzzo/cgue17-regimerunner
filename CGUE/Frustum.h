@@ -1,5 +1,7 @@
 #pragma once
 #include "glm/glm.hpp"
+#include "glm/gtc/matrix_access.hpp"
+
 using namespace glm;
 
 namespace Engine
@@ -98,6 +100,25 @@ namespace Engine
 			this->z = z;
 
 		}
+
+		void transform(mat4 m)
+		{
+			auto xa = column(m, 0) * this->corner.x;
+			auto xb = column(m, 0) * this->x;
+
+			auto ya = column(m, 1) * this->corner.y;
+			auto yb = column(m, 1) * this->y;
+
+			auto za = column(m, 2) * this->corner.z;
+			auto zb = column(m, 2) * this->z;
+
+			this->corner = min(xa, xb) + min(ya, yb) + min(za, zb) + vec4(vec3(m[3]), 0);
+			auto end = max(xa, xb) + max(ya, yb) + max(za, zb) + vec4(vec3(m[3]), 0);
+			this->x = end.x - corner.x;
+			this->y = end.y - corner.y;
+			this->z = end.z = corner.z;
+		}
+
 
 		// for use in frustum computations
 		vec3 AABox::getVertexP(vec3 normal) const

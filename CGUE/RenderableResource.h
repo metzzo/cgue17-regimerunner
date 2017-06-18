@@ -43,7 +43,6 @@ namespace Engine {
 		GLuint mode;
 		GLuint renderType;
 
-		AABox box;
 		vec3 min;
 		vec3 max;
 

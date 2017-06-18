@@ -203,9 +203,10 @@ namespace Engine {
 		for (auto &mesh : this->resource->GetMeshes())
 		{
 			auto& box = this->boxes[i];
-			auto tmpMin = pos + mesh->min;
-			auto tmpMax = pos + mesh->max;
+			auto tmpMin = mesh->min;
+			auto tmpMax = mesh->max;
 			box.setBox(tmpMin, tmpMax.x, tmpMax.y, tmpMax.z);
+			box.transform(GetTransformation()->GetAbsoluteMatrix());
 
 			i++;
 		}
@@ -226,7 +227,7 @@ namespace Engine {
 		auto id = 0;
 		for (auto &mesh : this->resource->GetMeshes())
 		{
-			this->boxes.push_back(mesh->box);
+			this->boxes.push_back(AABox());
 
 			GetEngine()->GetRenderPass()->AddOperation(new MeshRenderOperation(id, mesh, this));
 			if (this->resource->IsShadowCasting()) {

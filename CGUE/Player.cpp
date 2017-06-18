@@ -149,8 +149,7 @@ namespace Game {
 	}
 
 	bool Player::displayedScreen() {
-		if (this->displayedLostScreen || this->displayedWinScreen) return true;
-		return false;
+		return this->displayedLostScreen || this->displayedWinScreen;
 	}
 
 	void Player::increaseGatheredWood() {
@@ -158,7 +157,6 @@ namespace Game {
 	}
 
 	bool Player::hasEnoughWoodGathered() {
-		if (this->gatheredWood > 1) return true;
-		return false;
+		return this->gatheredWood > 5;
 	}
 }
