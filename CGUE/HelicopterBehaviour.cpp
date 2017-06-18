@@ -23,7 +23,7 @@ namespace Game {
 	{
 
 		auto component = static_cast<HelicopterBehaviour*>(this->GetComponent());
-		component->state = HelicopterMovementState(component->GetEngine()->IsHelicopterCalled() ? 0 : rand() % 5);
+		component->state = HelicopterMovementState(component->GetEngine()->IsHelicopterCalled() && component->heliId == 0 ? 0 : rand() % 5);
 		component->start = SDL_GetTicks();
 		component->duration = 2000 + rand() % 5000;
 	}
@@ -108,13 +108,13 @@ namespace Game {
 
 			auto spotLightPos = component->GetTransformation()->GetAbsolutePosition();
 			spotLightPos.y = 0;
-			auto spotLightDir = normalize(vec3(cos(radians(component->spotLightTimer)) / 2.0f, -1, 0.001)); //; vec3(cos(radians(component->spotLightTimer)) / 1.5f, -1, sin(radians(component->spotLightTimer)) / 1.5f);
-			component->spotLight->GetCamera()->SetLookAtVector(spotLightPos + spotLightDir);
+			auto spotLightDir = vec3(cos(radians(component->spotLightTimer)), 0, sin(radians(component->spotLightTimer))) * (2 + sin(radians(component->spotLightTimer)))* 50.0f;
+			component->spotLight->GetCamera()->SetLookAtVector(vec3(spotLightPos.x, 0, spotLightPos.z) + spotLightDir);
 
 			// check if heli sees player
 			if (component->viewCamera->PointInFrustum(component->player->GetTransformation()->GetAbsolutePosition()) != Engine::F_OUTSIDE)
 			{
-				component->spotLightTimer += dt * 0.00001;
+				component->spotLightTimer += dt*0.001;
 				auto physicsPos = PxVec3(pos.x, pos.y, pos.z);
 				auto raycastDir = normalize(component->player->GetTransformation()->GetAbsolutePosition() - pos);
 				auto physicsDir = PxVec3(raycastDir.x, raycastDir.y, raycastDir.z);
@@ -139,7 +139,7 @@ namespace Game {
 			}
 			else
 			{
-				component->spotLightTimer += dt * 0.01;
+				component->spotLightTimer += dt*0.1;
 
 				//cout << "Helicopter does not see you" << endl;
 			}
@@ -158,7 +158,8 @@ namespace Game {
 		bool broken, 
 		Engine::HeightMapResource *heightMap, 
 		Player *player,
-		Engine::Camera *viewCamera)
+		Engine::Camera *viewCamera,
+		int heliId)
 	{
 		this->spotLight = nullptr;
 		this->broken = broken;
@@ -171,6 +172,7 @@ namespace Game {
 		this->start = 0;
 		this->duration = 0;
 		this->spotLightTimer = 0;
+		this->heliId;
 	}
 
 	void HelicopterBehaviour::Init()

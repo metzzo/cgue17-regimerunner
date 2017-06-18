@@ -52,6 +52,7 @@ namespace Game {
 		int duration;
 		float spotLightTimer;
 		Engine::Camera* viewCamera;
+		int heliId;
 	public:
 		explicit HelicopterBehaviour(
 			Engine::Transformation *mainRotor, 
@@ -59,7 +60,8 @@ namespace Game {
 			bool broken, 
 			Engine::HeightMapResource *heightMap, 
 			Player *player,
-			Engine::Camera *viewCamera);
+			Engine::Camera *viewCamera,
+			int heliId);
 		
 		void Init() override;
 		void Wire() override;

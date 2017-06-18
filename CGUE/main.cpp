@@ -106,7 +106,8 @@ void PlaceHeli(
 	vec3 pos, 
 	bool broken, 
 	HeightMapResource *heightMap,
-	Game::Player *player)
+	Game::Player *player,
+	int heliId)
 {
 	auto heli = child->CreateChild();
 	auto heliModel = heli->CreateChild();
@@ -140,7 +141,8 @@ void PlaceHeli(
 		broken, 
 		heightMap, 
 		player,
-		viewCamera));
+		viewCamera,
+		heliId));
 	
 	//auto hudTest = engine->GetRootEntity()->CreateChild();
 	//hudTest->GetTransformation()->Scale(vec3(1, 1, 1));
@@ -148,7 +150,7 @@ void PlaceHeli(
 	//auto spriteResource = new SpriteResource(viewCamera);
 	//hudTest->Add(new Model(spriteResource));
 
-	auto spotLight = new SpotLight(80.0f, 1.0f, 1000.0f, 512, 19.0f, 20.0f);
+	auto spotLight = new SpotLight(80.0f, 1.0f, 1000.0f, 1024, 19.0f, 20.0f);
 	spotLight->SetAmbient(vec3(0, 0, 0));
 	spotLight->SetSpecular(vec3(1, 1, 1));
 	spotLight->SetDiffuse(vec3(0.9f, 0.9f, 0.9f));
@@ -352,6 +354,7 @@ int main(int argc, char **argv)
 	auto objectMap = new TextureResource("textures/objectmap.png", false);
 	objectMap->Init();
 
+	int heliId = 0;
 	for (auto x = 0;  x < objectMap->GetWidth(); x++)
 	{
 		for (auto y = 0;  y < objectMap->GetHeight(); y++)
@@ -383,11 +386,11 @@ int main(int argc, char **argv)
 			} else if (r == 0 && g == 0 && b == 255)
 			{
 				// broken heli
-				PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, pos, true, mapResource, playerComponent);
+				PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, pos, true, mapResource, playerComponent, -1);
 			} else if (r == 0 && g == 255 && b == 0)
 			{
 				// normal heli
-				PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, pos, false, mapResource, playerComponent);
+				PlaceHeli(engine->GetRootEntity(), heliResource, heliMainRotorResource, heliSideRotorResource, pos, false, mapResource, playerComponent, heliId++);
 			} else if (r == 0 && g ==255 && b == 255)
 			{
 				PlaceCollectingPlace(engine->GetRootEntity(), collectingPlaceResource, pos, mapResource, playerComponent);
