@@ -27,7 +27,7 @@ namespace Game {
 				component->win();
 				auto hudTest = component->GetEngine()->GetRootEntity()->CreateChild();
 				hudTest->GetTransformation()->Translate(vec3(component->GetEngine()->GetMainCamera()->GetWidth() / 2, component->GetEngine()->GetMainCamera()->GetHeight() / 2, 0));
-				auto spriteResource = new SpriteResource(new TextureResource("textures/win.jpg"));
+				auto spriteResource = new SpriteResource(new TextureResource("textures/win.png"));
 				hudTest->Add(new Model(spriteResource));
 			}
 		}
@@ -37,8 +37,10 @@ namespace Game {
 				component->lose();
 				auto hudTest = component->GetEngine()->GetRootEntity()->CreateChild();
 				hudTest->GetTransformation()->Translate(vec3(component->GetEngine()->GetMainCamera()->GetWidth()/2, component->GetEngine()->GetMainCamera()->GetHeight()/2, 0));
-				auto spriteResource = new SpriteResource(new TextureResource("textures/lost.jpg"));
-				hudTest->Add(new Model(spriteResource));
+				auto spriteResource = new SpriteResource(new TextureResource("textures/lost.png"));
+				auto screen = new Model(spriteResource);
+				screen->SetAlpha(0.1);
+				hudTest->Add(screen);
 			}
 		}
 

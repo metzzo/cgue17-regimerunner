@@ -17,6 +17,7 @@ namespace Game {
 	const CameraMovement CameraMovementClass;
 
 	void CameraMovementOperation::Execute() {
+
 		auto component = static_cast<CameraMovement*>(this->GetComponent());
 		auto engine = this->GetComponent()->GetEngine();
 		auto xspeed = engine->GetMouseXRel();
@@ -38,8 +39,10 @@ namespace Game {
 			component->GetTransformation()->SetRelativeMatrix(translate(mat4(), pos));
 		}
 
-		yaw += xspeed;
-		pitch -= yspeed;
+		if (component->player->hasLost() == false && component->player->hasWon() == false) {
+			yaw += xspeed;
+			pitch -= yspeed;
+		}
 
 		if (pitch > 89.0f)
 		{
@@ -61,24 +64,45 @@ namespace Game {
 		front.z = cos(glm::radians(-pitch)) * sin(glm::radians(yaw));
 		auto waterCameraFront = glm::normalize(front);
 
-		component->spotLight->GetCamera()->SetLookAtVector(component->spotLight->GetTransformation()->GetAbsolutePosition() + cameraFront);
-		cam->SetLookAtVector(pos + cameraFront);
-		component->refractionCamera->SetLookAtVector(pos + cameraFront);
+		if (component->player->hasLost() == false && component->player->hasWon() == false) {
 
-		component->reflectionCamera->GetTransformation()->SetRelativeMatrix(translate(mat4(), vec3(0, -2 * (pos.y - 20), 0)));
-		component->reflectionCamera->SetLookAtVector(component->reflectionCamera->GetTransformation()->GetAbsolutePosition() + waterCameraFront);
+			component->spotLight->GetCamera()->SetLookAtVector(component->spotLight->GetTransformation()->GetAbsolutePosition() + cameraFront);
+			cam->SetLookAtVector(pos + cameraFront);
+			component->refractionCamera->SetLookAtVector(pos + cameraFront);
+
+			component->reflectionCamera->GetTransformation()->SetRelativeMatrix(translate(mat4(), vec3(0, -2 * (pos.y - 20), 0)));
+			component->reflectionCamera->SetLookAtVector(component->reflectionCamera->GetTransformation()->GetAbsolutePosition() + waterCameraFront);
+		}
+		else {
+			auto dt = component->GetEngine()->GetDeltaTime();
+			float radius = 5.0f;			
+			yaw += 1;
+			front.x = 1 * cos(glm::radians(yaw)) * radius;
+			front.y = 1;
+			front.z = 1 * sin(glm::radians(yaw)) * radius;
+			cameraFront = glm::normalize(front);
+			waterCameraFront = glm::normalize(front);
+
+			component->spotLight->GetCamera()->SetLookAtVector(component->spotLight->GetTransformation()->GetAbsolutePosition() + cameraFront);
+			cam->SetLookAtVector(pos + cameraFront);
+			component->refractionCamera->SetLookAtVector(pos + cameraFront);
+
+			component->reflectionCamera->GetTransformation()->SetRelativeMatrix(translate(mat4(), vec3(0, -2 * (pos.y - 20), 0)));
+			component->reflectionCamera->SetLookAtVector(component->reflectionCamera->GetTransformation()->GetAbsolutePosition() + waterCameraFront);
+
+		}
 
 
 		auto direction = vec3(0.0f, -9.81f, 0.0f) + jump;
-		if (keyDown || keyUp || keyLeft || keyRight) {
-			auto cameraSpeed = 1.0f;
 
-			direction += cameraSpeed * (
-				cameraFront * static_cast<float>(keyUp - keyDown) +
-				glm::normalize(glm::cross(cameraFront, cam->GetUpVector())) * static_cast<float>(keyRight - keyLeft)
-			);
-
-			//component->skybox->GetTransformation()->Translate(vec3(direction.x, direction.y, direction.z));
+		if (component->player->hasLost() == false && component->player->hasWon() == false) {
+			if ((keyDown || keyUp || keyLeft || keyRight)) {
+				auto cameraSpeed = 1.0f;
+				direction += cameraSpeed * (
+					cameraFront * static_cast<float>(keyUp - keyDown) +
+					glm::normalize(glm::cross(cameraFront, cam->GetUpVector())) * static_cast<float>(keyRight - keyLeft)
+					);
+			}
 		}
 
 		if (keySpace && !jumpPress)
