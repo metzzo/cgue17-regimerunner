@@ -76,6 +76,7 @@ void PlacePalm(Entity *child, vec3 pos, ModelResource *palmResource, HeightMapRe
 	auto palm = child->CreateChild();
 	palm->Add(new Model(palmResource));
 	palm->GetTransformation()->Translate(pos + vec3(0,-4, 0));
+	palm->GetTransformation()->Rotate(rand() % 360, vec3(0, 1, 0));
 
 	auto trunk = new Engine::CapsuleGeometry(4, 30);
 	auto transform = physx::PxTransform();
@@ -282,6 +283,7 @@ int main(int argc, char **argv)
 	auto engine = new GameEngine(width, height, fullscreen, string("Regime Runner"));
 
 	auto palmResource = new ModelResource("objects/palm/palmtree.obj");
+	auto palm2Resource = new ModelResource("objects/palm2/palm_tree_lowpoly.obj");
 	auto heliResource = new ModelResource("objects/heli2/body.obj");
 	auto heliMainRotorResource = new ModelResource("objects/heli2/main_rotor.obj");
 	auto heliSideRotorResource = new ModelResource("objects/heli2/side_rotor.obj");
@@ -376,7 +378,20 @@ int main(int argc, char **argv)
 			if (r == 255 && g == 0 && b == 0)
 			{
 				// place palm
-				PlacePalm(engine->GetRootEntity(), pos, palmResource, mapResource, playerComponent);
+				ModelResource *res;
+				switch(rand() % 2)
+				{
+				case 0:
+					res = palmResource;
+					break;
+				case 1:
+					res = palm2Resource;
+					break;
+				default:
+					res = nullptr;
+				}
+				
+				PlacePalm(engine->GetRootEntity(), pos, res, mapResource, playerComponent);
 			} else if (r == 255 && g == 255 && b == 0)
 			{
 				// start location

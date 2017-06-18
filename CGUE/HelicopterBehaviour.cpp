@@ -40,20 +40,9 @@ namespace Game {
 
 			auto pos = component->GetTransformation()->GetAbsolutePosition();
 			auto cumHeight = component->heightMap->GetHeightAt(pos.x, pos.z);
-			/*for (auto x = -16; x < 16; x += 4)
-			{
-				for (auto z = -16; z < 16; z += 4)
-				{
-					auto height = component->heightMap->GetHeightAt(pos.x + x, pos.z + z);
-					if (height == -1 && component->state != HMS_FOLLOW_PLAYER)
-					{
-						component->state = HMS_GOTO_CENTER;
-					}
-					cumHeight = max(cumHeight, height);
-				}
-			}*/
-			auto translation = vec3(0, float(cumHeight) - pos.y + 140, 0);
-			//cout << component->state << endl;
+
+			auto translation = vec3(0, float(cumHeight) - pos.y + 140 + component->heliId * 20, 0);
+
 			switch (component->state)
 			{
 			case HMS_GOTO_CENTER:

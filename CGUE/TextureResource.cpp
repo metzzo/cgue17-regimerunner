@@ -46,7 +46,14 @@ namespace Engine {
 
 			int mode, internalMode;
 			if (this->sdlImage->format->BytesPerPixel == 4) {
-				internalMode = mode = GL_RGBA;
+				if (ends_with(filename, ".tga"))
+				{
+					internalMode = GL_RGBA;
+					mode = GL_BGRA;
+				}
+				else {
+					internalMode = mode = GL_RGBA;
+				}
 			}
 			else
 			{
