@@ -15,7 +15,9 @@
 #include "Component.h"
 #include "glm/gtx/transform.hpp"
 #include "Timer.h";
+#include <fstream>
 
+using namespace std;
 
 namespace Engine {
 	void checkSDLError(int line = -1) {
@@ -62,13 +64,14 @@ namespace Engine {
 		exit(1);
 	}
 
-	GameEngine::GameEngine(int width, int height, const string programName)
+	GameEngine::GameEngine(int width, int height, bool fullscreen, const string programName)
 	{
+
 		this->programName = programName;
 		this->cancelled = false;
 		this->width = width;
 		this->height = height;
-
+		this->fullscreen = fullscreen;
 		this->rootEntity = new Entity(this);
 		this->mainCamera = nullptr;
 		this->utilityCamera = nullptr;
@@ -490,7 +493,7 @@ namespace Engine {
 
 	void GameEngine::Init()
 	{
-		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
+		if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		{
 			RaiseEngineError("Unable to initialize SDL: " + string(SDL_GetError()));
 		}
@@ -533,6 +536,10 @@ namespace Engine {
 		SDL_SetWindowGrab(this->mainwindow, SDL_TRUE);
 		SDL_SetRelativeMouseMode(SDL_TRUE);
 		SDL_ShowCursor(SDL_DISABLE);
+
+		if (this->fullscreen == true) {
+			SDL_SetWindowFullscreen(this->mainwindow, SDL_WINDOW_FULLSCREEN);
+		}
 
 		this->maincontext = SDL_GL_CreateContext(this->mainwindow);
 		checkSDLError(__LINE__);
