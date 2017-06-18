@@ -41,7 +41,7 @@ namespace Game {
 			auto pos = component->GetTransformation()->GetAbsolutePosition();
 			auto cumHeight = component->heightMap->GetHeightAt(pos.x, pos.z);
 
-			auto translation = vec3(0, float(cumHeight) - pos.y + 140 + component->heliId * 20, 0);
+			auto translation = vec3(0, float(cumHeight) - pos.y + 140 + component->heliId * 40, 0);
 
 			switch (component->state)
 			{
@@ -97,7 +97,7 @@ namespace Game {
 
 			auto spotLightPos = component->GetTransformation()->GetAbsolutePosition();
 			spotLightPos.y = 0;
-			auto spotLightDir = vec3(cos(radians(component->spotLightTimer)), 0, sin(radians(component->spotLightTimer))) * (2 + sin(radians(component->spotLightTimer)))* 50.0f;
+			auto spotLightDir = vec3(cos(radians(component->spotLightTimer)), 0, sin(radians(component->spotLightTimer))) * (1.25f + sin(radians(component->spotLightTimer)))* 50.0f;
 			component->spotLight->GetCamera()->SetLookAtVector(vec3(spotLightPos.x, 0, spotLightPos.z) + spotLightDir);
 
 			// check if heli sees player
@@ -161,7 +161,7 @@ namespace Game {
 		this->start = 0;
 		this->duration = 0;
 		this->spotLightTimer = 0;
-		this->heliId;
+		this->heliId = heliId;
 	}
 
 	void HelicopterBehaviour::Init()
