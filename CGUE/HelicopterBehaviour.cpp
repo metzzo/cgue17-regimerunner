@@ -54,7 +54,7 @@ namespace Game {
 			}*/
 			auto translation = vec3(0, float(cumHeight) - pos.y + 140, 0);
 			//cout << component->state << endl;
-			switch(component->state)
+			switch (component->state)
 			{
 			case HMS_GOTO_CENTER:
 			case HMS_FOLLOW_PLAYER: {
@@ -65,7 +65,7 @@ namespace Game {
 				glm::vec4 perspective;
 				glm::decompose(component->GetTransformation()->GetRelativeMatrix(), scale, rotation, IGNORE, skew, perspective);
 
-				auto targetPos = component->state == HMS_FOLLOW_PLAYER ? component->player->GetTransformation()->GetAbsolutePosition() : component->heightMap->GetSize()/2.0f;
+				auto targetPos = component->state == HMS_FOLLOW_PLAYER ? component->player->GetTransformation()->GetAbsolutePosition() : component->heightMap->GetSize() / 2.0f;
 
 				auto direction = targetPos - pos;
 				direction.y = 0;
@@ -77,7 +77,8 @@ namespace Game {
 					component->GetTransformation()->SetRelativeMatrix(translate(mat4(), pos)*rotMatrix);
 
 					translation += vec3(0, 0, 1) * dt * 0.05f;
-				} else if (component->state == HMS_GOTO_CENTER)
+				}
+				else if (component->state == HMS_GOTO_CENTER)
 				{
 					ChangeDirection();
 				}
@@ -126,13 +127,13 @@ namespace Game {
 					auto b = hit.block.actor;
 					if (b->userData == nullptr) { // if it doesnt hit anything with a userdata => player is visible
 						component->player->HelicopterHit();
-						
+
 						/*auto rigidBody = static_cast<Engine::RigidBody*>(b->userData);
 						Player *player = nullptr;
 						rigidBody->GetEntity()->WireUp(reinterpret_cast<Engine::Component**>(&player), PlayerClass.GetClassName(), false);
 						if (player != nullptr) {*/
-							//cout << "Helicopter sees you" << endl;
-						//}
+						//cout << "Helicopter sees you" << endl;
+					//}
 					}
 				}
 			}
@@ -145,6 +146,7 @@ namespace Game {
 
 			speed = 100.0f;
 		}
+	
 		component->mainRotor->Rotate(radians(speed * dt), vec3(0.0f, 1.0f, 0.0f));
 		component->sideRotor->Rotate(radians(speed * dt), vec3(1.0f, 0.0f, 0.0f));
 

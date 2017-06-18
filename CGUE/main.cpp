@@ -148,7 +148,7 @@ void PlaceHeli(
 	//auto spriteResource = new SpriteResource(viewCamera);
 	//hudTest->Add(new Model(spriteResource));
 
-	auto spotLight = broken ? new SpotLight(15.0f, 20.0f) : new SpotLight(80.0f, 1.0f, 1000.0f, 512, 19.0f, 20.0f);
+	auto spotLight = new SpotLight(80.0f, 1.0f, 1000.0f, 512, 19.0f, 20.0f);
 	spotLight->SetAmbient(vec3(0, 0, 0));
 	spotLight->SetSpecular(vec3(1, 1, 1));
 	spotLight->SetDiffuse(vec3(0.9f, 0.9f, 0.9f));
@@ -158,17 +158,26 @@ void PlaceHeli(
 
 	if (broken)
 	{
-		spotLight->GetCamera()->SetLookAtVector(heli->GetTransformation()->GetAbsolutePosition() + vec3(10, 1, 0));
+		heliModel->GetTransformation()->Translate(vec3(0, 0, -25));
 		heli->GetTransformation()->Translate(vec3(0, 8, 0));
-		heli->GetTransformation()->Rotate(75 + 180, vec3(0, 1, 0));
-		heli->GetTransformation()->Rotate(-30, vec3(0, 0, 1));
-		heli->GetTransformation()->Rotate(-30, vec3(0, 1, 0));
+
+		auto mat = mat4();
+		mat = rotate(mat, radians(75.0f + 180.0f), vec3(0, 1, 0));
+		mat = rotate(mat, radians(-30.0f), vec3(0,0,1));
+		mat = rotate(mat, radians(-30.0f), vec3(0, 1, 0));
+
+		heli->GetTransformation()->SetRelativeMatrix(heli->GetTransformation()->GetRelativeMatrix() * mat);
+
+		mat = translate(mat, vec3(0, 0, 1));
+
+		spotLight->GetCamera()->SetLookAtVector(heli->GetTransformation()->GetAbsolutePosition() + vec3(mat[3]));
+
 
 		auto rigidBody = new Engine::RigidBody();
 		auto geometry = new BoxGeometry(vec3(20, 60, 60));
 		auto transform = physx::PxTransform();
 		transform.q = PxQuat(0, PxVec3(0, 0, 1));
-		transform.p = PxVec3(0, 0, 0);
+		transform.p = PxVec3(0, 0, -25);
 		geometry->SetLocalPose(transform);
 		rigidBody->AddGeometry(geometry);
 		rigidBody->SetStaticness(true);
@@ -284,8 +293,8 @@ int main(int argc, char **argv)
 	dirLightEntity->Add(dirLight);
 	dirLightEntity->GetTransformation()->Translate(vec3(256, 256, 512));
 	dirLight->SetAmbient(vec3(0 + lightintensity, 0 + lightintensity, 0 + lightintensity));
-	dirLight->SetSpecular(vec3(0.2f, 0.2f, 0.2f));
-	dirLight->SetDiffuse(vec3(0.2f, 0.2f, 0.2f));
+	dirLight->SetSpecular(vec3(0.05f, 0.05f, 0.05f));
+	dirLight->SetDiffuse(vec3(0.05f, 0.05f, 0.05f));
 	dirLight->SetLookAtVector(vec3(0, 0, 0));/**/
 
 	auto camera = new Camera(80.0f, 0.1f, 800.0f, engine->GetScreenWidth(), engine->GetScreenHeight());
