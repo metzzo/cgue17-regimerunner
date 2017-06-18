@@ -21,10 +21,13 @@
 #include "Player.h"
 #include "BoxGeometry.h"
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <map>
 #include "CollectingPlaceBehaviour.h"
 
 using namespace Engine;
+using namespace std;
 
 HeightMapResource *PlaceMap(Entity *child)
 {
@@ -235,11 +238,33 @@ void PlaceWood(Entity* entity, ModelResource* woodResource, Game::Player *player
 	wood->Add(new Game::WoodInteraction(player, modelComponent));
 }
 
+bool string2bool(std::string var)
+{
+	if (var == "true" || var == "TRUE")
+		return true;
+	else if (var == "false" || var == "FALSE")
+		return false;
+}
 
 
 int main(int argc, char **argv)
 {
-	auto engine = new GameEngine(1440, 800, string("Regime Runner"));
+	std::ifstream file("config/vars.txt");
+	std::string str;
+	std::getline(file, str);
+	int width = std::stoi(str);
+	cout << "Initializing with WIDTH:" << str << endl;
+	std::getline(file, str);
+	int height = std::stoi(str);
+	cout << "Initializing with HEIGHT:" << str << endl;
+	std::getline(file, str);
+	float lightintensity = std::stoi(str)/10;
+	cout << "Initializing with GAMMA:" << str << endl;
+	std::getline(file, str);
+	bool fullscreen = string2bool(str);
+	cout << "Initializing in WINDOWMODE:" << str << endl;
+
+	auto engine = new GameEngine(width, height, fullscreen, string("Regime Runner"));
 
 	auto palmResource = new ModelResource("objects/palm/palmtree.obj");
 	auto heliResource = new ModelResource("objects/heli2/body.obj");
@@ -254,7 +279,7 @@ int main(int argc, char **argv)
 	auto dirLightEntity = engine->GetRootEntity()->CreateChild();
 	dirLightEntity->Add(dirLight);
 	dirLightEntity->GetTransformation()->Translate(vec3(256, 256, 512));
-	dirLight->SetAmbient(vec3(0, 0, 0));
+	dirLight->SetAmbient(vec3(0 + lightintensity, 0 + lightintensity, 0 + lightintensity));
 	dirLight->SetSpecular(vec3(0.2f, 0.2f, 0.2f));
 	dirLight->SetDiffuse(vec3(0.2f, 0.2f, 0.2f));
 	dirLight->SetLookAtVector(vec3(0, 0, 0));/**/

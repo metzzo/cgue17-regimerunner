@@ -7,6 +7,7 @@
 #include "PxPhysicsAPI.h"
 #include "Component.h"
 
+
 using namespace physx;
 using namespace std;
 
@@ -41,6 +42,7 @@ namespace Engine {
 		Camera* utilityCamera;
 		int width;
 		int height;
+		bool fullscreen;
 		int mouseXRel;
 		int mouseYRel;
 		bool keyStates[322];
@@ -86,7 +88,7 @@ namespace Engine {
 
 		void UpdatePhysics() const;
 	public:
-		GameEngine(int width, int height, string programName);
+		GameEngine(int width, int height, bool fullscreen, string programName);
 		virtual ~GameEngine();
 
 		void Run();
