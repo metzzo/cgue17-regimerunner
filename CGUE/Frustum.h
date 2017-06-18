@@ -39,7 +39,7 @@ namespace Engine
 
 			d = -dot(normal, point);
 		}
-		void setNormalAndPoint(vec3 &normal, vec3 &point)
+		void setNormalAndPoint(vec3 normal, vec3 point)
 		{
 
 			this->normal = normalize(normal);
@@ -60,7 +60,7 @@ namespace Engine
 		float x, y, z;
 
 
-		AABox::AABox(vec3 &corner, float x, float y, float z)
+		AABox::AABox(vec3 corner, float x, float y, float z)
 		{
 			setBox(corner, x, y, z);
 		}
@@ -77,7 +77,7 @@ namespace Engine
 			
 		}
 
-		void AABox::setBox(vec3 &corner, float x, float y, float z)
+		void AABox::setBox(vec3 corner, float x, float y, float z)
 		{
 			this->corner = corner;
 
@@ -100,7 +100,7 @@ namespace Engine
 		}
 
 		// for use in frustum computations
-		vec3 AABox::getVertexP(vec3 &normal) const
+		vec3 AABox::getVertexP(vec3 normal) const
 		{
 			auto res = corner;
 
@@ -115,7 +115,7 @@ namespace Engine
 
 			return(res);
 		}
-		vec3 AABox::getVertexN(vec3 &normal) const
+		vec3 AABox::getVertexN(vec3 normal) const
 		{
 			auto res = corner;
 

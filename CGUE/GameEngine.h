@@ -95,6 +95,7 @@ namespace Engine {
 
 		bool KeyDown(int keyCode);
 		bool KeyDownLastFrame(int keyCode);
+		void ClearKeyDownLastFrame(int keyCode);
 
 		RenderPass *GetRenderPass() const;
 		DepthPass *GetDepthPass() const;

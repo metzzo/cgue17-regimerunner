@@ -37,9 +37,9 @@ HeightMapResource *PlaceMap(Entity *child)
 	res->Init();
 
 	auto mapResource = new HeightMapResource(res, mapSize, 4096, 4096);
-	mapResource->AddTexture(sandTex, 0, 0.3);
-	mapResource->AddTexture(grassTex, 0.15, 0.5);
-	mapResource->AddTexture(stoneTex, 0.3, 1.0);
+	mapResource->AddTexture(sandTex, 0, 0.5);
+	mapResource->AddTexture(grassTex, 0.4, 0.75);
+	mapResource->AddTexture(stoneTex, 0.6, 1.0);
 
 	child->CreateChild()->Add(new Model(mapResource));
 
@@ -195,26 +195,34 @@ void PlaceCollectingPlace(
 void PlaceStone(Entity* entity, ModelResource* stone_resource, const vec3& pos)
 {
 	auto stone = entity->CreateChild();
-	stone->Add(new Model(stone_resource));
 	stone->GetTransformation()->Translate(pos);
-	stone->GetTransformation()->Rotate(rand() % 360, vec3(0,1,0));
+	stone->GetTransformation()->Rotate(rand() % 360, vec3(0, 1, 0));
+	auto stoneModel = stone->CreateChild();
+	stoneModel->Add(new Model(stone_resource));
 	auto s = 5 + 10.0f/(1 + rand() % 10);
-	stone->GetTransformation()->Scale(vec3(s, s, s));
+	stoneModel->GetTransformation()->Scale(vec3(s, s, s));
+
+	auto rigidBody = new Engine::RigidBody();
+	auto geometry = new BoxGeometry(vec3(3, 3, 3)*s);
+	rigidBody->AddGeometry(geometry);
+	rigidBody->SetStaticness(true);
+	rigidBody->SetDensity(50);
+	rigidBody->SetMaterial(0.5, 0.5, 0.5);
+	stone->Add(rigidBody);
 }
 
 void PlaceWood(Entity* entity, ModelResource* woodResource, Game::Player *player, const vec3& pos)
 {
 	auto wood = entity->CreateChild();
-	wood->Add(new Model(woodResource));
+	auto woodModel = wood->CreateChild();
+	auto modelComponent = new Model(woodResource);
+	woodModel->Add(modelComponent);
+
 	wood->GetTransformation()->Translate(pos);
-	wood->GetTransformation()->Rotate(90, vec3(0, 1, 0));
 
 
-	auto box = new Engine::BoxGeometry(vec3(100, 6, 6));
-	auto transform = physx::PxTransform();
-	transform.q = PxQuat(PxIdentity);
-	transform.p = PxVec3(0, 0, 0);
-	box->SetLocalPose(transform);
+	auto box = new Engine::BoxGeometry(vec3(90, 6, 20));
+	box->SetLocalPose(physx::PxTransform(PxIdentity));
 
 	auto rigidBody = new Engine::RigidBody();
 	rigidBody->AddGeometry(box);
@@ -224,7 +232,7 @@ void PlaceWood(Entity* entity, ModelResource* woodResource, Game::Player *player
 	wood->Add(rigidBody);
 
 
-	wood->Add(new Game::WoodInteraction(player));
+	wood->Add(new Game::WoodInteraction(player, modelComponent));
 }
 
 

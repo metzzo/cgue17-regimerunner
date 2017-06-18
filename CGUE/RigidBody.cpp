@@ -55,6 +55,7 @@ namespace Engine {
 		this->actor->userData = this;
 
 		for (auto& geometry : geometries)
+
 		{
 			auto g = geometry->GetGeometry(this);
 

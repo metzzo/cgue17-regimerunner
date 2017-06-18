@@ -14,11 +14,14 @@ namespace Game {
 		}
 
 		void Execute() override;
+		int GetPriority() override;
 	};
 
 	class CollectingPlaceBehaviour :
 		public Engine::Component
 	{
+		friend CollectingPlaceOperation;
+
 		Player* player;
 	public:
 		explicit CollectingPlaceBehaviour(Player *player);

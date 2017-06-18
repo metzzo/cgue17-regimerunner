@@ -18,42 +18,75 @@ namespace Game {
 
 	void WoodInteractionOperation::Execute() {
 		auto component = static_cast<WoodInteraction*>(this->GetComponent());
-		auto spaceBar = component->GetEngine()->KeyDown(SDL_SCANCODE_E) || component->GetEngine()->KeyDown(SDL_SCANCODE_SPACE);
+		auto selectButton = component->GetEngine()->KeyDownLastFrame(SDL_SCANCODE_E);
 
-		if (spaceBar && component->player->GetWood() == nullptr) {
-			auto posWood = component->GetTransformation()->GetAbsolutePosition();
-			auto cam = component->GetEngine()->GetMainCamera();
-			auto posCamera = cam->GetTransformation()->GetAbsolutePosition();
-			auto dist = glm::distance(posWood, posCamera);
+		if (selectButton && !component->placed) {
+			if (component->player->GetWood() == nullptr) {
+				auto posWood = component->GetTransformation()->GetAbsolutePosition();
+				auto cam = component->GetEngine()->GetMainCamera();
+				auto posCamera = cam->GetTransformation()->GetAbsolutePosition();
+				auto dist = glm::distance(posWood, posCamera);
 
-			if (dist < 50.0 && component->rigidBody->IsStatic()) {
-				std::cout << dist << std::endl;
+				if (dist < 60.0) {
 
-				component->model->SetCullingEnabled(false);
-				component->rigidBody->SetStaticness(false);
-				component->rigidBody->Refresh();
+					if (component->rigidBody->IsStatic()) {
+						std::cout << dist << std::endl;
+						component->GetTransformation()->Translate(vec3(0, 10, 0));
+						component->model->SetCullingEnabled(false);
+						component->rigidBody->SetStaticness(false);
+						component->rigidBody->Refresh();
 
-				auto playerActor = component->player->GetActor();
-				joint = PxDistanceJointCreate(
-					*component->GetEngine()->GetPhysics(),
-					component->rigidBody->GetActor(),
-					PxTransform(PxIdentity),
-					static_cast<PxRigidActor*>(playerActor),
-					PxTransform(PxIdentity));
-				joint->setMaxDistance(20.0f);
-				joint->setDistanceJointFlag(PxDistanceJointFlag::eMAX_DISTANCE_ENABLED, true);
+					}
+					auto transform = PxTransform(
+						PxVec3(60, 0, 0)
+					);
 
-				component->player->SetWood(component);
+					auto playerActor = component->player->GetActor();
+					component->joint = PxDistanceJointCreate(
+						*component->GetEngine()->GetPhysics(),
+						component->rigidBody->GetActor(),
+						transform,
+						static_cast<PxRigidActor*>(playerActor),
+						PxTransform(PxIdentity));
+					component->joint->setMaxDistance(15.0f);
+					component->joint->setDistanceJointFlag(PxDistanceJointFlag::eMAX_DISTANCE_ENABLED, true);
+
+					component->player->SetWood(component);
+				}
+			} else if (component->joint != nullptr)
+			{
+				component->Reset();
 			}
-									
 		}
 	}
 
-	WoodInteraction::WoodInteraction(Player *player) : Component()
+	WoodInteraction::WoodInteraction(Player *player, Engine::Model *model) : Component()
 	{
 		this->rigidBody = nullptr;
-		this->model = nullptr;
+		this->model = model;
 		this->player = player;
+		this->placed = false;
+		this->joint = nullptr;
+	}
+
+	void WoodInteraction::Place(CollectingPlaceBehaviour* component)
+	{
+		GetTransformation()->SetRelativeMatrix(translate(mat4(), component->GetTransformation()->GetAbsolutePosition() + vec3(0, 100, 0)));
+		GetTransformation()->Rotate(90, vec3(0, 1, 0));
+		rigidBody->Refresh();
+
+		placed = true;
+
+		player->increaseGatheredWood();
+
+		Reset();
+	}
+
+	void WoodInteraction::Reset()
+	{
+		this->joint->release();
+		this->joint = nullptr;
+		this->player->SetWood(nullptr);
 	}
 
 	void WoodInteraction::Init() {
@@ -64,6 +97,5 @@ namespace Game {
 	void WoodInteraction::Wire()
 	{
 		WIRE_COMPONENT(this->rigidBody, Engine::RigidBodyClass);
-		WIRE_COMPONENT(this->model, Engine::ModelClass);
 	}
 }

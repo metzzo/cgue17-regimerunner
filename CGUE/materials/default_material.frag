@@ -322,7 +322,7 @@ void main()
 	switch(renderType) {
 		case RT_MESH:
 			result = renderMesh();
-			result = mix(sky,result,visible);
+			result = mix(sky,result,visible*5);
 			result = mix(result,vec3(0.047, 0.2, 0.352),0.4);
 			break;
 		case RT_HUD:

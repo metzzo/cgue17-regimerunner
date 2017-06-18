@@ -315,6 +315,9 @@ namespace Engine {
 
 			this->Render();
 
+
+			this->keyStatesOld[SDL_SCANCODE_E] = false; // dirty me is dirty, this should definitely NOT be done like that
+
 		}
 		this->DeInit();
 	}
@@ -524,6 +527,9 @@ namespace Engine {
 		}
 		checkSDLError(__LINE__);
 
+		SDL_SetWindowGrab(this->mainwindow, SDL_TRUE);
+		SDL_ShowCursor(SDL_DISABLE);
+
 		this->maincontext = SDL_GL_CreateContext(this->mainwindow);
 		checkSDLError(__LINE__);
 
@@ -533,7 +539,6 @@ namespace Engine {
 		{
 			RaiseEngineError("Glew init error: " + to_string(error));
 		}
-
 		SDL_GL_SetSwapInterval(0);
 
 		cout << "Using OpenGL Version: " << glGetString(GL_VERSION) << endl;

@@ -26,7 +26,7 @@ namespace Game {
 		auto keyUp = engine->KeyDown(SDL_SCANCODE_W);
 		auto keyLeft = engine->KeyDown(SDL_SCANCODE_A);
 		auto keyRight = engine->KeyDown(SDL_SCANCODE_D);
-		auto keySpace = engine->KeyDown(SDL_SCANCODE_Q);
+		auto keySpace = engine->KeyDown(SDL_SCANCODE_Q) || component->GetEngine()->KeyDown(SDL_SCANCODE_SPACE);
 		auto camerapos = cam->GetTransformation()->GetAbsolutePosition();
 
 		// key
@@ -93,7 +93,7 @@ namespace Game {
 		jump *= 0.95;
 
 
-		component->controller->move(PxVec3(direction.x, direction.y, direction.z), 0.1f, 1, nullptr);
+		component->controller->move(PxVec3(direction.x, direction.y, direction.z), 0.1f, engine->GetDeltaTime(), nullptr);
 	}
 
 

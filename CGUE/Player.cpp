@@ -156,7 +156,7 @@ namespace Game {
 	}
 
 	bool Player::hasEnoughWoodGathered() {
-		if (this->gatheredWood > 7) return true;
+		if (this->gatheredWood > 1) return true;
 		return false;
 	}
 }
