@@ -112,7 +112,7 @@ namespace Game {
 		if (keySpace && !jumpPress)
 		{
 			jumpPress = true;
- 			jump = vec3(0.0f, 9.81f, 0.0f)*0.75f;
+ 			jump = vec3(0.0f, 9.81f, 0.0f)*0.85f;
 		} else if (!keySpace && jumpPress)
 		{
 			jumpPress = false;

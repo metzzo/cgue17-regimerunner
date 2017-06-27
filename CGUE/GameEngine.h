@@ -24,7 +24,8 @@ namespace Engine {
 	
 	GLenum glCheckError_(const char *file, int line);
 #define glCheckError() glCheckError_(__FILE__, __LINE__);
-#define DEBUG_OGL(X) X; glCheckError_(__FILE__, __LINE__); 
+//#define DEBUG_OGL(X) X; glCheckError_(__FILE__, __LINE__); 
+#define DEBUG_OGL(X) X;
 
 	class GameEngine
 	{
@@ -76,7 +77,7 @@ namespace Engine {
 		bool blendingEnabled;
 		bool textureSamplingQuality;
 		int mipMappingQuality;
-		bool waterEnabled;
+		bool godModeEnabled;
 		bool callHelicopter;
 		bool frustumCullingEnabled;
 		bool switchTextureSamplingQuality;
@@ -124,7 +125,7 @@ namespace Engine {
 		int GetMipMappingQuality() const;
 		void SetMipMappingQuality(int x);
 
-		bool IsWaterEnabled() const;
+		bool IsGodModeEnabled() const;
 		bool IsHelicopterCalled() const;
 		bool IsCullingEnabled() const;
 		bool IsBlendingEnabled() const;

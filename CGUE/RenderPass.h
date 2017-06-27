@@ -34,7 +34,7 @@ namespace Engine {
 		void AssignUniforms(GLuint programId, string name, int lightId, BaseLight *light);
 	};
 
-#define NUM_SHADOW_MAPS 16
+#define NUM_SHADOW_MAPS 7
 
 	class RenderPass : public Pass
 	{

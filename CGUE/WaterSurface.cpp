@@ -26,13 +26,7 @@ namespace Engine {
 			DEBUG_OGL(glEnable(GL_PRIMITIVE_RESTART));
 			DEBUG_OGL(glPrimitiveRestartIndex(mesh->restartIndex));
 		}
-
-		if (component->GetEngine()->IsWaterEnabled()) {
-			DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), RT_WATER));
-		}
-		else {
-			DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), RT_MODEL));
-		}
+		DEBUG_OGL(glUniform1i(pass->GetRenderTypeUniform(), RT_WATER));
 
 
 		DEBUG_OGL(glActiveTexture(GL_TEXTURE0 + MAX_NUM_SHADOW_MAPS));
@@ -118,15 +112,16 @@ namespace Engine {
 			//component->GetEngine()->DoSwitchMipMappingQuality();
 		}
 
+		float texOffset = component->getTexAlpha();
+		float waveOffset = component->getWaveAlpha();
+
+		DEBUG_OGL(glUniform1f(pass->GetWaveOffsetUniform(), waveOffset / 1000));
+		DEBUG_OGL(glUniform1f(pass->GetTexOffsetUniform(), texOffset));
+
 		DEBUG_OGL(glBindVertexArray(mesh->VAO));
 		DEBUG_OGL(glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr));
 		DEBUG_OGL(glBindVertexArray(0));
 
-		float texOffset = component->getTexAlpha();
-		float waveOffset = component->getWaveAlpha();
-
-		DEBUG_OGL(glUniform1f(pass->GetWaveOffsetUniform(), waveOffset/1000));
-		DEBUG_OGL(glUniform1f(pass->GetTexOffsetUniform(), texOffset));
 
 
 		if (mesh->restartIndex != -1)

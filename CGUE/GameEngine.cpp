@@ -87,7 +87,7 @@ namespace Engine {
 		this->showFPSEnabled = false;
 		this->wireFrameEnabled = false;
 		this->textureSamplingQuality = true;
-		this->waterEnabled = true;
+		this->godModeEnabled = false;
 		this->callHelicopter = false;
 		this->frustumCullingEnabled = true;
 		this->switchMipMappingQuality = false;
@@ -186,7 +186,7 @@ namespace Engine {
 				cout << "F3: " << "Wireframe on/of" << endl;
 				cout << "F4: " << "Texture Sampling quality " << endl;
 				cout << "F5: " << "Mip mapping quality" << endl;
-				cout << "F6: " << "Enable/Disable water" << endl;
+				cout << "F6: " << "Enable/Disable God mode" << endl;
 				cout << "F7: " << "Call/Uncall Helicopter" << endl;
 				cout << "F8: " << "Enable/Disable view frustum culling " << endl;
 				cout << "F9: " << "Enable/Disable blending" << endl;
@@ -247,14 +247,14 @@ namespace Engine {
 			}
 
 			if (this->KeyDownLastFrame(SDL_SCANCODE_F6)) {
-				if (!this->waterEnabled) {
-					cout << "F6: " << "Enabling Water" << endl;
-					this->waterEnabled = true;
+				if (!this->godModeEnabled) {
+					cout << "F6: " << "God mode enabled" << endl;
+					this->godModeEnabled = true;
 					this->keyStatesOld[SDL_SCANCODE_F6] = false;
 				}
 				else {
-					cout << "F6: " << "Disabling Water" << endl;
-					this->waterEnabled = false;
+					cout << "F6: " << "God mode disabled" << endl;
+					this->godModeEnabled = false;
 					this->keyStatesOld[SDL_SCANCODE_F6] = false;
 				}
 			}
@@ -319,7 +319,7 @@ namespace Engine {
 
 			this->Render();
 			if (KeyDown(SDL_SCANCODE_L)) {
-				SDL_Delay(rand() % 50);
+				SDL_Delay(25);
 			}
 
 			this->keyStatesOld[SDL_SCANCODE_E] = false; // dirty me is dirty, this should definitely NOT be done like that
@@ -405,9 +405,9 @@ namespace Engine {
 		this->mipMappingQuality = x;
 	}
 
-	bool GameEngine::IsWaterEnabled() const
+	bool GameEngine::IsGodModeEnabled() const
 	{
-		return this->waterEnabled;
+		return this->godModeEnabled;
 	}
 
 	bool GameEngine::IsHelicopterCalled() const

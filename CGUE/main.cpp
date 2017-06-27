@@ -240,7 +240,7 @@ void PlaceWood(Entity* entity, ModelResource* woodResource, Game::Player *player
 	wood->GetTransformation()->Translate(pos);
 
 
-	auto box = new Engine::BoxGeometry(vec3(90, 6, 20));
+	auto box = new Engine::BoxGeometry(vec3(90, 4, 20));
 	box->SetLocalPose(physx::PxTransform(PxIdentity));
 
 	auto rigidBody = new Engine::RigidBody();

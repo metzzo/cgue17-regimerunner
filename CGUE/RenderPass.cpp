@@ -236,7 +236,6 @@ namespace Engine {
 	void RenderPass::AfterPass()
 	{
 
-		DEBUG_OGL(glBindVertexArray(0));
 
 		auto cam = gameEngine->GetMainCamera();
 		if (cam->IsClippingEnabled()) {

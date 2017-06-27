@@ -10,6 +10,7 @@
 #include "Model.h"
 #include "TextureResource.h"
 #include "ModelResource.h"
+#include "GameEngine.h"
 
 using namespace Engine;
 
@@ -134,6 +135,11 @@ namespace Game {
 
 	void Player::HelicopterHit()
 	{
+		if (GetEngine()->IsGodModeEnabled()) {
+			this->blood = 0.0f;
+			return;
+		}
+
 		this->blood += GetEngine()->GetDeltaTime()*0.0001f;
 
 		if (this->blood > 0.75f)
